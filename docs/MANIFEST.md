@@ -1,51 +1,39 @@
-# MyPitchPlaylist — Project Manifest
+# MyPitchPlaylist — 선언문 (Manifesto)
 
-## What We're Building
+## 선언문: "완벽하지 않아도 괜찮아, 일단 불러봐!"
 
-MyPitchPlaylist is a mobile app that recommends songs matched to a user's natural singing voice. By recording a short sung sample, the app analyzes the user's vocal range and surfaces songs they can comfortably sing along to — turning every car ride, walk, or quiet moment into a personal sing-along session.
+전문적인 보컬 트레이닝을 받은 건 아니지만, 우리 모두는 샤워하면서, 혹은 차 안에서 노래 부르는 걸 사랑합니다. 내가 부르기 딱 좋은 노래를 찾는 과정이 너무 어렵고 막막해서 이 프로젝트를 시작했습니다.
 
----
-
-## Core Values
-
-### 1. Singing is for everyone
-Most music apps are built for listeners. We build for singers. The ability to sing along — comfortably, in key, without straining — should be accessible to anyone, not just people with musical training.
-
-### 2. Personalization over curation
-Generic playlists are everywhere. We believe the most valuable recommendation is one calibrated to *your voice*, not an average of what other people like. Vocal range is the filter everything else runs through.
-
-### 3. Simplicity in motion
-The primary use case is singing along while doing something else — driving, exercising, cooking. The interface must work with minimal attention. Controls should be reachable in one tap, and the app should make smart decisions so the user doesn't have to.
-
-### 4. Language is culture, not a setting
-English and Korean are first-class citizens, not toggles in a settings menu. Song recommendations, search, and UI adapt naturally to the user's language preference without friction.
-
-### 5. Honest technology
-We use what works and disclose what doesn't. YouTube is used for playback because it has the catalog; background audio is not supported without Premium and we say so. We don't overpromise.
-
-### 6. Privacy by default
-Voice recordings are analyzed on-device where possible and never stored beyond the session. Account data is minimal — email and password only, no social login.
+이 앱은 완벽한 보컬 분석 도구가 아닙니다. 대신, 당신의 목소리와 **'비슷한 느낌'**의 노래들을 최대한 많이(적어도 50곡쯤은!) 모아서 보여주는 든든한 조력자가 되고 싶습니다. 기술은 조금 서툴지 몰라도, 당신이 마이크를 잡았을 때의 그 즐거움만큼은 진심으로 응원합니다.
 
 ---
 
-## What Success Looks Like
+## 핵심 가치 (Core Values)
 
-A user with no musical knowledge opens the app, sings a verse of a familiar song, and within one minute has a playlist of songs they can genuinely sing along to — and wants to share it with someone.
+### 1. 좁은 문보다는 넓은 광장 (Discovery over Precision)
+
+단 5개의 완벽한 곡을 찾으려다 실패하기보다, 비슷한 음역대의 노래 50곡을 제안합니다. 그중에서 당신의 인생 곡을 발견하는 건 바로 당신의 몫입니다. 선택지는 우리가 넓게 펼쳐놓을게요.
+
+### 2. 함께 만드는 첫 번째 버전 (Learning Together)
+
+이 프로젝트는 완성형이 아닌 '진행형'입니다. 개발자인 저도, 앱을 쓰는 당신도 함께 맞춰가며 성장합니다. 버그가 있을 수도, 추천이 가끔 엉뚱할 수도 있지만 그 과정조차 음악을 즐기는 하나의 여정이라고 생각합니다.
+
+### 3. 취향 존중의 커스터마이징 (Respect for Preferences)
+
+K-Pop이든 팝송이든, 2010년대 감성이든 최신 트렌드든 당신이 원하는 판을 깔아드립니다. 유튜브라는 거대한 바다에서 당신의 입맛에 맞는 노래들을 필터링해오는 것, 그것이 이 앱의 존재 이유입니다.
+
+### 4. 단순함의 미학 (Keep it Simple)
+
+복잡한 수치나 어려운 음악 이론은 뒤로 미뤄둡니다. "내 목소리 녹음 - 취향 선택 - 플레이리스트 확인"이라는 단순한 연결에 집중합니다. 복잡한 건 제가 고민할 테니, 당신은 즐기기만 하세요.
 
 ---
 
-## What We Are Not Building
+## 프로젝트 원칙 (Guiding Principles)
 
-- A karaoke scoring app
-- A music theory tool
-- A social network
-- A full music streaming service
+- **실패를 두려워하지 않는 추천:** 음정이 조금 틀려도 괜찮습니다. 앱이 추천해준 곡이 조금 높거나 낮아도 괜찮습니다. 그 과정에서 새로운 노래를 알게 되는 즐거움에 집중합니다.
 
----
+- **유튜브 API의 영리한 활용:** 거창한 서버를 두기보다, 유튜브의 방대한 데이터를 활용해 가장 실용적인 플레이리스트를 생성합니다.
 
-## Guiding Principles for Development
+- **데이터보다 경험:** 알고리즘의 정확도 수치에 매몰되기보다, 사용자가 "오, 이 노래 부를만한데?"라고 느끼는 그 순간의 경험을 가장 소중하게 여깁니다.
 
-- **Ship to learn.** Iterate on real feedback, not assumptions.
-- **No feature without a user need.** Every addition must map to a concrete user problem.
-- **Graceful degradation.** When an API fails or a feature isn't available, the app should still be usable.
-- **One screen, one job.** Each screen has a single clear purpose.
+- **아마추어리즘의 열정:** "내가 쓰고 싶어서 만든 앱"이라는 초심을 잃지 않습니다. 투박하지만 따뜻한, 사람 냄새 나는 서비스를 지향합니다.
