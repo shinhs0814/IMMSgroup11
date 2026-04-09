@@ -1,66 +1,52 @@
 # Premortem — MyPitchPlaylist
 
-> A premortem asks: *"It is 12 months from now. The project has failed. What went wrong?"*
-> Working backwards from failure helps surface risks before they happen.
+> "지금으로부터 12개월 후, 프로젝트가 실패했다. 무엇이 잘못되었는가?"
+> 실패로부터 거꾸로 추적하면 리스크를 미리 발견할 수 있다.
 
 ---
 
-## How to Use This Document
+## 시나리오
 
-Each team member independently writes down the most plausible reasons for failure. Collect all answers, group by theme, and prioritize by likelihood × impact. Assign mitigations.
-
----
-
-## Scenario
-
-> It is April 2026. MyPitchPlaylist has been built, launched, and has failed to gain meaningful traction. The team is doing a retrospective on what went wrong.
+> 2027년 4월. MyPitchPlaylist가 개발되어 출시되었지만, 의미 있는 사용자 확보에 실패했다. 팀은 무엇이 잘못되었는지 회고하고 있다.
 
 ---
 
-## Failure Modes
+## 실패 원인 분석
 
-### Technical Failures
+### 기술적 실패
 
-| # | What went wrong | Likelihood (1–5) | Impact (1–5) | Mitigation |
+| # | 무엇이 잘못되었나 | 가능성 (1–5) | 영향 (1–5) | 대응책 |
 |---|---|---|---|---|
-| T1 | _[Placeholder — e.g. YouTube API quota exceeded in production]_ | | | |
-| T2 | _[Placeholder — e.g. Pitch detection was inaccurate for most users]_ | | | |
-| T3 | _[Placeholder — e.g. App crashed on certain Android versions]_ | | | |
-| T4 | _[Your answer here]_ | | | |
+| T1 | 유튜브 API 일일 할당량 초과로 서비스 중단 | 4 | 5 | API 응답 캐싱, 할당량 실시간 모니터링, 백업 검색 방식 마련 |
+| T2 | 피치 감지 정확도가 낮아 엉뚱한 음역대 결과 도출 | 3 | 5 | 여러 음성 샘플 평균화, 사용자 수동 보정 기능 제공 |
+| T3 | 모바일 브라우저에서 마이크 권한 획득 실패 | 3 | 4 | HTTPS 필수 적용, 권한 요청 UX 가이드 제공 |
+| T4 | 추천 결과가 실제 유튜브 영상과 매칭되지 않음 (삭제/비공개 영상) | 3 | 3 | 주기적 링크 유효성 검사, 대체 영상 자동 추천 |
 
 ---
 
-### Product / UX Failures
+### 제품/UX 실패
 
-| # | What went wrong | Likelihood (1–5) | Impact (1–5) | Mitigation |
+| # | 무엇이 잘못되었나 | 가능성 (1–5) | 영향 (1–5) | 대응책 |
 |---|---|---|---|---|
-| P1 | _[Placeholder — e.g. Onboarding (singing) felt embarrassing, users dropped off]_ | | | |
-| P2 | _[Placeholder — e.g. Recommendations weren't accurate enough to feel personalized]_ | | | |
-| P3 | _[Placeholder — e.g. Users didn't understand what vocal range meant]_ | | | |
-| P4 | _[Your answer here]_ | | | |
+| P1 | 노래를 불러야 하는 온보딩이 부끄러워서 사용자 이탈 | 4 | 5 | 허밍만으로 분석 가능하게 하거나, 선호 가수 선택 대안 제공 |
+| P2 | 추천된 50곡 중 실제로 부를만한 곡이 거의 없음 | 3 | 4 | 추천 알고리즘 고도화, 사용자 피드백(좋아요/싫어요) 반영 |
+| P3 | 음역대 개념을 모르는 사용자가 결과를 이해하지 못함 | 3 | 3 | 쉬운 시각적 설명 (높은 소리/낮은 소리 그래프) 추가 |
+| P4 | 한번 플레이리스트를 받으면 재방문 동기가 없음 | 4 | 4 | 주간 새 곡 추천, 노래 연습 기록 기능으로 재방문 유도 |
 
 ---
 
-### Market / External Failures
+### 시장/외부 실패
 
-| # | What went wrong | Likelihood (1–5) | Impact (1–5) | Mitigation |
+| # | 무엇이 잘못되었나 | 가능성 (1–5) | 영향 (1–5) | 대응책 |
 |---|---|---|---|---|
-| M1 | _[Placeholder — e.g. YouTube changed its embedding policy]_ | | | |
-| M2 | _[Placeholder — e.g. A major player (Spotify, YT Music) shipped the same feature]_ | | | |
-| M3 | _[Your answer here]_ | | | |
+| M1 | 유튜브가 임베딩/API 정책을 변경하여 핵심 기능 작동 불가 | 2 | 5 | 다른 음원 플랫폼(Spotify 등) 연동 대비 |
+| M2 | 스포티파이/유튜브 뮤직이 유사한 음역대 추천 기능 출시 | 2 | 5 | 차별화 포인트(한국 노래방 문화 특화) 강화 |
+| M3 | 타겟 사용자(한국 노래방 이용자)가 앱의 존재를 모름 | 4 | 4 | SNS 바이럴 콘텐츠 제작, 노래방 커뮤니티 마케팅 |
 
 ---
 
-## Top Risks (to complete as a team)
+## 최우선 리스크 3개
 
-After filling in the table, list the **top 3 risks** the team agrees are highest priority:
-
-1. **[Risk name]** — _description_ → Mitigation: _[action]_
-2. **[Risk name]** — _description_ → Mitigation: _[action]_
-3. **[Risk name]** — _description_ → Mitigation: _[action]_
-
----
-
-## Notes
-
-_Record any risks that were surprising, disagreements on likelihood, or decisions made as a result of this exercise._
+1. **온보딩 이탈** — 노래를 불러야 하는 첫 단계가 부끄러워 사용자가 바로 이탈함 → 대응: 허밍/가수 선택 등 대안 온보딩 제공
+2. **유튜브 API 할당량** — 사용자 증가 시 API 한도 초과로 서비스 중단 위험 → 대응: 응답 캐싱 + 할당량 실시간 모니터링
+3. **재방문 동기 부족** — 일회성 사용 후 다시 올 이유가 없음 → 대응: 주간 새 곡 추천 + 노래 연습 기록 기능 추가

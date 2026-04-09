@@ -1,54 +1,11 @@
 # Why Tree — MyPitchPlaylist
 
-> A Why Tree drills down from a top-level goal to its root motivations by repeatedly asking "Why does this matter?" Fill in each branch with your team's answers.
+아래에서 위로 올라가면 "왜?(Why Up)", 위에서 아래로 내려가면 "어떻게?(How Down)"
 
----
+![Why Tree 다이어그램](whytree.png)
 
-## How to Use This Document
+## 핵심 발견
 
-Start from the top-level goal and work downward. At each level, ask **"Why does this matter?"** or **"Why is this true?"** until you reach a root belief or constraint that needs no further justification.
-
----
-
-## Top-Level Goal
-
-**Help people sing along to music more easily and enjoyably.**
-
----
-
-### Level 1 — Why does this matter?
-
-- [ ] _[Your answer here]_
-- [ ] _[Your answer here]_
-- [ ] _[Your answer here]_
-
----
-
-### Level 2 — Why do those things matter?
-
-> For each Level 1 answer, ask why again.
-
-- [ ] _[Your answer here]_
-- [ ] _[Your answer here]_
-- [ ] _[Your answer here]_
-
----
-
-### Level 3 — Root Motivations
-
-> These should be beliefs, values, or constraints that need no further justification.
-
-- [ ] _[Your answer here]_
-- [ ] _[Your answer here]_
-- [ ] _[Your answer here]_
-
----
-
-## Notes
-
-_Use this section to record disagreements, alternative framings, or anything the tree surfaced that surprised the team._
-
-| Insight | Who raised it | Action |
-|---|---|---|
-| | | |
-| | | |
+- **"왜?"를 올라가다 보면** "노래 부르는 즐거움"과 "새로운 노래 발견의 재미"라는 두 가지 핵심 가치가 하나로 수렴한다: **일상에서의 즐거움과 자신감**.
+- **"어떻게?"를 내려가다 보면** 음성 녹음, 피치 감지, 유튜브 API, 취향 필터링이라는 다섯 가지 구체적 수단이 드러난다.
+- 피치 감지와 유튜브 API 검색은 "음역대 맞는 곡 추천"과 "취향 맞는 곡 탐색" 두 가지 목적(why)을 동시에 충족하는 수단(how)이다.
