@@ -1,10 +1,10 @@
 # Why Tree — Can I Eat?
 
-> A Why Tree drills down from a top-level goal to its root motivations by repeatedly asking "Why does this matter?" Fill in each branch with your team's answers.
+아래에서 위로 올라가면 "왜?(Why Up)", 위에서 아래로 내려가면 "어떻게?(How Down)"
 
----
+![Why Tree 다이어그램](whytree.png)
 
-## How to Use This Document
+## 핵심 발견
 
 Start from the top-level goal and work downward. At each level, ask **"Why does this matter?"** or **"Why is this true?"** until you reach a root belief or constraint that needs no further justification.
 
