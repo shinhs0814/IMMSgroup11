@@ -1,0 +1,71 @@
+{
+  "expo": {
+    "name": "Can I Eat?",
+    "slug": "can-i-eat",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": false,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FAFAF8"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.canieat.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Can I Eat? uses your camera to scan food and package labels.",
+        "NSPhotoLibraryUsageDescription": "Can I Eat? accesses your photos to analyze food images."
+      }
+    },
+    "android": {
+      "package": "com.canieat.app",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FAFAF8"
+      },
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.RECORD_AUDIO"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Can I Eat? uses your camera to scan food and package labels."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Can I Eat? accesses your photos to analyze food images.",
+          "cameraPermission": "Can I Eat? uses your camera to take photos of food."
+        }
+      ],
+      "expo-font",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "kotlinVersion": "2.1.21",
+            "compileSdkVersion": 35,
+            "targetSdkVersion": 34,
+            "buildToolsVersion": "35.0.0"
+          }
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "72a974a6-f005-485e-8979-0c41a0a38ce1"
+      }
+    }
+  }
+}
