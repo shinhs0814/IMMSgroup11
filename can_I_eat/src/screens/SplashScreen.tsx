@@ -2,8 +2,10 @@ import React, { useEffect, useRef } from 'react';
 import { View, StyleSheet, Animated, Image } from 'react-native';
 import AppText from '../components/AppText';
 import { Colors } from '../constants/colors';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function SplashScreen({ onFinish }: { onFinish: () => void }) {
+  const { t } = useLanguage();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.82)).current;
 
@@ -36,7 +38,7 @@ export default function SplashScreen({ onFinish }: { onFinish: () => void }) {
           resizeMode="contain"
         />
         <AppText weight="400" style={styles.subtitle}>
-          Your personal food safety companion
+          {t.splashTagline}
         </AppText>
       </Animated.View>
     </View>

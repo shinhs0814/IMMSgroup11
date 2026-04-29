@@ -169,6 +169,37 @@ export type TranslationKeys = {
   pref_low_fiber_desc: string;
   pref_none: string;
   pref_none_desc: string;
+
+  // Auth screens (sign in / sign up / splash)
+  authTagline: string;
+  splashTagline: string;
+  authSignInTab: string;
+  authSignUpTab: string;
+  authEmailLabel: string;
+  authEmailPlaceholder: string;
+  authPasswordLabel: string;
+  authPasswordPlaceholder: string;
+  authRememberMe: string;
+  authLoginButton: string;
+  authNameLabel: string;
+  authNamePlaceholder: string;
+  authPasswordPlaceholderSignUp: string;
+  authCreateAccount: string;
+  authLegalNote: string;
+  authMissingInfoTitle: string;
+  authMissingInfoMsgSignIn: string;
+  authMissingInfoMsgSignUp: string;
+  authWeakPasswordTitle: string;
+  authWeakPasswordMsg: string;
+  authSignInFailedTitle: string;
+  authSignInFailedMsg: string;
+  authSignUpFailedTitle: string;
+  authGenericErrorMsg: string;
+
+  // Permission alerts
+  permissionRequiredTitle: string;
+  cameraPermissionMsg: string;
+  photoLibraryPermissionMsg: string;
 };
 
 const en: TranslationKeys = {
@@ -326,6 +357,37 @@ const en: TranslationKeys = {
   pref_low_fiber_desc: 'Easy on digestion',
   pref_none: 'No Preference',
   pref_none_desc: 'I eat everything',
+
+  // Auth
+  authTagline: 'Know before you eat',
+  splashTagline: 'Your personal food safety companion',
+  authSignInTab: 'Sign In',
+  authSignUpTab: 'Sign Up',
+  authEmailLabel: 'E-mail address',
+  authEmailPlaceholder: 'your@email.com',
+  authPasswordLabel: 'Password',
+  authPasswordPlaceholder: 'Your password',
+  authRememberMe: 'Remember me',
+  authLoginButton: 'Login',
+  authNameLabel: 'Your Name',
+  authNamePlaceholder: 'e.g. Anna',
+  authPasswordPlaceholderSignUp: 'At least 6 characters',
+  authCreateAccount: 'Create Account',
+  authLegalNote: 'By signing up, you agree to our Terms of Service and Privacy Policy.',
+  authMissingInfoTitle: 'Missing Info',
+  authMissingInfoMsgSignIn: 'Please enter your email and password.',
+  authMissingInfoMsgSignUp: 'Please fill in all fields.',
+  authWeakPasswordTitle: 'Weak Password',
+  authWeakPasswordMsg: 'Password must be at least 6 characters.',
+  authSignInFailedTitle: 'Sign In Failed',
+  authSignInFailedMsg: 'Incorrect email or password.',
+  authSignUpFailedTitle: 'Sign Up Failed',
+  authGenericErrorMsg: 'Something went wrong.',
+
+  // Permissions
+  permissionRequiredTitle: 'Permission Required',
+  cameraPermissionMsg: 'Camera access is needed to take photos.',
+  photoLibraryPermissionMsg: 'Photo library access is needed.',
 };
 
 const ko: TranslationKeys = {
@@ -483,6 +545,37 @@ const ko: TranslationKeys = {
   pref_low_fiber_desc: '소화에 부담 없음',
   pref_none: '제한 없음',
   pref_none_desc: '모두 먹을 수 있음',
+
+  // Auth
+  authTagline: '먹기 전에 확인하세요',
+  splashTagline: '나만의 식품 안전 도우미',
+  authSignInTab: '로그인',
+  authSignUpTab: '회원가입',
+  authEmailLabel: '이메일 주소',
+  authEmailPlaceholder: 'your@email.com',
+  authPasswordLabel: '비밀번호',
+  authPasswordPlaceholder: '비밀번호를 입력하세요',
+  authRememberMe: '이메일 기억하기',
+  authLoginButton: '로그인',
+  authNameLabel: '이름',
+  authNamePlaceholder: '예: 신혜성',
+  authPasswordPlaceholderSignUp: '최소 6자 이상',
+  authCreateAccount: '계정 만들기',
+  authLegalNote: '가입하시면 서비스 약관 및 개인정보 처리방침에 동의하는 것입니다.',
+  authMissingInfoTitle: '입력 필요',
+  authMissingInfoMsgSignIn: '이메일과 비밀번호를 입력해 주세요.',
+  authMissingInfoMsgSignUp: '모든 항목을 입력해 주세요.',
+  authWeakPasswordTitle: '비밀번호가 약합니다',
+  authWeakPasswordMsg: '비밀번호는 최소 6자 이상이어야 합니다.',
+  authSignInFailedTitle: '로그인 실패',
+  authSignInFailedMsg: '이메일 또는 비밀번호가 올바르지 않습니다.',
+  authSignUpFailedTitle: '회원가입 실패',
+  authGenericErrorMsg: '문제가 발생했습니다.',
+
+  // Permissions
+  permissionRequiredTitle: '권한 필요',
+  cameraPermissionMsg: '사진 촬영을 위해 카메라 접근 권한이 필요합니다.',
+  photoLibraryPermissionMsg: '사진 라이브러리 접근 권한이 필요합니다.',
 };
 
 const es: TranslationKeys = {
@@ -640,6 +733,37 @@ const es: TranslationKeys = {
   pref_low_fiber_desc: 'Fácil de digerir',
   pref_none: 'Sin Preferencia',
   pref_none_desc: 'Como de todo',
+
+  // Auth
+  authTagline: 'Sabe antes de comer',
+  splashTagline: 'Tu compañero personal de seguridad alimentaria',
+  authSignInTab: 'Iniciar Sesión',
+  authSignUpTab: 'Registrarse',
+  authEmailLabel: 'Correo electrónico',
+  authEmailPlaceholder: 'tu@email.com',
+  authPasswordLabel: 'Contraseña',
+  authPasswordPlaceholder: 'Tu contraseña',
+  authRememberMe: 'Recordarme',
+  authLoginButton: 'Entrar',
+  authNameLabel: 'Tu Nombre',
+  authNamePlaceholder: 'ej. Ana',
+  authPasswordPlaceholderSignUp: 'Al menos 6 caracteres',
+  authCreateAccount: 'Crear Cuenta',
+  authLegalNote: 'Al registrarte, aceptas nuestros Términos de Servicio y Política de Privacidad.',
+  authMissingInfoTitle: 'Falta Información',
+  authMissingInfoMsgSignIn: 'Por favor ingresa tu correo y contraseña.',
+  authMissingInfoMsgSignUp: 'Por favor completa todos los campos.',
+  authWeakPasswordTitle: 'Contraseña Débil',
+  authWeakPasswordMsg: 'La contraseña debe tener al menos 6 caracteres.',
+  authSignInFailedTitle: 'Error al Iniciar Sesión',
+  authSignInFailedMsg: 'Correo o contraseña incorrectos.',
+  authSignUpFailedTitle: 'Error al Registrarse',
+  authGenericErrorMsg: 'Algo salió mal.',
+
+  // Permissions
+  permissionRequiredTitle: 'Permiso Requerido',
+  cameraPermissionMsg: 'Se necesita acceso a la cámara para tomar fotos.',
+  photoLibraryPermissionMsg: 'Se necesita acceso a la galería de fotos.',
 };
 
 const fr: TranslationKeys = {
@@ -781,8 +905,53 @@ const fr: TranslationKeys = {
   pref_keto_desc: 'Faible en glucides, riche en graisses',
   pref_paleo: 'Paléo',
   pref_paleo_desc: 'Aliments naturels, sans transformés',
+  pref_mediterranean: 'Méditerranéen',
+  pref_mediterranean_desc: "Huile d'olive, poisson, céréales complètes",
+  pref_low_carb: 'Faible en Glucides',
+  pref_low_carb_desc: 'Glucides réduits',
+  pref_low_fat: 'Faible en Matières Grasses',
+  pref_low_fat_desc: 'Apport en gras réduit',
+  pref_high_protein: 'Riche en Protéines',
+  pref_high_protein_desc: 'Développement musculaire, fitness',
+  pref_dairy_free: 'Sans Produits Laitiers',
+  pref_dairy_free_desc: 'Sans lactose, par choix',
+  pref_gluten_free: 'Sans Gluten',
+  pref_gluten_free_desc: 'Sans gluten, par choix',
+  pref_low_fiber: 'Faible en Fibres',
+  pref_low_fiber_desc: 'Facile à digérer',
   pref_none: 'Aucune Préférence',
   pref_none_desc: 'Je mange de tout',
+
+  // Auth
+  authTagline: 'Savoir avant de manger',
+  splashTagline: 'Votre compagnon personnel de sécurité alimentaire',
+  authSignInTab: 'Se Connecter',
+  authSignUpTab: "S'Inscrire",
+  authEmailLabel: 'Adresse e-mail',
+  authEmailPlaceholder: 'votre@email.com',
+  authPasswordLabel: 'Mot de passe',
+  authPasswordPlaceholder: 'Votre mot de passe',
+  authRememberMe: 'Se souvenir de moi',
+  authLoginButton: 'Connexion',
+  authNameLabel: 'Votre Nom',
+  authNamePlaceholder: 'ex. Anna',
+  authPasswordPlaceholderSignUp: 'Au moins 6 caractères',
+  authCreateAccount: 'Créer un Compte',
+  authLegalNote: "En vous inscrivant, vous acceptez nos Conditions d'Utilisation et notre Politique de Confidentialité.",
+  authMissingInfoTitle: 'Informations Manquantes',
+  authMissingInfoMsgSignIn: "Veuillez entrer votre e-mail et votre mot de passe.",
+  authMissingInfoMsgSignUp: 'Veuillez remplir tous les champs.',
+  authWeakPasswordTitle: 'Mot de Passe Faible',
+  authWeakPasswordMsg: 'Le mot de passe doit comporter au moins 6 caractères.',
+  authSignInFailedTitle: 'Échec de la Connexion',
+  authSignInFailedMsg: 'E-mail ou mot de passe incorrect.',
+  authSignUpFailedTitle: "Échec de l'Inscription",
+  authGenericErrorMsg: "Une erreur s'est produite.",
+
+  // Permissions
+  permissionRequiredTitle: 'Autorisation Requise',
+  cameraPermissionMsg: "L'accès à la caméra est nécessaire pour prendre des photos.",
+  photoLibraryPermissionMsg: "L'accès à la galerie de photos est nécessaire.",
 };
 
 const ja: TranslationKeys = {
@@ -924,8 +1093,53 @@ const ja: TranslationKeys = {
   pref_keto_desc: '低炭水化物、高脂肪',
   pref_paleo: 'パレオ',
   pref_paleo_desc: '自然食品、加工食品なし',
+  pref_mediterranean: '地中海式',
+  pref_mediterranean_desc: 'オリーブオイル、魚、全粒穀物',
+  pref_low_carb: '低炭水化物',
+  pref_low_carb_desc: '炭水化物を減らす',
+  pref_low_fat: '低脂肪',
+  pref_low_fat_desc: '脂肪摂取を減らす',
+  pref_high_protein: '高タンパク',
+  pref_high_protein_desc: '筋肉増強、フィットネス',
+  pref_dairy_free: '乳製品なし',
+  pref_dairy_free_desc: '選択的に乳製品を除外',
+  pref_gluten_free: 'グルテンフリー',
+  pref_gluten_free_desc: '選択的にグルテンを除外',
+  pref_low_fiber: '低食物繊維',
+  pref_low_fiber_desc: '消化に優しい',
   pref_none: '制限なし',
   pref_none_desc: '何でも食べられる',
+
+  // Auth
+  authTagline: '食べる前に知る',
+  splashTagline: 'あなたのための食品安全アシスタント',
+  authSignInTab: 'サインイン',
+  authSignUpTab: '新規登録',
+  authEmailLabel: 'メールアドレス',
+  authEmailPlaceholder: 'your@email.com',
+  authPasswordLabel: 'パスワード',
+  authPasswordPlaceholder: 'パスワードを入力',
+  authRememberMe: 'メールを記憶する',
+  authLoginButton: 'ログイン',
+  authNameLabel: 'お名前',
+  authNamePlaceholder: '例: 田中',
+  authPasswordPlaceholderSignUp: '6文字以上',
+  authCreateAccount: 'アカウントを作成',
+  authLegalNote: '登録すると、利用規約とプライバシーポリシーに同意したものとみなされます。',
+  authMissingInfoTitle: '入力が必要です',
+  authMissingInfoMsgSignIn: 'メールアドレスとパスワードを入力してください。',
+  authMissingInfoMsgSignUp: 'すべての項目を入力してください。',
+  authWeakPasswordTitle: 'パスワードが弱いです',
+  authWeakPasswordMsg: 'パスワードは6文字以上である必要があります。',
+  authSignInFailedTitle: 'サインインに失敗しました',
+  authSignInFailedMsg: 'メールアドレスまたはパスワードが正しくありません。',
+  authSignUpFailedTitle: '登録に失敗しました',
+  authGenericErrorMsg: '問題が発生しました。',
+
+  // Permissions
+  permissionRequiredTitle: '権限が必要です',
+  cameraPermissionMsg: '写真を撮影するためにカメラへのアクセスが必要です。',
+  photoLibraryPermissionMsg: '写真ライブラリへのアクセスが必要です。',
 };
 
 export const TRANSLATIONS: Record<AppLanguage, TranslationKeys> = { en, ko, es, fr, ja };
