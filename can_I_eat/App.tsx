@@ -16,6 +16,13 @@ import {
   NanumGothic_700Bold,
   NanumGothic_800ExtraBold,
 } from '@expo-google-fonts/nanum-gothic';
+import {
+  NotoSansJP_400Regular,
+  NotoSansJP_500Medium,
+  NotoSansJP_600SemiBold,
+  NotoSansJP_700Bold,
+  NotoSansJP_800ExtraBold,
+} from '@expo-google-fonts/noto-sans-jp';
 import { AuthProvider } from './src/context/AuthContext';
 import { LanguageProvider } from './src/context/LanguageContext';
 import AppNavigator from './src/navigation/AppNavigator';
@@ -31,6 +38,11 @@ export default function App() {
     NanumGothic_400Regular,
     NanumGothic_700Bold,
     NanumGothic_800ExtraBold,
+    NotoSansJP_400Regular,
+    NotoSansJP_500Medium,
+    NotoSansJP_600SemiBold,
+    NotoSansJP_700Bold,
+    NotoSansJP_800ExtraBold,
   });
 
   if (!fontsLoaded) {

@@ -14,6 +14,7 @@ import {
 import AppText from '../../components/AppText';
 import { Colors } from '../../constants/colors';
 import { useAuth } from '../../context/AuthContext';
+import { useLanguage } from '../../context/LanguageContext';
 
 type Props = {
   onSignIn: () => void;
@@ -21,6 +22,7 @@ type Props = {
 
 export default function SignUpScreen({ onSignIn }: Props) {
   const { signUp } = useAuth();
+  const { t } = useLanguage();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -29,18 +31,18 @@ export default function SignUpScreen({ onSignIn }: Props) {
 
   const handleSignUp = async () => {
     if (!name.trim() || !email.trim() || !password.trim()) {
-      Alert.alert('Missing Info', 'Please fill in all fields.');
+      Alert.alert(t.authMissingInfoTitle, t.authMissingInfoMsgSignUp);
       return;
     }
     if (password.length < 6) {
-      Alert.alert('Weak Password', 'Password must be at least 6 characters.');
+      Alert.alert(t.authWeakPasswordTitle, t.authWeakPasswordMsg);
       return;
     }
     setLoading(true);
     try {
       await signUp(email.trim(), password, name.trim());
     } catch (e: any) {
-      Alert.alert('Sign Up Failed', e.message || 'Something went wrong.');
+      Alert.alert(t.authSignUpFailedTitle, e.message || t.authGenericErrorMsg);
     } finally {
       setLoading(false);
     }
@@ -59,33 +61,33 @@ export default function SignUpScreen({ onSignIn }: Props) {
           style={styles.logo}
           resizeMode="contain"
         />
-        <AppText weight="400" style={styles.tagline}>Know before you eat</AppText>
+        <AppText weight="400" style={styles.tagline}>{t.authTagline}</AppText>
 
         {/* Sign In / Sign Up tabs */}
         <View style={styles.tabRow}>
           <TouchableOpacity style={styles.tabInactive} onPress={onSignIn}>
-            <AppText weight="500" style={styles.tabTextInactive}>Sign In</AppText>
+            <AppText weight="500" style={styles.tabTextInactive}>{t.authSignInTab}</AppText>
           </TouchableOpacity>
           <TouchableOpacity style={styles.tabActive}>
-            <AppText weight="700" style={styles.tabTextActive}>Sign Up</AppText>
+            <AppText weight="700" style={styles.tabTextActive}>{t.authSignUpTab}</AppText>
           </TouchableOpacity>
         </View>
 
         <View style={styles.form}>
-          <AppText weight="500" style={styles.label}>Your Name</AppText>
+          <AppText weight="500" style={styles.label}>{t.authNameLabel}</AppText>
           <TextInput
             style={styles.input}
-            placeholder="e.g. Anna"
+            placeholder={t.authNamePlaceholder}
             value={name}
             onChangeText={setName}
             autoCapitalize="words"
             placeholderTextColor={Colors.textLight}
           />
 
-          <AppText weight="500" style={styles.label}>E-mail address</AppText>
+          <AppText weight="500" style={styles.label}>{t.authEmailLabel}</AppText>
           <TextInput
             style={styles.input}
-            placeholder="your@email.com"
+            placeholder={t.authEmailPlaceholder}
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
@@ -93,11 +95,11 @@ export default function SignUpScreen({ onSignIn }: Props) {
             placeholderTextColor={Colors.textLight}
           />
 
-          <AppText weight="500" style={styles.label}>Password</AppText>
+          <AppText weight="500" style={styles.label}>{t.authPasswordLabel}</AppText>
           <View style={styles.passwordRow}>
             <TextInput
               style={[styles.input, { flex: 1, marginBottom: 0 }]}
-              placeholder="At least 6 characters"
+              placeholder={t.authPasswordPlaceholderSignUp}
               value={password}
               onChangeText={setPassword}
               secureTextEntry={!showPassword}
@@ -116,12 +118,12 @@ export default function SignUpScreen({ onSignIn }: Props) {
           {loading ? (
             <ActivityIndicator color="#fff" />
           ) : (
-            <AppText weight="700" style={styles.btnText}>Create Account</AppText>
+            <AppText weight="700" style={styles.btnText}>{t.authCreateAccount}</AppText>
           )}
         </TouchableOpacity>
 
         <AppText style={styles.legalNote}>
-          By signing up, you agree to our Terms of Service and Privacy Policy.
+          {t.authLegalNote}
         </AppText>
       </ScrollView>
     </KeyboardAvoidingView>

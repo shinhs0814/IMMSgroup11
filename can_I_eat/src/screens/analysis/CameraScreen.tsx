@@ -53,7 +53,7 @@ export default function CameraScreen({ onResult, onCancel }: Props) {
   const openCamera = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== 'granted') {
-      Alert.alert('Permission Required', 'Camera access is needed to take photos.');
+      Alert.alert(t.permissionRequiredTitle, t.cameraPermissionMsg);
       return;
     }
     const result = await ImagePicker.launchCameraAsync({
@@ -70,7 +70,7 @@ export default function CameraScreen({ onResult, onCancel }: Props) {
   const openAlbum = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
-      Alert.alert('Permission Required', 'Photo library access is needed.');
+      Alert.alert(t.permissionRequiredTitle, t.photoLibraryPermissionMsg);
       return;
     }
     const result = await ImagePicker.launchImageLibraryAsync({
