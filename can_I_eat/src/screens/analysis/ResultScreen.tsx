@@ -14,7 +14,8 @@ import { Colors } from '../../constants/colors';
 import { AnalysisResult } from '../../services/anthropic';
 import { useFoods } from '../../context/FoodContext';
 import { useLanguage } from '../../context/LanguageContext';
-import { SavedFood } from '../../services/storage';
+import { SavedFood, logMeal } from '../../services/storage';
+import { useAuth } from '../../context/AuthContext';
 
 type Props = {
   result: AnalysisResult;
@@ -28,8 +29,21 @@ type Props = {
 export default function ResultScreen({ result, imageBase64, imageUrl, savedFood, onBack, onSaved }: Props) {
   const { groups, addFood } = useFoods();
   const { t } = useLanguage();
+  const { user } = useAuth();
   const [saved, setSaved] = useState(!!savedFood);
   const [showGroupPicker, setShowGroupPicker] = useState(false);
+  const [logged, setLogged] = useState(false);
+
+  const handleLogMeal = async () => {
+    if (!user || logged) return;
+    try {
+      await logMeal(user.uid, result.foodName, result, imageBase64, imageUrl);
+      setLogged(true);
+      Alert.alert('', t.mealLogged);
+    } catch {
+      Alert.alert('', t.mealLogFailed);
+    }
+  };
 
   const statusConfig = {
     safe: { color: Colors.safe, bg: '#EFF8F0', emoji: '✅', label: t.safeLabel },
@@ -167,7 +181,7 @@ export default function ResultScreen({ result, imageBase64, imageUrl, savedFood,
         </View>
       </ScrollView>
 
-      {/* Save button (bottom) */}
+      {/* Action buttons (bottom) */}
       {!savedFood && (
         <View style={styles.footer}>
           <TouchableOpacity
@@ -177,6 +191,14 @@ export default function ResultScreen({ result, imageBase64, imageUrl, savedFood,
           >
             <Text style={styles.saveBtnIcon}>{saved ? '❤️' : '🤍'}</Text>
             <Text style={[styles.saveBtnText, saved && styles.saveBtnTextSaved]}>{saved ? t.savedToLibrary : t.saveToMyFoods}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.logBtn, logged && styles.logBtnDone]}
+            onPress={handleLogMeal}
+            disabled={logged}
+          >
+            <Text style={styles.logBtnIcon}>{logged ? '✅' : '🍽️'}</Text>
+            <Text style={styles.logBtnText}>{logged ? t.mealLoggedBtn : t.logMealBtn}</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -301,6 +323,21 @@ const styles = StyleSheet.create({
   saveBtnTextSaved: { color: Colors.primary },
   saveBtnIcon: { fontSize: 20 },
   saveBtnText: { fontSize: 16, fontWeight: '700', color: '#fff' },
+  logBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+    backgroundColor: Colors.background,
+    borderRadius: 14,
+    paddingVertical: 14,
+    borderWidth: 1.5,
+    borderColor: Colors.primary,
+    marginTop: 10,
+  },
+  logBtnDone: { borderColor: Colors.safe, backgroundColor: '#EFF8F0' },
+  logBtnIcon: { fontSize: 18 },
+  logBtnText: { fontSize: 15, fontWeight: '700', color: Colors.primary },
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' },
   modalCard: { backgroundColor: Colors.card, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, paddingBottom: 40, maxHeight: '60%' },
   modalTitle: { fontSize: 20, fontWeight: '700', color: Colors.text, marginBottom: 16 },

@@ -12,16 +12,25 @@ import CameraScreen from '../screens/analysis/CameraScreen';
 import ResultScreen from '../screens/analysis/ResultScreen';
 import SearchScreen from '../screens/search/SearchScreen';
 import ProfileEditScreen from '../screens/settings/ProfileEditScreen';
+import MealHistoryScreen from '../screens/history/MealHistoryScreen';
 import SettingsSidebar from '../components/SettingsSidebar';
 import { AnalysisResult } from '../services/anthropic';
 import { SavedFood } from '../services/storage';
 import { Colors } from '../constants/colors';
 
-type Screen = 'home' | 'camera' | 'result' | 'saved_result' | 'search' | 'search_result' | 'profile_edit';
+type Screen =
+  | 'home'
+  | 'camera'
+  | 'result'
+  | 'saved_result'
+  | 'search'
+  | 'search_result'
+  | 'profile_edit'
+  | 'history';
 
 function AuthenticatedApp() {
   const { t } = useLanguage();
-  const [activeTab, setActiveTab] = useState<'home' | 'camera' | 'search'>('home');
+  const [activeTab, setActiveTab] = useState<'home' | 'camera' | 'search' | 'history'>('home');
   const [screen, setScreen] = useState<Screen>('home');
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
   const [analysisImage, setAnalysisImage] = useState<string | undefined>();
@@ -101,15 +110,19 @@ function AuthenticatedApp() {
 
   return (
     <View style={styles.appContainer}>
-      <HomeScreen
-        onNavigateToAnalysis={(food) => {
-          if (food) {
-            setViewingFood(food);
-            setScreen('saved_result');
-          }
-        }}
-        onOpenSettings={() => setShowSidebar(true)}
-      />
+      {screen === 'history' ? (
+        <MealHistoryScreen onOpenSettings={() => setShowSidebar(true)} />
+      ) : (
+        <HomeScreen
+          onNavigateToAnalysis={(food) => {
+            if (food) {
+              setViewingFood(food);
+              setScreen('saved_result');
+            }
+          }}
+          onOpenSettings={() => setShowSidebar(true)}
+        />
+      )}
 
       {/* Fixed bottom tab bar */}
       <View style={styles.tabBar}>
@@ -136,6 +149,14 @@ function AuthenticatedApp() {
         >
           <Text style={[styles.tabIcon, activeTab === 'search' && styles.tabIconActive]}>🔍</Text>
           <Text style={[styles.tabLabel, activeTab === 'search' && styles.tabLabelActive]}>{t.search}</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.tabBtn}
+          onPress={() => { setActiveTab('history'); setScreen('history'); }}
+        >
+          <Text style={[styles.tabIcon, activeTab === 'history' && styles.tabIconActive]}>📅</Text>
+          <Text style={[styles.tabLabel, activeTab === 'history' && styles.tabLabelActive]}>{t.mealHistory}</Text>
         </TouchableOpacity>
       </View>
 

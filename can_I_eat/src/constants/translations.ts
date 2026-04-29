@@ -110,6 +110,20 @@ export type TranslationKeys = {
   deleteGroupConfirm: string;
   removeFoodConfirm: string;
 
+  // Meal history
+  mealHistory: string;
+  mealHistoryTitle: string;
+  mealHistorySubtitle: string;
+  mealHistoryToday: string;
+  mealHistoryEmpty: string;
+  mealHistoryEmptySub: string;
+  mealHistoryDelete: string;
+  mealHistoryDeleteConfirm: string;
+  logMealBtn: string;
+  mealLoggedBtn: string;
+  mealLogged: string;
+  mealLogFailed: string;
+
   // Deactivate / delete account
   deactivateAccount: string;
   deactivateTitle: string;
@@ -264,6 +278,20 @@ const en: TranslationKeys = {
   noFoodsInGroup: 'No foods yet. Scan something!',
   deleteGroupConfirm: 'Delete this group? Foods will move to uncategorized.',
   removeFoodConfirm: 'Remove this food from your saved foods?',
+
+  // Meal history
+  mealHistory: 'History',
+  mealHistoryTitle: 'Meal History',
+  mealHistorySubtitle: 'Track what you eat every day',
+  mealHistoryToday: 'Today',
+  mealHistoryEmpty: 'No meals logged',
+  mealHistoryEmptySub: 'Scan or search food and tap\n"I ate this" to log your meal',
+  mealHistoryDelete: 'Delete Record',
+  mealHistoryDeleteConfirm: 'Remove this meal from your history?',
+  logMealBtn: 'I ate this today',
+  mealLoggedBtn: 'Logged!',
+  mealLogged: 'Meal logged to your history.',
+  mealLogFailed: 'Failed to log meal. Please try again.',
 
   // Deactivate / delete account
   deactivateAccount: '🗑  Deactivate Account',
@@ -422,6 +450,20 @@ const ko: TranslationKeys = {
   deleteGroupConfirm: '이 그룹을 삭제하시겠습니까? 음식이 미분류로 이동합니다.',
   removeFoodConfirm: '이 음식을 저장된 목록에서 제거하시겠습니까?',
 
+  // Meal history
+  mealHistory: '기록',
+  mealHistoryTitle: '섭취 기록',
+  mealHistorySubtitle: '매일 먹은 음식을 기록해보세요',
+  mealHistoryToday: '오늘',
+  mealHistoryEmpty: '기록된 식사가 없습니다',
+  mealHistoryEmptySub: '음식을 스캔하거나 검색한 뒤\n"오늘 먹었어요"를 눌러 기록하세요',
+  mealHistoryDelete: '기록 삭제',
+  mealHistoryDeleteConfirm: '이 식사 기록을 삭제하시겠습니까?',
+  logMealBtn: '오늘 먹었어요',
+  mealLoggedBtn: '기록 완료!',
+  mealLogged: '식사가 기록되었습니다.',
+  mealLogFailed: '기록에 실패했습니다. 다시 시도해주세요.',
+
   // Deactivate / delete account
   deactivateAccount: '🗑  계정 비활성화',
   deactivateTitle: '⚠️ 계정 비활성화',
@@ -578,6 +620,20 @@ const es: TranslationKeys = {
   noFoodsInGroup: '¡Sin alimentos. Escanea algo!',
   deleteGroupConfirm: '¿Eliminar este grupo? Los alimentos pasarán a sin categoría.',
   removeFoodConfirm: '¿Eliminar este alimento de tus guardados?',
+
+  // Meal history
+  mealHistory: 'Historial',
+  mealHistoryTitle: 'Historial de Comidas',
+  mealHistorySubtitle: 'Registra lo que comes cada día',
+  mealHistoryToday: 'Hoy',
+  mealHistoryEmpty: 'Sin comidas registradas',
+  mealHistoryEmptySub: 'Escanea o busca un alimento y toca\n"Lo comí hoy" para registrarlo',
+  mealHistoryDelete: 'Eliminar Registro',
+  mealHistoryDeleteConfirm: '¿Eliminar este registro de comida?',
+  logMealBtn: 'Lo comí hoy',
+  mealLoggedBtn: '¡Registrado!',
+  mealLogged: 'Comida registrada en tu historial.',
+  mealLogFailed: 'Error al registrar. Inténtalo de nuevo.',
 
   // Deactivate / delete account
   deactivateAccount: '🗑  Desactivar Cuenta',
@@ -736,6 +792,20 @@ const fr: TranslationKeys = {
   deleteGroupConfirm: 'Supprimer ce groupe? Les aliments seront déplacés vers non classifié.',
   removeFoodConfirm: 'Supprimer cet aliment de vos sauvegardes?',
 
+  // Meal history
+  mealHistory: 'Historique',
+  mealHistoryTitle: 'Historique des Repas',
+  mealHistorySubtitle: 'Suivez ce que vous mangez chaque jour',
+  mealHistoryToday: "Aujourd'hui",
+  mealHistoryEmpty: 'Aucun repas enregistré',
+  mealHistoryEmptySub: 'Scannez ou cherchez un aliment et appuyez\nsur "Je l\'ai mangé" pour le noter',
+  mealHistoryDelete: 'Supprimer le Repas',
+  mealHistoryDeleteConfirm: 'Supprimer ce repas de votre historique?',
+  logMealBtn: "Je l'ai mangé aujourd'hui",
+  mealLoggedBtn: 'Noté!',
+  mealLogged: 'Repas enregistré dans votre historique.',
+  mealLogFailed: "Échec de l'enregistrement. Veuillez réessayer.",
+
   // Deactivate / delete account
   deactivateAccount: '🗑  Désactiver le Compte',
   deactivateTitle: '⚠️ Désactiver le Compte',
@@ -878,6 +948,20 @@ const ja: TranslationKeys = {
   noFoodsInGroup: '食品なし。スキャンしてみて！',
   deleteGroupConfirm: 'このグループを削除しますか？食品は未分類に移動します。',
   removeFoodConfirm: 'この食品を保存済みリストから削除しますか？',
+
+  // Meal history
+  mealHistory: '記録',
+  mealHistoryTitle: '食事記録',
+  mealHistorySubtitle: '毎日の食事を記録しましょう',
+  mealHistoryToday: '今日',
+  mealHistoryEmpty: '記録がありません',
+  mealHistoryEmptySub: '食品をスキャンまたは検索して\n「今日食べた」を押して記録してください',
+  mealHistoryDelete: '記録を削除',
+  mealHistoryDeleteConfirm: 'この食事記録を削除しますか？',
+  logMealBtn: '今日食べた',
+  mealLoggedBtn: '記録済み！',
+  mealLogged: '食事が記録されました。',
+  mealLogFailed: '記録に失敗しました。もう一度お試しください。',
 
   // Deactivate / delete account
   deactivateAccount: '🗑  アカウントを無効化',
