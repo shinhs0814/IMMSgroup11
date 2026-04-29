@@ -99,7 +99,7 @@ export default function SearchScreen({ onResult, onCancel, onRestaurantSelect }:
             <View style={styles.illustration}>
               <Text style={styles.illustrationEmoji}>🔍</Text>
               <Text style={styles.illustrationSub}>
-                Search any food in any language
+                {t.searchAnyLanguage}
               </Text>
             </View>
 

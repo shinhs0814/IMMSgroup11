@@ -6,6 +6,8 @@ const client = new Anthropic({
   dangerouslyAllowBrowser: true,
 });
 
+const MODEL = 'claude-sonnet-4-6';
+
 export type AnalysisResult = {
   foodName: string;
   englishName?: string;    // always in English — used internally for image search
@@ -80,7 +82,7 @@ Safety rules:
 - For food images (not labels): identify the dish by appearance and flag likely ingredients`;
 
   const response = await client.messages.create({
-    model: 'claude-opus-4-6',
+    model: MODEL,
     max_tokens: 2048,
     messages: [
       {
@@ -175,7 +177,7 @@ Safety rules:
 - Always check every allergen listed in the user's profile`;
 
   const response = await client.messages.create({
-    model: 'claude-opus-4-6',
+    model: MODEL,
     max_tokens: 2048,
     messages: [{ role: 'user', content: prompt }],
   });

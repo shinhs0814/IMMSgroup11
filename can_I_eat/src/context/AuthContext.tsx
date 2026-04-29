@@ -48,7 +48,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signUp = async (email: string, password: string, name: string) => {
     const cred = await createUserWithEmailAndPassword(auth, email, password);
     await updateProfile(cred.user, { displayName: name });
-    setUser({ ...cred.user, displayName: name });
+    // Use the live Firebase User instance (preserves prototype methods like getIdToken).
+    // Spreading it would strip the prototype.
+    setUser(auth.currentUser);
   };
 
   const signIn = async (email: string, password: string) => {

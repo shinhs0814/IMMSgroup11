@@ -24,13 +24,15 @@ export default function RestaurantDetailScreen({ restaurant, onBack }: Props) {
     const query = encodeURIComponent(restaurant.address);
     const url = `https://maps.google.com/?q=${query}`;
     Linking.openURL(url).catch(() =>
-      Alert.alert('Error', 'Could not open maps.')
+      Alert.alert(t.errorTitle, t.restaurantCouldNotOpenMaps)
     );
   };
 
   const callPhone = () => {
     if (!restaurant.phone) return;
-    Linking.openURL(`tel:${restaurant.phone}`);
+    Linking.openURL(`tel:${restaurant.phone}`).catch(() =>
+      Alert.alert(t.errorTitle, t.restaurantPhone)
+    );
   };
 
   const badges = [
@@ -77,7 +79,7 @@ export default function RestaurantDetailScreen({ restaurant, onBack }: Props) {
           <View style={styles.infoRow}>
             <Text style={styles.infoIcon}>📍</Text>
             <View style={styles.infoContent}>
-              <Text style={styles.infoLabel}>Address</Text>
+              <Text style={styles.infoLabel}>{t.restaurantAddress}</Text>
               <Text style={styles.infoValue}>
                 {isInfoAvailable(restaurant.address) ? restaurant.address : t.restaurantInfoNotAvailable}
               </Text>
@@ -92,7 +94,7 @@ export default function RestaurantDetailScreen({ restaurant, onBack }: Props) {
           <View style={styles.infoRow}>
             <Text style={styles.infoIcon}>🕐</Text>
             <View style={styles.infoContent}>
-              <Text style={styles.infoLabel}>Hours</Text>
+              <Text style={styles.infoLabel}>{t.restaurantHours}</Text>
               <View style={styles.hoursRow}>
                 <Text style={styles.hoursLabel}>{t.restaurantWeekdays}</Text>
                 <Text style={styles.hoursValue}>

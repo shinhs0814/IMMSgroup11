@@ -20,6 +20,26 @@ const REGIONS = [
   ...new Set(ALL_RESTAURANTS.map((r) => r.region).filter(Boolean)),
 ].sort();
 
+type FilterChipProps = {
+  label: string;
+  emoji: string;
+  active: boolean;
+  onPress: () => void;
+  activeColor: string;
+};
+
+function FilterChip({ label, emoji, active, onPress, activeColor }: FilterChipProps) {
+  return (
+    <TouchableOpacity
+      style={[styles.chip, active && { backgroundColor: activeColor, borderColor: activeColor }]}
+      onPress={onPress}
+    >
+      <Text style={styles.chipEmoji}>{emoji}</Text>
+      <Text style={[styles.chipText, active && { color: '#fff' }]}>{label}</Text>
+    </TouchableOpacity>
+  );
+}
+
 type Props = {
   onSelect: (restaurant: Restaurant) => void;
 };
@@ -67,28 +87,6 @@ export default function RestaurantListScreen({ onSelect }: Props) {
       </TouchableOpacity>
     ),
     [onSelect]
-  );
-
-  const FilterChip = ({
-    label,
-    emoji,
-    active,
-    onPress,
-    activeColor,
-  }: {
-    label: string;
-    emoji: string;
-    active: boolean;
-    onPress: () => void;
-    activeColor: string;
-  }) => (
-    <TouchableOpacity
-      style={[styles.chip, active && { backgroundColor: activeColor, borderColor: activeColor }]}
-      onPress={onPress}
-    >
-      <Text style={styles.chipEmoji}>{emoji}</Text>
-      <Text style={[styles.chipText, active && { color: '#fff' }]}>{label}</Text>
-    </TouchableOpacity>
   );
 
   return (
@@ -147,7 +145,7 @@ export default function RestaurantListScreen({ onSelect }: Props) {
       {/* List */}
       <FlatList
         data={filtered}
-        keyExtractor={(item, idx) => `${item.name}-${idx}`}
+        keyExtractor={(item) => `${item.name}|${item.address}`}
         renderItem={renderItem}
         contentContainerStyle={styles.list}
         ListEmptyComponent={
