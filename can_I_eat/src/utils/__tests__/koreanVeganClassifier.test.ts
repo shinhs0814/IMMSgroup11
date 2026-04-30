@@ -97,6 +97,80 @@ describe('classifyKoreanVegan — clear safe cases', () => {
   });
 });
 
+describe('classifyKoreanVegan — false positive defenses', () => {
+  // These are the cases the first AI review flagged as bugs.
+  // Korean compounds without spaces would naively match if we used
+  // raw substring search — token boundaries + flavor-suffix exclusion
+  // should prevent that.
+
+  test('"꿀맛" should not match "꿀"', () => {
+    const text = '쌀, 꿀맛 시즈닝, 정제소금';
+    const result = classifyKoreanVegan(text);
+    expect(result.verdict).not.toBe('unsafe');
+    expect(result.detectedAnimal.map((d) => d.canonical)).not.toContain('꿀');
+  });
+
+  test('"닭갈비향" should not match "닭고기" (it is a flavoring)', () => {
+    const text = '면, 닭갈비향 분말, 양파';
+    const result = classifyKoreanVegan(text);
+    expect(result.detectedAnimal.map((d) => d.canonical)).not.toContain('닭고기');
+  });
+
+  test('"쇠고기향" should not match "쇠고기" (it is a flavoring, not actual beef)', () => {
+    const text = '면, 쇠고기향 분말, 양파';
+    const result = classifyKoreanVegan(text);
+    expect(result.detectedAnimal.map((d) => d.canonical)).not.toContain('쇠고기');
+  });
+
+  test('"우유맛 사탕" should not match "우유"', () => {
+    const text = '설탕, 우유맛 향료';
+    const result = classifyKoreanVegan(text);
+    expect(result.detectedAnimal.map((d) => d.canonical)).not.toContain('우유');
+  });
+
+  test('"게맛살 풍미" should not match "게"', () => {
+    const text = '면, 게맛살 풍미 시즈닝';
+    const result = classifyKoreanVegan(text);
+    expect(result.detectedAnimal.map((d) => d.canonical)).not.toContain('게');
+  });
+
+  test('"난방용 식물성 오일" must not match "난" (egg alias was removed)', () => {
+    const text = '난방용 식물성 오일, 정제수';
+    const result = classifyKoreanVegan(text);
+    expect(result.verdict).toBe('safe');
+  });
+
+  test('actual 꿀 in product → still unsafe', () => {
+    const text = '쌀, 꿀, 정제소금';
+    const result = classifyKoreanVegan(text);
+    expect(result.verdict).toBe('unsafe');
+    expect(result.detectedAnimal.map((d) => d.canonical)).toContain('꿀');
+  });
+});
+
+describe('classifyKoreanVegan — newly added ingredients', () => {
+  test('다시다(Korean beef seasoning) → unsafe', () => {
+    const text = '국수, 다시다, 양파분말';
+    const result = classifyKoreanVegan(text);
+    expect(result.verdict).toBe('unsafe');
+    expect(result.detectedAnimal.map((d) => d.canonical)).toContain('다시다');
+  });
+
+  test('사골육수 → unsafe', () => {
+    const text = '면, 사골육수, 정제염';
+    const result = classifyKoreanVegan(text);
+    expect(result.verdict).toBe('unsafe');
+    expect(result.detectedAnimal.map((d) => d.canonical)).toContain('사골');
+  });
+
+  test('연유 → unsafe (dairy-derived)', () => {
+    const text = '설탕, 연유, 정제수';
+    const result = classifyKoreanVegan(text);
+    expect(result.verdict).toBe('unsafe');
+    expect(result.detectedAnimal.map((d) => d.canonical)).toContain('연유');
+  });
+});
+
 describe('classifyKoreanVegan — edge cases', () => {
   test('empty string → caution', () => {
     const result = classifyKoreanVegan('');
@@ -109,7 +183,8 @@ describe('classifyKoreanVegan — edge cases', () => {
   });
 
   test('parentheses are stripped before matching', () => {
-    const text = '면(쇠고기향), 양념';
+    // Use a real ingredient (not a flavoring) to verify parens tokenize.
+    const text = '면(쇠고기분말), 양념';
     const result = classifyKoreanVegan(text);
     expect(result.verdict).toBe('unsafe');
   });

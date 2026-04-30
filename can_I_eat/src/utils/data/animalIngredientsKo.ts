@@ -30,7 +30,7 @@ export type IngredientEntry = {
 export const RED_LIST: IngredientEntry[] = [
   // Meat — 육류
   { term: '쇠고기', english: 'beef', aliases: ['우육', '소고기'] },
-  { term: '돼지고기', english: 'pork', aliases: ['돈육', '돈지'] },
+  { term: '돼지고기', english: 'pork', aliases: ['돈육'] },
   { term: '닭고기', english: 'chicken', aliases: ['계육', '닭'] },
   { term: '오리고기', english: 'duck' },
   { term: '양고기', english: 'lamb' },
@@ -39,6 +39,10 @@ export const RED_LIST: IngredientEntry[] = [
   { term: '베이컨', english: 'bacon' },
   { term: '라드', english: 'lard' },
   { term: '동물성유지', english: 'animal fat', aliases: ['동물성 유지', '우지', '돈지'] },
+  { term: '사골', english: 'beef bone broth', aliases: ['사골육수', '우골'] },
+  { term: '육수', english: 'meat broth' }, // generic — caution but typically meat-based
+  { term: '갈비', english: 'galbi (ribs)' },
+  { term: '다시다', english: 'Dasida (beef seasoning)' }, // Korean beef-based bouillon brand
 
   // Seafood — 해산물
   { term: '어육', english: 'fish meat' },
@@ -47,8 +51,12 @@ export const RED_LIST: IngredientEntry[] = [
   { term: '게', english: 'crab' },
   { term: '오징어', english: 'squid' },
   { term: '문어', english: 'octopus' },
+  { term: '낙지', english: 'small octopus' },
   { term: '굴', english: 'oyster', aliases: ['굴소스'] },
-  { term: '조개', english: 'clam' },
+  { term: '조개', english: 'clam', aliases: ['바지락', '홍합'] },
+  { term: '전복', english: 'abalone' },
+  { term: '명태', english: 'pollock' },
+  { term: '대구', english: 'cod' },
   { term: '액젓', english: 'fish sauce', aliases: ['멸치액젓', '까나리액젓'] },
   { term: '가쓰오부시', english: 'bonito flakes', aliases: ['가다랑어'] },
   { term: '참치', english: 'tuna' },
@@ -62,11 +70,13 @@ export const RED_LIST: IngredientEntry[] = [
   { term: '카제인', english: 'casein', aliases: ['카제인나트륨', '카세인'] },
   { term: '버터', english: 'butter' },
   { term: '치즈', english: 'cheese', aliases: ['치즈분말'] },
-  { term: '생크림', english: 'cream', aliases: ['크림', '연유'] },
+  { term: '생크림', english: 'cream', aliases: ['크림'] },
+  { term: '연유', english: 'condensed milk' }, // dairy-derived, not cream
   { term: '요구르트', english: 'yogurt' },
 
   // Eggs — 계란
-  { term: '계란', english: 'egg', aliases: ['달걀', '난'] },
+  { term: '계란', english: 'egg', aliases: ['달걀'] }, // '난' alias removed:
+  // far too many false positives ("난방", "후난", standalone "난" rare on labels)
   { term: '난백', english: 'egg white' },
   { term: '난황', english: 'egg yolk' },
   { term: '전란', english: 'whole egg' },

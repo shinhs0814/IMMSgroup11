@@ -49,28 +49,69 @@ export type ClassifierResult = {
 };
 
 /**
- * Find every dictionary entry whose canonical term or alias
- * appears as a substring in the normalized input text.
+ * Token-boundary match. Korean labels lack word spaces inside compounds
+ * (e.g. "꿀맛", "닭갈비향"), so a naive substring search produces lots
+ * of false positives. We split on label-level delimiters — commas,
+ * semicolons, slashes, brackets, parentheses — to get rough ingredient
+ * tokens, then check each token.
+ *
+ * A token "matches" a candidate term when:
+ *   1. The token equals the candidate exactly, OR
+ *   2. The candidate appears in the token AND is not followed by a
+ *      flavor/style suffix that would change its meaning ("향", "맛",
+ *      "풍미", "스타일") — those go through the AMBER list as 향료
+ *      instead.
  */
+const FLAVOR_SUFFIXES = ['향', '맛', '풍미', '스타일', '풍'];
+
+function tokenize(text: string): string[] {
+  return text
+    .split(/[,;/\[\]（）()「」、]/)
+    .map((t) => t.trim())
+    .filter((t) => t.length > 0);
+}
+
+function tokenMatches(token: string, candidate: string): boolean {
+  if (token === candidate) return true;
+  const idx = token.indexOf(candidate);
+  if (idx === -1) return false;
+  // Reject if any flavor suffix appears anywhere after the candidate
+  // within the token. Labels like "닭갈비향", "쇠고기향분말", "우유맛"
+  // describe flavorings, not actual ingredients.
+  const trailing = token.slice(idx + candidate.length);
+  for (const suffix of FLAVOR_SUFFIXES) {
+    if (trailing.includes(suffix)) return false;
+  }
+  return true;
+}
+
 function findMatches(
   normalizedText: string,
   list: IngredientEntry[]
 ): DetectedIngredient[] {
   const matches: DetectedIngredient[] = [];
   const seen = new Set<string>();
+  const tokens = tokenize(normalizedText);
 
   for (const entry of list) {
     const candidates = [entry.term, ...(entry.aliases ?? [])];
-    for (const candidate of candidates) {
-      if (normalizedText.includes(candidate) && !seen.has(entry.term)) {
-        matches.push({
-          matchedText: candidate,
-          canonical: entry.term,
-          english: entry.english,
-        });
-        seen.add(entry.term);
-        break;
+    let matched: string | undefined;
+    for (const token of tokens) {
+      for (const candidate of candidates) {
+        if (tokenMatches(token, candidate)) {
+          matched = candidate;
+          break;
+        }
       }
+      if (matched) break;
+    }
+    if (matched && !seen.has(entry.term)) {
+      matches.push({
+        matchedText: matched,
+        canonical: entry.term,
+        english: entry.english,
+      });
+      seen.add(entry.term);
     }
   }
 
@@ -78,15 +119,15 @@ function findMatches(
 }
 
 /**
- * Normalize input: collapse whitespace, strip parentheses content
- * marker characters but keep their content (since allergen disclosures
- * often appear there), unify common variants.
+ * Normalize input: strip all whitespace inside the label.
+ * Korean ingredient labels rarely use whitespace meaningfully — most
+ * compound ingredient names are written without spaces. Removing all
+ * whitespace lets the tokenizer use only commas/brackets as boundaries
+ * and lets multi-word aliases like "동물성 유지" still match the
+ * canonical "동물성유지" form.
  */
 function normalize(text: string): string {
-  return text
-    .replace(/\s+/g, ' ')
-    .replace(/[（）()]/g, ' ')
-    .trim();
+  return text.replace(/\s+/g, '');
 }
 
 /**
