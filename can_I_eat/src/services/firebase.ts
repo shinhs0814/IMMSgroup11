@@ -1,9 +1,8 @@
+import { Platform } from 'react-native';
 import { initializeApp } from 'firebase/app';
-import { initializeAuth, getReactNativePersistence } from 'firebase/auth';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { initializeAuth, browserLocalPersistence } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
-// Replace with your Firebase project config
 const firebaseConfig = {
   apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY || '',
   authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN || '',
@@ -15,9 +14,19 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
-export const auth = initializeAuth(app, {
-  persistence: getReactNativePersistence(AsyncStorage),
-});
+const buildAuth = () => {
+  if (Platform.OS === 'web') {
+    return initializeAuth(app, { persistence: browserLocalPersistence });
+  }
+  // Lazy-require so the native module is never loaded on web
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const { getReactNativePersistence } = require('firebase/auth');
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const AsyncStorage = require('@react-native-async-storage/async-storage').default;
+  return initializeAuth(app, { persistence: getReactNativePersistence(AsyncStorage) });
+};
+
+export const auth = buildAuth();
 
 export const db = getFirestore(app);
 export default app;

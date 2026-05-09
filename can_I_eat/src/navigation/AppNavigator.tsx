@@ -12,12 +12,14 @@ import CameraScreen from '../screens/analysis/CameraScreen';
 import ResultScreen from '../screens/analysis/ResultScreen';
 import SearchScreen from '../screens/search/SearchScreen';
 import ProfileEditScreen from '../screens/settings/ProfileEditScreen';
+import RestaurantDetailScreen from '../screens/restaurant/RestaurantDetailScreen';
 import SettingsSidebar from '../components/SettingsSidebar';
 import { AnalysisResult } from '../services/anthropic';
 import { SavedFood } from '../services/storage';
+import { Restaurant } from '../types/restaurant';
 import { Colors } from '../constants/colors';
 
-type Screen = 'home' | 'camera' | 'result' | 'saved_result' | 'search' | 'search_result' | 'profile_edit';
+type Screen = 'home' | 'camera' | 'result' | 'saved_result' | 'search' | 'search_result' | 'profile_edit' | 'restaurant_detail';
 
 function AuthenticatedApp() {
   const { t } = useLanguage();
@@ -27,6 +29,7 @@ function AuthenticatedApp() {
   const [analysisImage, setAnalysisImage] = useState<string | undefined>();
   const [analysisImageUrl, setAnalysisImageUrl] = useState<string | undefined>();
   const [viewingFood, setViewingFood] = useState<SavedFood | null>(null);
+  const [selectedRestaurant, setSelectedRestaurant] = useState<Restaurant | null>(null);
   const [showSidebar, setShowSidebar] = useState(false);
 
   const goHome = () => {
@@ -80,6 +83,19 @@ function AuthenticatedApp() {
           setScreen('search_result');
         }}
         onCancel={goHome}
+        onRestaurantSelect={(restaurant) => {
+          setSelectedRestaurant(restaurant);
+          setScreen('restaurant_detail');
+        }}
+      />
+    );
+  }
+
+  if (screen === 'restaurant_detail' && selectedRestaurant) {
+    return (
+      <RestaurantDetailScreen
+        restaurant={selectedRestaurant}
+        onBack={() => setScreen('search')}
       />
     );
   }

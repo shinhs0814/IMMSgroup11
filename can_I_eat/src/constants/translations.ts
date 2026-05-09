@@ -170,6 +170,28 @@ export type TranslationKeys = {
   pref_none: string;
   pref_none_desc: string;
 
+  // Restaurants feature
+  searchFood: string;
+  searchRestaurants: string;
+  searchAnyLanguage: string;
+  restaurantSearchPlaceholder: string;
+  restaurantFilterVegetarian: string;
+  restaurantFilterHalal: string;
+  restaurantFilterGlutenFree: string;
+  restaurantAllRegions: string;
+  restaurantResults: string;
+  restaurantNoResults: string;
+  restaurantNoResultsSub: string;
+  restaurantInfoNotAvailable: string;
+  restaurantWeekdays: string;
+  restaurantWeekends: string;
+  restaurantPhone: string;
+  restaurantDirections: string;
+  restaurantAddress: string;
+  restaurantHours: string;
+  restaurantCouldNotOpenMaps: string;
+  errorTitle: string;
+
   // Auth screens (sign in / sign up / splash)
   authTagline: string;
   splashTagline: string;
@@ -357,6 +379,28 @@ const en: TranslationKeys = {
   pref_low_fiber_desc: 'Easy on digestion',
   pref_none: 'No Preference',
   pref_none_desc: 'I eat everything',
+
+  // Restaurants feature
+  searchFood: 'Food',
+  searchRestaurants: 'Restaurants',
+  searchAnyLanguage: 'Search any food in any language',
+  restaurantSearchPlaceholder: 'Search restaurants by name or address...',
+  restaurantFilterVegetarian: 'Vegetarian',
+  restaurantFilterHalal: 'Halal',
+  restaurantFilterGlutenFree: 'Gluten-Free',
+  restaurantAllRegions: 'All Regions',
+  restaurantResults: 'results',
+  restaurantNoResults: 'No restaurants found',
+  restaurantNoResultsSub: 'Try adjusting your filters',
+  restaurantInfoNotAvailable: 'Not available',
+  restaurantWeekdays: 'Weekdays',
+  restaurantWeekends: 'Weekends',
+  restaurantPhone: 'Phone',
+  restaurantDirections: 'Get Directions',
+  restaurantAddress: 'Address',
+  restaurantHours: 'Hours',
+  restaurantCouldNotOpenMaps: 'Could not open maps',
+  errorTitle: 'Error',
 
   // Auth
   authTagline: 'Know before you eat',
@@ -546,6 +590,28 @@ const ko: TranslationKeys = {
   pref_none: '제한 없음',
   pref_none_desc: '모두 먹을 수 있음',
 
+  // Restaurants feature
+  searchFood: '음식',
+  searchRestaurants: '식당',
+  searchAnyLanguage: '어떤 언어로든 음식을 검색하세요',
+  restaurantSearchPlaceholder: '식당 이름이나 주소로 검색...',
+  restaurantFilterVegetarian: '채식',
+  restaurantFilterHalal: '할랄',
+  restaurantFilterGlutenFree: '글루텐 프리',
+  restaurantAllRegions: '전체 지역',
+  restaurantResults: '개의 결과',
+  restaurantNoResults: '식당을 찾을 수 없습니다',
+  restaurantNoResultsSub: '필터를 조정해 보세요',
+  restaurantInfoNotAvailable: '정보 없음',
+  restaurantWeekdays: '평일',
+  restaurantWeekends: '주말',
+  restaurantPhone: '전화',
+  restaurantDirections: '길찾기',
+  restaurantAddress: '주소',
+  restaurantHours: '영업 시간',
+  restaurantCouldNotOpenMaps: '지도를 열 수 없습니다',
+  errorTitle: '오류',
+
   // Auth
   authTagline: '먹기 전에 확인하세요',
   splashTagline: '나만의 식품 안전 도우미',
@@ -733,6 +799,28 @@ const es: TranslationKeys = {
   pref_low_fiber_desc: 'Fácil de digerir',
   pref_none: 'Sin Preferencia',
   pref_none_desc: 'Como de todo',
+
+  // Restaurants feature
+  searchFood: 'Comida',
+  searchRestaurants: 'Restaurantes',
+  searchAnyLanguage: 'Busca cualquier comida en cualquier idioma',
+  restaurantSearchPlaceholder: 'Buscar restaurantes por nombre o dirección...',
+  restaurantFilterVegetarian: 'Vegetariano',
+  restaurantFilterHalal: 'Halal',
+  restaurantFilterGlutenFree: 'Sin Gluten',
+  restaurantAllRegions: 'Todas las Regiones',
+  restaurantResults: 'resultados',
+  restaurantNoResults: 'No se encontraron restaurantes',
+  restaurantNoResultsSub: 'Intenta ajustar los filtros',
+  restaurantInfoNotAvailable: 'No disponible',
+  restaurantWeekdays: 'Entre Semana',
+  restaurantWeekends: 'Fin de Semana',
+  restaurantPhone: 'Teléfono',
+  restaurantDirections: 'Cómo Llegar',
+  restaurantAddress: 'Dirección',
+  restaurantHours: 'Horario',
+  restaurantCouldNotOpenMaps: 'No se pudo abrir el mapa',
+  errorTitle: 'Error',
 
   // Auth
   authTagline: 'Sabe antes de comer',
@@ -922,6 +1010,28 @@ const fr: TranslationKeys = {
   pref_none: 'Aucune Préférence',
   pref_none_desc: 'Je mange de tout',
 
+  // Restaurants feature
+  searchFood: 'Nourriture',
+  searchRestaurants: 'Restaurants',
+  searchAnyLanguage: "Cherchez n'importe quel aliment dans n'importe quelle langue",
+  restaurantSearchPlaceholder: 'Rechercher par nom ou adresse...',
+  restaurantFilterVegetarian: 'Végétarien',
+  restaurantFilterHalal: 'Halal',
+  restaurantFilterGlutenFree: 'Sans Gluten',
+  restaurantAllRegions: 'Toutes les Régions',
+  restaurantResults: 'résultats',
+  restaurantNoResults: 'Aucun restaurant trouvé',
+  restaurantNoResultsSub: "Essayez d'ajuster les filtres",
+  restaurantInfoNotAvailable: 'Non disponible',
+  restaurantWeekdays: 'En Semaine',
+  restaurantWeekends: 'Week-end',
+  restaurantPhone: 'Téléphone',
+  restaurantDirections: 'Itinéraire',
+  restaurantAddress: 'Adresse',
+  restaurantHours: 'Horaires',
+  restaurantCouldNotOpenMaps: "Impossible d'ouvrir la carte",
+  errorTitle: 'Erreur',
+
   // Auth
   authTagline: 'Savoir avant de manger',
   splashTagline: 'Votre compagnon personnel de sécurité alimentaire',
@@ -1109,6 +1219,28 @@ const ja: TranslationKeys = {
   pref_low_fiber_desc: '消化に優しい',
   pref_none: '制限なし',
   pref_none_desc: '何でも食べられる',
+
+  // Restaurants feature
+  searchFood: '食品',
+  searchRestaurants: 'レストラン',
+  searchAnyLanguage: 'どの言語でも食品を検索できます',
+  restaurantSearchPlaceholder: '名前や住所で検索...',
+  restaurantFilterVegetarian: 'ベジタリアン',
+  restaurantFilterHalal: 'ハラール',
+  restaurantFilterGlutenFree: 'グルテンフリー',
+  restaurantAllRegions: 'すべての地域',
+  restaurantResults: '件の結果',
+  restaurantNoResults: 'レストランが見つかりません',
+  restaurantNoResultsSub: 'フィルターを調整してみてください',
+  restaurantInfoNotAvailable: '情報なし',
+  restaurantWeekdays: '平日',
+  restaurantWeekends: '週末',
+  restaurantPhone: '電話',
+  restaurantDirections: '経路を表示',
+  restaurantAddress: '住所',
+  restaurantHours: '営業時間',
+  restaurantCouldNotOpenMaps: '地図を開けませんでした',
+  errorTitle: 'エラー',
 
   // Auth
   authTagline: '食べる前に知る',
