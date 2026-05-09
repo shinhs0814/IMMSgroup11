@@ -21,9 +21,10 @@ type Props = {
   visible: boolean;
   onClose: () => void;
   onMyProfile: () => void;
+  onQRPassport?: () => void;
 };
 
-export default function SettingsSidebar({ visible, onClose, onMyProfile }: Props) {
+export default function SettingsSidebar({ visible, onClose, onMyProfile, onQRPassport }: Props) {
   const { user, logOut } = useAuth();
   const { t, language, setLanguage } = useLanguage();
 
@@ -111,6 +112,18 @@ export default function SettingsSidebar({ visible, onClose, onMyProfile }: Props
             <Text style={styles.menuText}>{t.myProfile}</Text>
             <Text style={styles.menuArrow}>›</Text>
           </TouchableOpacity>
+
+          {/* QR Passport */}
+          {onQRPassport && (
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={onQRPassport}
+            >
+              <Text style={styles.menuIcon}>📋</Text>
+              <Text style={styles.menuText}>QR Passport</Text>
+              <Text style={styles.menuArrow}>›</Text>
+            </TouchableOpacity>
+          )}
 
           <View style={styles.divider} />
 

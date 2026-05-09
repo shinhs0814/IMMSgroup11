@@ -1,1 +1,38 @@
+# macOS
 .DS_Store
+*.pem
+
+# Dependencies
+node_modules/
+
+# Expo
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# Native builds
+.kotlin/
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+/ios
+/android
+
+# Metro
+.metro-health-check*
+
+# Debug logs
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# Local env files — never commit secrets
+.env
+.env*.local
+
+# TypeScript
+*.tsbuildinfo
