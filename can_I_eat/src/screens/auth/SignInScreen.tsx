@@ -15,6 +15,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import AppText from '../../components/AppText';
 import { Colors } from '../../constants/colors';
 import { useAuth } from '../../context/AuthContext';
+import { useLanguage } from '../../context/LanguageContext';
 
 const REMEMBERED_EMAIL_KEY = 'remembered_email';
 
@@ -24,6 +25,7 @@ type Props = {
 
 export default function SignInScreen({ onSignUp }: Props) {
   const { signIn } = useAuth();
+  const { t } = useLanguage();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -42,7 +44,7 @@ export default function SignInScreen({ onSignUp }: Props) {
 
   const handleSignIn = async () => {
     if (!email.trim() || !password.trim()) {
-      Alert.alert('Missing Info', 'Please enter your email and password.');
+      Alert.alert(t.authMissingInfoTitle, t.authMissingInfoMsgSignIn);
       return;
     }
     setLoading(true);
@@ -55,7 +57,7 @@ export default function SignInScreen({ onSignUp }: Props) {
         await AsyncStorage.removeItem(REMEMBERED_EMAIL_KEY);
       }
     } catch {
-      Alert.alert('Sign In Failed', 'Incorrect email or password.');
+      Alert.alert(t.authSignInFailedTitle, t.authSignInFailedMsg);
     } finally {
       setLoading(false);
     }
@@ -74,23 +76,23 @@ export default function SignInScreen({ onSignUp }: Props) {
           style={styles.logo}
           resizeMode="contain"
         />
-        <AppText weight="400" style={styles.tagline}>Know before you eat</AppText>
+        <AppText weight="400" style={styles.tagline}>{t.authTagline}</AppText>
 
         {/* Sign In / Sign Up tabs */}
         <View style={styles.tabRow}>
           <TouchableOpacity style={styles.tabActive}>
-            <AppText weight="700" style={styles.tabTextActive}>Sign In</AppText>
+            <AppText weight="700" style={styles.tabTextActive}>{t.authSignInTab}</AppText>
           </TouchableOpacity>
           <TouchableOpacity style={styles.tabInactive} onPress={onSignUp}>
-            <AppText weight="500" style={styles.tabTextInactive}>Sign Up</AppText>
+            <AppText weight="500" style={styles.tabTextInactive}>{t.authSignUpTab}</AppText>
           </TouchableOpacity>
         </View>
 
         <View style={styles.form}>
-          <AppText weight="500" style={styles.label}>E-mail address</AppText>
+          <AppText weight="500" style={styles.label}>{t.authEmailLabel}</AppText>
           <TextInput
             style={styles.input}
-            placeholder="your@email.com"
+            placeholder={t.authEmailPlaceholder}
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
@@ -98,11 +100,11 @@ export default function SignInScreen({ onSignUp }: Props) {
             placeholderTextColor={Colors.textLight}
           />
 
-          <AppText weight="500" style={styles.label}>Password</AppText>
+          <AppText weight="500" style={styles.label}>{t.authPasswordLabel}</AppText>
           <View style={styles.passwordRow}>
             <TextInput
               style={[styles.input, { flex: 1, marginBottom: 0 }]}
-              placeholder="Your password"
+              placeholder={t.authPasswordPlaceholder}
               value={password}
               onChangeText={setPassword}
               secureTextEntry={!showPassword}
@@ -116,7 +118,7 @@ export default function SignInScreen({ onSignUp }: Props) {
             </TouchableOpacity>
           </View>
 
-          {/* Remember Me + Forgot Password row */}
+          {/* Remember Me row */}
           <View style={styles.rememberRow}>
             <TouchableOpacity
               style={styles.rememberLeft}
@@ -126,11 +128,7 @@ export default function SignInScreen({ onSignUp }: Props) {
               <View style={[styles.checkbox, rememberMe && styles.checkboxActive]}>
                 {rememberMe && <AppText style={styles.checkmark}>✓</AppText>}
               </View>
-              <AppText weight="500" style={styles.rememberText}>Remember me</AppText>
-            </TouchableOpacity>
-
-            <TouchableOpacity>
-              <AppText weight="500" style={styles.forgotText}>Forgot password?</AppText>
+              <AppText weight="500" style={styles.rememberText}>{t.authRememberMe}</AppText>
             </TouchableOpacity>
           </View>
         </View>
@@ -139,7 +137,7 @@ export default function SignInScreen({ onSignUp }: Props) {
           {loading ? (
             <ActivityIndicator color="#fff" />
           ) : (
-            <AppText weight="700" style={styles.btnText}>Login</AppText>
+            <AppText weight="700" style={styles.btnText}>{t.authLoginButton}</AppText>
           )}
         </TouchableOpacity>
       </ScrollView>

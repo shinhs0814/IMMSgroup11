@@ -114,7 +114,7 @@ export default function ResultScreen({ result, imageBase64, imageUrl, savedFood,
           {/* Type badge */}
           <View style={styles.typeBadge}>
             <Text style={styles.typeBadgeText}>
-              {result.type === 'label' ? '📋 Nutrition Label' : '🍽️ Food Image'}
+              {result.type === 'label' ? t.labelType : t.foodType}
             </Text>
           </View>
 
@@ -187,7 +187,7 @@ export default function ResultScreen({ result, imageBase64, imageUrl, savedFood,
           <View style={styles.modalCard}>
             <Text style={styles.modalTitle}>{t.saveToGroup}</Text>
             <FlatList
-              data={[{ id: null, name: 'Uncategorized' }, ...groups]}
+              data={[{ id: null, name: t.uncategorized }, ...groups]}
               keyExtractor={(item) => item.id || 'none'}
               renderItem={({ item }) => (
                 <TouchableOpacity
@@ -202,7 +202,7 @@ export default function ResultScreen({ result, imageBase64, imageUrl, savedFood,
               style={styles.modalCancel}
               onPress={() => setShowGroupPicker(false)}
             >
-              <Text style={styles.modalCancelText}>Cancel</Text>
+              <Text style={styles.modalCancelText}>{t.cancel}</Text>
             </TouchableOpacity>
           </View>
         </View>
