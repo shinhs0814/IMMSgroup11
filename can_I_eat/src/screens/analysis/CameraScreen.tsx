@@ -14,6 +14,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { analyzeFoodImage, AnalysisResult } from '../../services/anthropic';
 import { LANGUAGE_NAMES } from '../../constants/translations';
+import { classifyKoreanVegan, disagreesWithLLM } from '../../utils/koreanVeganClassifier';
 
 type Props = {
   onResult: (result: AnalysisResult, imageBase64: string, foodName: string) => void;
@@ -40,6 +41,23 @@ export default function CameraScreen({ onResult, onCancel }: Props) {
 
       const profile = dietaryProfile || { name: '', allergies: [], restrictions: [], preferences: [] };
       const result = await analyzeFoodImage(base64, 'image/jpeg', profile, LANGUAGE_NAMES[language]);
+
+      // Run Korean vegan classifier as a guardrail when:
+      // 1. The label is Korean
+      // 2. User has vegan or vegetarian preference
+      const isKoreanLabel = result.labelLanguage?.toLowerCase().includes('korean');
+      const isVeganOrVeg = profile.preferences.some(p => p === 'vegan' || p === 'vegetarian');
+      if (isKoreanLabel && isVeganOrVeg && result.originalIngredients?.length) {
+        const ingredientText = result.originalIngredients.join(', ');
+        const classifierResult = classifyKoreanVegan(ingredientText);
+        if (disagreesWithLLM(result.overallStatus, classifierResult)) {
+          result.veganWarning = {
+            detectedAnimal: classifierResult.detectedAnimal,
+            detectedAmbiguous: classifierResult.detectedAmbiguous,
+            reason: classifierResult.reason,
+          };
+        }
+      }
 
       onResult(result, base64, result.foodName);
     } catch (e: any) {

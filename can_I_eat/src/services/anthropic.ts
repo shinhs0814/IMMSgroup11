@@ -10,8 +10,9 @@ const MODEL = 'claude-sonnet-4-6';
 
 export type AnalysisResult = {
   foodName: string;
-  englishName?: string;    // always in English — used internally for image search
+  englishName?: string;         // always in English — used internally for image search
   originalName?: string;
+  originalIngredients?: string[]; // ingredients in original label language (e.g. Korean) — used by vegan classifier
   labelLanguage?: string;
   type: 'food_image' | 'label';
   overallStatus: 'safe' | 'caution' | 'unsafe';
@@ -20,6 +21,11 @@ export type AnalysisResult = {
   flags: FoodFlag[];
   calories?: string;
   nutritionHighlights?: string[];
+  veganWarning?: {              // set when Korean vegan classifier disagrees with Claude
+    detectedAnimal: { matchedText: string; canonical: string; english: string }[];
+    detectedAmbiguous: { matchedText: string; canonical: string; english: string }[];
+    reason: string;
+  };
 };
 
 export type FoodFlag = {
@@ -58,6 +64,7 @@ Respond with ONLY this JSON (no other text):
   "overallStatus": "safe",
   "summary": "1-2 sentence summary for this specific user based on their dietary profile, written in ${uiLanguage}",
   "ingredients": ["every", "ingredient", "written", "in", "${uiLanguage}"],
+  "originalIngredients": ["every ingredient exactly as printed on the label in its original script — do NOT translate"],
   "flags": [
     {
       "ingredient": "ingredient name written in ${uiLanguage}",

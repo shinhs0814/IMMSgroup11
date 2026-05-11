@@ -111,6 +111,26 @@ export default function ResultScreen({ result, imageBase64, imageUrl, savedFood,
 
           <Text style={styles.summary}>{result.summary}</Text>
 
+          {/* Korean vegan classifier warning banner */}
+          {result.veganWarning && (
+            <View style={styles.veganWarningBanner}>
+              <Text style={styles.veganWarningTitle}>🧪 Korean Vegan Classifier Warning</Text>
+              <Text style={styles.veganWarningText}>
+                AI marked this as safe, but our rule-based classifier detected animal ingredients in the Korean label:
+              </Text>
+              {result.veganWarning.detectedAnimal.map((d, i) => (
+                <Text key={i} style={styles.veganWarningItem}>
+                  🔴 {d.canonical} ({d.english})
+                </Text>
+              ))}
+              {result.veganWarning.detectedAmbiguous.map((d, i) => (
+                <Text key={i} style={styles.veganWarningItem}>
+                  🟡 {d.canonical} ({d.english}) — source unclear
+                </Text>
+              ))}
+            </View>
+          )}
+
           {/* Type badge */}
           <View style={styles.typeBadge}>
             <Text style={styles.typeBadgeText}>
@@ -269,6 +289,18 @@ const styles = StyleSheet.create({
   statusEmoji: { fontSize: 18 },
   statusLabel: { fontSize: 16, fontWeight: '700' },
   summary: { fontSize: 15, color: Colors.textSecondary, lineHeight: 22, marginBottom: 16 },
+  veganWarningBanner: {
+    backgroundColor: '#FFF3CD',
+    borderRadius: 12,
+    padding: 14,
+    marginBottom: 16,
+    borderLeftWidth: 4,
+    borderLeftColor: '#F59E0B',
+    gap: 6,
+  },
+  veganWarningTitle: { fontSize: 13, fontWeight: '700', color: '#92400E', marginBottom: 4 },
+  veganWarningText: { fontSize: 12, color: '#78350F', lineHeight: 18 },
+  veganWarningItem: { fontSize: 13, color: '#92400E', fontWeight: '600' },
   typeBadge: {
     backgroundColor: Colors.border,
     paddingHorizontal: 12,
