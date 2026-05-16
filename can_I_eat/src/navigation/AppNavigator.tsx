@@ -12,19 +12,15 @@ import CameraScreen from '../screens/analysis/CameraScreen';
 import ResultScreen from '../screens/analysis/ResultScreen';
 import SearchScreen from '../screens/search/SearchScreen';
 import ProfileEditScreen from '../screens/settings/ProfileEditScreen';
-
 import RestaurantDetailScreen from '../screens/restaurant/RestaurantDetailScreen';
 import QRPassportScreen from '../screens/passport/QRPassportScreen';
-
 import SettingsSidebar from '../components/SettingsSidebar';
 import { AnalysisResult } from '../services/anthropic';
 import { SavedFood } from '../services/storage';
 import { Restaurant } from '../types/restaurant';
 import { Colors } from '../constants/colors';
 
-
 type Screen = 'home' | 'camera' | 'result' | 'saved_result' | 'search' | 'search_result' | 'profile_edit' | 'restaurant_detail' | 'qr_passport';
-
 
 function AuthenticatedApp() {
   const { t } = useLanguage();
