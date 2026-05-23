@@ -29,31 +29,45 @@ export default function QRPassportScreen({ onBack }: Props) {
 
   if (!dietaryProfile) return null;
 
-  // Build QR payload
-  const qrPayload = JSON.stringify({
-    name: user?.displayName || 'User',
-    allergies: dietaryProfile.allergies,
-    restrictions: dietaryProfile.restrictions,
-    preferences: dietaryProfile.preferences,
-  });
+  // Build QR payload as human-readable text in current UI language
+  const qrLines: string[] = [
+    `🍱 Can I Eat? — ${t.myProfileTitle}`,
+    `👤 ${user?.displayName || 'User'}`,
+    '',
+  ];
+  if (allergyLabels.length > 0) {
+    qrLines.push(`🚨 ${t.allergiesTitle}`);
+    allergyLabels.forEach((l) => qrLines.push(`• ${l}`));
+    qrLines.push('');
+  }
+  if (restrictionLabels.length > 0) {
+    qrLines.push(`⚠️ ${t.restrictionsTitle}`);
+    restrictionLabels.forEach((l) => qrLines.push(`• ${l}`));
+    qrLines.push('');
+  }
+  if (preferenceLabels.length > 0) {
+    qrLines.push(`🌿 ${t.preferencesTitle}`);
+    preferenceLabels.forEach((l) => qrLines.push(`• ${l}`));
+  }
+  if (hasNothing) {
+    qrLines.push('✅ No dietary restrictions');
+  }
+  const qrPayload = qrLines.join('\n');
 
-  // Get human-readable labels
+  // Get human-readable labels in current UI language
   const allergyLabels = ALLERGIES
     .filter((a) => dietaryProfile.allergies.includes(a.id))
-    .map((a) => `${a.emoji} ${a.label}`);
+    .map((a) => `${a.emoji} ${(t as any)[`allergy_${a.id}`] || a.label}`);
 
   const restrictionLabels = DIETARY_RESTRICTIONS
     .filter((r) => dietaryProfile.restrictions.includes(r.id))
-    .map((r) => `${r.emoji} ${r.label}`);
+    .map((r) => `${r.emoji} ${(t as any)[`restriction_${r.id}`] || r.label}`);
 
   const preferenceLabels = DIETARY_PREFERENCES
     .filter((p) => dietaryProfile.preferences.includes(p.id))
-    .map((p) => `${p.emoji} ${p.label}`);
+    .map((p) => `${p.emoji} ${(t as any)[`pref_${p.id}`] || p.label}`);
 
-  const hasNothing =
-    allergyLabels.length === 0 &&
-    restrictionLabels.length === 0 &&
-    preferenceLabels.length === 0;
+  const hasNothing = allergyLabels.length === 0 && restrictionLabels.length === 0 && preferenceLabels.length === 0;
 
   const handleShare = async () => {
     try {
