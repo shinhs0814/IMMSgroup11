@@ -31,26 +31,19 @@ export default function QRPassportScreen({ onBack }: Props) {
 
   // Build QR payload as human-readable text in current UI language
   const qrLines: string[] = [
-    `🍱 Can I Eat? — ${t.myProfileTitle}`,
-    `👤 ${user?.displayName || 'User'}`,
-    '',
+    `${t.authNameLabel} : ${user?.displayName || 'User'}`,
   ];
   if (allergyLabels.length > 0) {
-    qrLines.push(`🚨 ${t.allergiesTitle}`);
-    allergyLabels.forEach((l) => qrLines.push(`• ${l}`));
-    qrLines.push('');
+    qrLines.push(`🚨 ${t.allergiesTitle} : ${allergyLabels.map(l => l).join(', ')}`);
   }
   if (restrictionLabels.length > 0) {
-    qrLines.push(`⚠️ ${t.restrictionsTitle}`);
-    restrictionLabels.forEach((l) => qrLines.push(`• ${l}`));
-    qrLines.push('');
+    qrLines.push(`⚠️ ${t.restrictionsTitle} : ${restrictionLabels.map(l => l).join(', ')}`);
   }
   if (preferenceLabels.length > 0) {
-    qrLines.push(`🌿 ${t.preferencesTitle}`);
-    preferenceLabels.forEach((l) => qrLines.push(`• ${l}`));
+    qrLines.push(`🌿 ${t.preferencesTitle} : ${preferenceLabels.map(l => l).join(', ')}`);
   }
   if (hasNothing) {
-    qrLines.push('✅ No dietary restrictions');
+    qrLines.push(`✅ ${t.safeLabel}`);
   }
   const qrPayload = qrLines.join('\n');
 
