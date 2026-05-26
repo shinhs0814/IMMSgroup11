@@ -211,7 +211,8 @@ Safety rules:
   }
 }
 
-function buildProfileDescription(profile: DietaryProfile): string {
+/** Exported for unit testing */
+export function buildProfileDescription(profile: DietaryProfile): string {
   const lines: string[] = [];
 
   if (profile.preferences.length > 0) {
