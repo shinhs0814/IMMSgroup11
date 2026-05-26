@@ -11,6 +11,7 @@ import {
   Modal,
   FlatList,
   Image,
+  Platform,
 } from 'react-native';
 import { Colors } from '../../constants/colors';
 import { useAuth } from '../../context/AuthContext';
@@ -55,17 +56,21 @@ export default function HomeScreen({ onNavigateToAnalysis, onOpenSettings, onOpe
   };
 
   const handleDeleteGroup = (groupId: string, groupName: string) => {
-    Alert.alert(
-      t.deleteGroup,
-      t.deleteGroupConfirm,
-      [
-        { text: t.cancel, style: 'cancel' },
-        { text: t.delete, style: 'destructive', onPress: () => removeGroup(groupId) },
-      ]
-    );
+    if (Platform.OS === 'web') {
+      if (window.confirm(t.deleteGroupConfirm)) removeGroup(groupId);
+      return;
+    }
+    Alert.alert(t.deleteGroup, t.deleteGroupConfirm, [
+      { text: t.cancel, style: 'cancel' },
+      { text: t.delete, style: 'destructive', onPress: () => removeGroup(groupId) },
+    ]);
   };
 
   const handleDeleteFood = (foodId: string, foodName: string) => {
+    if (Platform.OS === 'web') {
+      if (window.confirm(t.removeFoodConfirm)) removeFood(foodId);
+      return;
+    }
     Alert.alert(t.removeFood, t.removeFoodConfirm, [
       { text: t.cancel, style: 'cancel' },
       { text: t.delete, style: 'destructive', onPress: () => removeFood(foodId) },
