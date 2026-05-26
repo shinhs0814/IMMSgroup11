@@ -83,7 +83,8 @@ export async function saveFood(
   foodName: string,
   analysisResult: AnalysisResult,
   imageBase64?: string,
-  imageUrl?: string
+  imageUrl?: string,
+  date?: string
 ): Promise<string> {
   const ref = await addDoc(collection(db, 'savedFoods'), {
     userId,
@@ -160,12 +161,13 @@ export async function logMeal(
   foodName: string,
   analysisResult: AnalysisResult,
   imageBase64?: string,
-  imageUrl?: string
+  imageUrl?: string,
+  date?: string
 ): Promise<string> {
   const ref = await addDoc(collection(db, 'mealRecords'), {
     userId,
     foodName,
-    date: todayDateString(),
+    date: date || todayDateString(),
     eatenAt: serverTimestamp(),
     analysisResult,
     imageBase64: imageBase64 || null,

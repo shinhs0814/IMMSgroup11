@@ -33,12 +33,22 @@ export default function ResultScreen({ result, imageBase64, imageUrl, savedFood,
   const [saved, setSaved] = useState(!!savedFood);
   const [showGroupPicker, setShowGroupPicker] = useState(false);
   const [logged, setLogged] = useState(false);
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [selectedLogDate, setSelectedLogDate] = useState(new Date().toISOString().slice(0, 10));
+
+  // Build a list of the last 30 days for the date picker
+  const recentDates = Array.from({ length: 30 }, (_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    return d.toISOString().slice(0, 10);
+  });
 
   const handleLogMeal = async () => {
-    if (!user || logged) return;
+    if (!user) return;
     try {
-      await logMeal(user.uid, result.foodName, result, imageBase64, imageUrl);
+      await logMeal(user.uid, result.foodName, result, imageBase64, imageUrl, selectedLogDate);
       setLogged(true);
+      setShowDatePicker(false);
       Alert.alert('', t.mealLogged);
     } catch {
       Alert.alert('', t.mealLogFailed);
@@ -202,8 +212,8 @@ export default function ResultScreen({ result, imageBase64, imageUrl, savedFood,
       </ScrollView>
 
       {/* Action buttons (bottom) */}
-      {!savedFood && (
-        <View style={styles.footer}>
+      <View style={styles.footer}>
+        {!savedFood && (
           <TouchableOpacity
             style={[styles.saveBtn, saved && styles.saveBtnSaved]}
             onPress={() => !saved && setShowGroupPicker(true)}
@@ -212,16 +222,51 @@ export default function ResultScreen({ result, imageBase64, imageUrl, savedFood,
             <Text style={styles.saveBtnIcon}>{saved ? '❤️' : '🤍'}</Text>
             <Text style={[styles.saveBtnText, saved && styles.saveBtnTextSaved]}>{saved ? t.savedToLibrary : t.saveToMyFoods}</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.logBtn, logged && styles.logBtnDone]}
-            onPress={handleLogMeal}
-            disabled={logged}
-          >
-            <Text style={styles.logBtnIcon}>{logged ? '✅' : '🍽️'}</Text>
-            <Text style={styles.logBtnText}>{logged ? t.mealLoggedBtn : t.logMealBtn}</Text>
-          </TouchableOpacity>
+        )}
+        <TouchableOpacity
+          style={[styles.logBtn, logged && styles.logBtnDone, savedFood ? styles.logBtnFull : null]}
+          onPress={() => !logged && setShowDatePicker(true)}
+          disabled={logged}
+        >
+          <Text style={styles.logBtnIcon}>{logged ? '✅' : '🍽️'}</Text>
+          <Text style={styles.logBtnText}>{logged ? t.mealLoggedBtn : t.logMealChooseDate}</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Date picker modal */}
+      <Modal visible={showDatePicker} transparent animationType="slide">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalCard}>
+            <Text style={styles.modalTitle}>{t.logMealDateTitle}</Text>
+            <FlatList
+              data={recentDates}
+              keyExtractor={(item) => item}
+              style={{ maxHeight: 260 }}
+              renderItem={({ item }) => {
+                const isSelected = item === selectedLogDate;
+                const isToday = item === new Date().toISOString().slice(0, 10);
+                return (
+                  <TouchableOpacity
+                    style={[styles.dateItem, isSelected && styles.dateItemSelected]}
+                    onPress={() => setSelectedLogDate(item)}
+                  >
+                    <Text style={[styles.dateItemText, isSelected && styles.dateItemTextSelected]}>
+                      {item}{isToday ? '  (Today)' : ''}
+                    </Text>
+                    {isSelected && <Text style={styles.dateItemCheck}>✓</Text>}
+                  </TouchableOpacity>
+                );
+              }}
+            />
+            <TouchableOpacity style={styles.logConfirmBtn} onPress={handleLogMeal}>
+              <Text style={styles.logConfirmText}>{t.logMealConfirm}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.modalCancel} onPress={() => setShowDatePicker(false)}>
+              <Text style={styles.modalCancelText}>{t.cancel}</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      )}
+      </Modal>
 
       {/* Group picker modal */}
       <Modal visible={showGroupPicker} transparent animationType="slide">
@@ -375,6 +420,14 @@ const styles = StyleSheet.create({
   modalTitle: { fontSize: 20, fontWeight: '700', color: Colors.text, marginBottom: 16 },
   groupItem: { paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: Colors.border },
   groupItemText: { fontSize: 15, color: Colors.text },
-  modalCancel: { marginTop: 12, padding: 14, borderRadius: 12, borderWidth: 1, borderColor: Colors.border, alignItems: 'center' },
+  modalCancel: { marginTop: 10, padding: 14, borderRadius: 12, borderWidth: 1, borderColor: Colors.border, alignItems: 'center' },
   modalCancelText: { fontWeight: '600', color: Colors.textSecondary },
+  logBtnFull: { marginTop: 0 },
+  dateItem: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 13, borderBottomWidth: 1, borderBottomColor: Colors.border, paddingHorizontal: 4 },
+  dateItemSelected: { backgroundColor: '#FEF0E7', borderRadius: 8, paddingHorizontal: 8, marginHorizontal: -4 },
+  dateItemText: { fontSize: 15, color: Colors.text },
+  dateItemTextSelected: { color: Colors.primary, fontWeight: '700' },
+  dateItemCheck: { fontSize: 16, color: Colors.primary },
+  logConfirmBtn: { marginTop: 16, backgroundColor: Colors.primary, borderRadius: 14, paddingVertical: 14, alignItems: 'center' },
+  logConfirmText: { color: '#fff', fontSize: 15, fontWeight: '700' },
 });
