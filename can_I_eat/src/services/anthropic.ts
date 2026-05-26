@@ -34,15 +34,36 @@ export type FoodFlag = {
   severity: 'safe' | 'caution' | 'unsafe';
 };
 
+export type MenuAnalysisItem = {
+  originalName: string;
+  translatedName: string;
+  box: { x: number; y: number; w: number; h: number }; // 0-1 fractions of image dimensions
+  overallStatus: 'safe' | 'caution' | 'unsafe';
+  ingredients: string[];
+  flags: FoodFlag[];
+  summary: string;
+};
+
 export async function analyzeFoodImage(
-  base64Image: string,
-  mimeType: 'image/jpeg' | 'image/png',
+  base64Image: string | null,
+  mimeType: 'image/jpeg' | 'image/png' | null,
   dietaryProfile: DietaryProfile,
-  uiLanguage: string = 'English'
+  uiLanguage: string = 'English',
+  textOverride?: string
 ): Promise<AnalysisResult> {
   const profileDescription = buildProfileDescription(dietaryProfile);
 
-  const prompt = `You are a multilingual global food safety assistant. Analyze this image — it may be a food dish or a product package label in ANY language (Korean, Japanese, Arabic, French, Spanish, Chinese, Thai, etc.).
+  const prompt = textOverride
+    ? `You are a food safety assistant. Analyze this product for the user's dietary profile.
+
+User's dietary profile:
+${buildProfileDescription(dietaryProfile)}
+
+${textOverride}
+
+Respond with ONLY the JSON schema below.
+`
+    : `You are a multilingual global food safety assistant. Analyze this image — it may be a food dish or a product package label in ANY language (Korean, Japanese, Arabic, French, Spanish, Chinese, Thai, etc.).
 
 User's dietary profile:
 ${profileDescription}
@@ -88,28 +109,17 @@ Safety rules:
 - Always check for all allergens in the user's profile
 - For food images (not labels): identify the dish by appearance and flag likely ingredients`;
 
+  const messageContent: any[] = base64Image
+    ? [
+        { type: 'image', source: { type: 'base64', media_type: mimeType, data: base64Image } },
+        { type: 'text', text: prompt },
+      ]
+    : [{ type: 'text', text: prompt }];
+
   const response = await client.messages.create({
     model: MODEL,
     max_tokens: 2048,
-    messages: [
-      {
-        role: 'user',
-        content: [
-          {
-            type: 'image',
-            source: {
-              type: 'base64',
-              media_type: mimeType,
-              data: base64Image,
-            },
-          },
-          {
-            type: 'text',
-            text: prompt,
-          },
-        ],
-      },
-    ],
+    messages: [{ role: 'user', content: messageContent }],
   });
 
   const text = response.content[0].type === 'text' ? response.content[0].text : '';

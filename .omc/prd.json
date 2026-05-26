@@ -1,0 +1,62 @@
+{
+  "task": "Add English vegan ingredient classifier + auto language dispatcher",
+  "rationale": "Wedge V2 expansion from docs/WEDGE.md. The Korean classifier (V1) is shipped and integrated into CameraScreen. Next step in the wedge's V2 plan is English labels — needed for travelers buying US/EU products. After both work standalone, we need a thin dispatcher so the camera flow doesn't have to branch on language at every call site.",
+  "stories": [
+    {
+      "id": 1,
+      "title": "English vegan classifier with token-boundary matching",
+      "passes": true,
+      "files": [
+        "can_I_eat/src/utils/data/animalIngredientsEn.ts",
+        "can_I_eat/src/utils/englishVeganClassifier.ts",
+        "can_I_eat/src/utils/__tests__/englishVeganClassifier.test.ts"
+      ],
+      "acceptanceCriteria": [
+        "classifyEnglishVegan('milk, sugar, salt') returns verdict='unsafe' with matched 'milk'",
+        "classifyEnglishVegan('whole milk powder, beef stock') flags both milk and beef",
+        "classifyEnglishVegan('milky way bar, sugar') does NOT false-match 'milk' inside 'milky'",
+        "classifyEnglishVegan('flour, sugar, vegetable oil') returns verdict='safe'",
+        "classifyEnglishVegan('flour, natural flavoring') returns verdict='caution' (flavoring is amber)",
+        "Dictionary covers >= 30 animal terms across meat, dairy, eggs, seafood, additives",
+        "All new tests pass under `bun run test`"
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Handle English-specific lexical variation (plurals, capitalization, dashes)",
+      "passes": true,
+      "files": [
+        "can_I_eat/src/utils/englishVeganClassifier.ts",
+        "can_I_eat/src/utils/__tests__/englishVeganClassifier.test.ts"
+      ],
+      "acceptanceCriteria": [
+        "'Milk' (title case) matches the same as 'milk'",
+        "'EGGS' (uppercase) matches 'egg'",
+        "'eggs' (plural) matches 'egg' canonical",
+        "'pork-derived' matches 'pork'",
+        "Flavor-suffix exclusion works for English: 'beef-flavored chips' does not flag 'beef' as unsafe (it's an amber flavoring)",
+        "All new and previously-passing tests still pass under `bun run test`"
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Multilingual dispatcher that picks the right classifier based on detected language",
+      "passes": true,
+      "files": [
+        "can_I_eat/src/utils/multilingualVeganClassifier.ts",
+        "can_I_eat/src/utils/__tests__/multilingualVeganClassifier.test.ts"
+      ],
+      "acceptanceCriteria": [
+        "detectLanguage('우유, 설탕') returns 'ko'",
+        "detectLanguage('milk, sugar') returns 'en'",
+        "detectLanguage('') returns 'unknown' (falls back to caution)",
+        "classifyVegan('우유, 설탕') routes to Korean classifier and returns unsafe with '우유'",
+        "classifyVegan('milk, sugar') routes to English classifier and returns unsafe with 'milk'",
+        "classifyVegan('日本語のテスト') returns verdict='caution' with reason about unsupported language (does not crash)",
+        "Existing Korean and English classifier tests continue to pass — no regressions",
+        "All new and previously-passing tests still pass under `bun run test` AND `bun run typecheck` exits clean"
+      ]
+    }
+  ],
+  "completionPromise": "All 3 stories have passes=true with verified evidence in progress.md, and the full test suite (`bun run health`) exits clean."
+}
