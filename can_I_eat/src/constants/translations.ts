@@ -104,6 +104,11 @@ export type TranslationKeys = {
   modeFoodDesc: string;
   modeLabel: string;
   modeLabelDesc: string;
+  modeBarcode: string;
+  modeBarcodeDesc: string;
+  barcodeScanning: string;
+  barcodeNotFound: string;
+  barcodeSuccess: string;
   modeMenu: string;
   modeMenuDesc: string;
   menuScanNote: string;
@@ -324,6 +329,11 @@ const en: TranslationKeys = {
   modeFoodDesc: 'Identify dish ingredients',
   modeLabel: 'Food Label',
   modeLabelDesc: 'Scan a package label',
+  modeBarcode: 'Barcode Scan',
+  modeBarcodeDesc: 'Scan a product barcode',
+  barcodeScanning: 'Scanning barcode...',
+  barcodeNotFound: 'Product not found. Try label scan instead.',
+  barcodeSuccess: 'Product found!',
   modeMenu: 'Menu Scan',
   modeMenuDesc: 'Analyze a full menu',
   menuScanNote: '⚠️ Warning: Food or menu photo results are based on typical recipes and may not be exact. Use Food Label search for the most accurate results.',
@@ -546,6 +556,11 @@ const ko: TranslationKeys = {
   modeFoodDesc: '요리 재료 확인',
   modeLabel: '포장 라벨',
   modeLabelDesc: '포장지 라벨 스캔',
+  modeBarcode: '바코드 스캔',
+  modeBarcodeDesc: '제품 바코드를 스캔하세요',
+  barcodeScanning: '바코드 스캔 중...',
+  barcodeNotFound: '제품을 찾을 수 없습니다. 라벨 스캔을 시도해 보세요.',
+  barcodeSuccess: '제품을 찾았습니다!',
   modeMenu: '메뉴판 스캔',
   modeMenuDesc: '메뉴 전체 분석',
   menuScanNote: '⚠️ 주의: 음식 또는 메뉴 사진 결과는 일반적인 레시피를 기반으로 하며 정확하지 않을 수 있습니다. 가장 정확한 결과를 위해 식품 라벨 검색을 이용하세요.',
@@ -768,6 +783,11 @@ const es: TranslationKeys = {
   modeFoodDesc: 'Identificar ingredientes',
   modeLabel: 'Etiqueta',
   modeLabelDesc: 'Escanear etiqueta del paquete',
+  modeBarcode: 'Escanear código de barras',
+  modeBarcodeDesc: 'Escanea un código de barras',
+  barcodeScanning: 'Escaneando código de barras...',
+  barcodeNotFound: 'Producto no encontrado. Intenta escanear la etiqueta.',
+  barcodeSuccess: '¡Producto encontrado!',
   modeMenu: 'Escanear menú',
   modeMenuDesc: 'Analizar menú completo',
   menuScanNote: '⚠️ Advertencia: Los resultados de fotos de comida o menú se basan en recetas típicas y pueden no ser exactos. Use la búsqueda de etiquetas para resultados más precisos.',
@@ -990,6 +1010,11 @@ const fr: TranslationKeys = {
   modeFoodDesc: 'Identifier les ingrédients',
   modeLabel: 'Étiquette',
   modeLabelDesc: 'Scanner une étiquette',
+  modeBarcode: 'Scanner le code-barres',
+  modeBarcodeDesc: 'Scannez un code-barres produit',
+  barcodeScanning: 'Scan du code-barres...',
+  barcodeNotFound: "Produit introuvable. Essayez le scan d'étiquette.",
+  barcodeSuccess: 'Produit trouvé !',
   modeMenu: 'Scanner le menu',
   modeMenuDesc: 'Analyser un menu complet',
   menuScanNote: '⚠️ Avertissement: Les résultats des photos de plats ou de menus sont basés sur des recettes typiques et peuvent ne pas être exacts. Utilisez la recherche par étiquette pour de meilleurs résultats.',
@@ -1212,6 +1237,11 @@ const ja: TranslationKeys = {
   modeFoodDesc: '料理の食材を確認',
   modeLabel: 'ラベルスキャン',
   modeLabelDesc: 'パッケージラベルをスキャン',
+  modeBarcode: 'バーコードスキャン',
+  modeBarcodeDesc: '商品のバーコードをスキャン',
+  barcodeScanning: 'バーコードをスキャン中...',
+  barcodeNotFound: '商品が見つかりません。ラベルスキャンをお試しください。',
+  barcodeSuccess: '商品が見つかりました！',
   modeMenu: 'メニュースキャン',
   modeMenuDesc: 'メニュー全体を分析',
   menuScanNote: '⚠️ 注意: 料理やメニュー写真の結果は一般的なレシピに基づいており、正確でない場合があります。最も正確な結果はフードラベル検索をご利用ください。',
