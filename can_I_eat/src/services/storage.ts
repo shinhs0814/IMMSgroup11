@@ -137,3 +137,65 @@ export async function deleteAllUserData(userId: string): Promise<void> {
   const foodsSnap = await getDocs(foodsQuery);
   await Promise.all(foodsSnap.docs.map((d) => deleteDoc(d.ref)));
 }
+
+// ─── Meal History ────────────────────────────────────────────────────────────
+
+export type MealRecord = {
+  id: string;
+  userId: string;
+  foodName: string;
+  date: string;        // YYYY-MM-DD
+  eatenAt: any;        // Firestore Timestamp
+  imageBase64?: string;
+  imageUrl?: string;
+  analysisResult: AnalysisResult;
+};
+
+function todayDateString(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
+export async function logMeal(
+  userId: string,
+  foodName: string,
+  analysisResult: AnalysisResult,
+  imageBase64?: string,
+  imageUrl?: string
+): Promise<string> {
+  const ref = await addDoc(collection(db, 'mealRecords'), {
+    userId,
+    foodName,
+    date: todayDateString(),
+    eatenAt: serverTimestamp(),
+    analysisResult,
+    imageBase64: imageBase64 || null,
+    imageUrl: imageUrl || null,
+  });
+  return ref.id;
+}
+
+export async function getMealsByDate(userId: string, date: string): Promise<MealRecord[]> {
+  const q = query(
+    collection(db, 'mealRecords'),
+    where('userId', '==', userId),
+    where('date', '==', date)
+  );
+  const snap = await getDocs(q);
+  const records = snap.docs.map((d) => ({ id: d.id, ...d.data() } as MealRecord));
+  return records.sort((a, b) => {
+    const aTime = a.eatenAt?.toMillis?.() ?? 0;
+    const bTime = b.eatenAt?.toMillis?.() ?? 0;
+    return aTime - bTime;
+  });
+}
+
+export async function getRecordedDates(userId: string): Promise<string[]> {
+  const q = query(collection(db, 'mealRecords'), where('userId', '==', userId));
+  const snap = await getDocs(q);
+  const dates = new Set(snap.docs.map((d) => (d.data() as MealRecord).date));
+  return Array.from(dates).sort();
+}
+
+export async function deleteMealRecord(recordId: string): Promise<void> {
+  await deleteDoc(doc(db, 'mealRecords', recordId));
+}
