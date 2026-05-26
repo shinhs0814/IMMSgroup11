@@ -22,6 +22,7 @@ import {
 } from '../../services/storage';
 
 type Props = {
+  onBack: () => void;
   onOpenSettings: () => void;
 };
 
@@ -40,7 +41,7 @@ function addDays(dateStr: string, delta: number): string {
   return d.toISOString().slice(0, 10);
 }
 
-export default function MealHistoryScreen({ onOpenSettings }: Props) {
+export default function MealHistoryScreen({ onOpenSettings, onBack }: Props) {
   const { user } = useAuth();
   const { t } = useLanguage();
 
@@ -119,6 +120,9 @@ export default function MealHistoryScreen({ onOpenSettings }: Props) {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
+        <TouchableOpacity onPress={onBack} style={styles.backBtn}>
+          <Text style={styles.backText}>←</Text>
+        </TouchableOpacity>
         <View>
           <AppText weight="800" style={styles.title}>{t.mealHistoryTitle}</AppText>
           <AppText weight="400" style={styles.subtitle}>{t.mealHistorySubtitle}</AppText>
@@ -263,6 +267,8 @@ const styles = StyleSheet.create({
   },
   title: { fontSize: 26, fontWeight: '800', color: Colors.text },
   subtitle: { fontSize: 14, color: Colors.textSecondary, marginTop: 2 },
+  backBtn: { padding: 8, marginRight: 8 },
+  backText: { fontSize: 22, color: Colors.primary, fontWeight: "600" },
   profileBtn: {
     width: 44,
     height: 44,
