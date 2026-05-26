@@ -22,9 +22,10 @@ import { SavedFood } from '../../services/storage';
 type Props = {
   onNavigateToAnalysis: (food?: SavedFood) => void;
   onOpenSettings: () => void;
+  onOpenHistory: () => void;
 };
 
-export default function HomeScreen({ onNavigateToAnalysis, onOpenSettings }: Props) {
+export default function HomeScreen({ onNavigateToAnalysis, onOpenSettings, onOpenHistory }: Props) {
   const { user } = useAuth();
   const { t } = useLanguage();
   const { savedFoods, groups, loadingFoods, fetchAll, addGroup, removeGroup, renameGroup, removeFood, moveFood } =
@@ -130,11 +131,16 @@ export default function HomeScreen({ onNavigateToAnalysis, onOpenSettings }: Pro
           <AppText weight="800" style={styles.greeting}>{t.hello}, {firstName}! 👋</AppText>
           <AppText weight="400" style={styles.subGreeting}>{t.savedFoods}</AppText>
         </View>
-        <TouchableOpacity onPress={onOpenSettings} style={styles.profileBtn}>
-          <Text style={styles.profileInitial}>
-            {user?.displayName?.charAt(0).toUpperCase() || '?'}
-          </Text>
-        </TouchableOpacity>
+        <View style={styles.headerActions}>
+          <TouchableOpacity onPress={onOpenHistory} style={styles.historyBtn}>
+            <Text style={styles.historyIcon}>📅</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={onOpenSettings} style={styles.profileBtn}>
+            <Text style={styles.profileInitial}>
+              {user?.displayName?.charAt(0).toUpperCase() || '?'}
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       <ScrollView
@@ -271,6 +277,18 @@ const styles = StyleSheet.create({
   },
   greeting: { fontSize: 26, fontWeight: '800', color: Colors.text },
   subGreeting: { fontSize: 14, color: Colors.textSecondary, marginTop: 2 },
+  headerActions: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  historyBtn: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: Colors.background,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  historyIcon: { fontSize: 20 },
   profileBtn: {
     width: 44,
     height: 44,

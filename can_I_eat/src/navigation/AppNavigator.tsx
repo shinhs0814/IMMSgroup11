@@ -37,7 +37,7 @@ type Screen =
 
 function AuthenticatedApp() {
   const { t } = useLanguage();
-  const [activeTab, setActiveTab] = useState<'home' | 'camera' | 'search' | 'history'>('home');
+  const [activeTab, setActiveTab] = useState<'home' | 'camera' | 'search'>('home');
   const [screen, setScreen] = useState<Screen>('home');
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
   const [analysisImage, setAnalysisImage] = useState<string | undefined>();
@@ -150,21 +150,22 @@ function AuthenticatedApp() {
     return <QRPassportScreen onBack={goHome} />;
   }
 
+  if (screen === 'history') {
+    return <MealHistoryScreen onOpenSettings={() => setShowSidebar(true)} onBack={goHome} />;
+  }
+
   return (
     <View style={styles.appContainer}>
-      {screen === 'history' ? (
-        <MealHistoryScreen onOpenSettings={() => setShowSidebar(true)} />
-      ) : (
-        <HomeScreen
-          onNavigateToAnalysis={(food) => {
-            if (food) {
-              setViewingFood(food);
-              setScreen('saved_result');
-            }
-          }}
-          onOpenSettings={() => setShowSidebar(true)}
-        />
-      )}
+      <HomeScreen
+        onNavigateToAnalysis={(food) => {
+          if (food) {
+            setViewingFood(food);
+            setScreen('saved_result');
+          }
+        }}
+        onOpenSettings={() => setShowSidebar(true)}
+        onOpenHistory={() => setScreen('history')}
+      />
 
       {/* Fixed bottom tab bar */}
       <View style={styles.tabBar}>
@@ -185,11 +186,6 @@ function AuthenticatedApp() {
         <TouchableOpacity style={styles.tabBtn} onPress={() => { setActiveTab('search'); setScreen('search'); }}>
           <Text style={[styles.tabIcon, activeTab === 'search' && styles.tabIconActive]}>🔍</Text>
           <Text style={[styles.tabLabel, activeTab === 'search' && styles.tabLabelActive]}>{t.search}</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.tabBtn} onPress={() => { setActiveTab('history'); setScreen('history'); }}>
-          <Text style={[styles.tabIcon, activeTab === 'history' && styles.tabIconActive]}>📅</Text>
-          <Text style={[styles.tabLabel, activeTab === 'history' && styles.tabLabelActive]}>{t.mealHistory}</Text>
         </TouchableOpacity>
       </View>
 

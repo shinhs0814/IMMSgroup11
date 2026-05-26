@@ -240,3 +240,32 @@ export function buildProfileDescription(profile: DietaryProfile): string {
 
   return lines.join('\n');
 }
+
+export async function analyzeMenu(
+  base64: string,
+  mimeType: string,
+  profile: DietaryProfile,
+  uiLanguage: string
+): Promise<MenuAnalysisItem[]> {
+  const profileDesc = buildProfileDescription(profile);
+  const prompt = `You are analyzing a restaurant menu image for a user with these dietary needs:\n${profileDesc}\n\nIdentify every dish/item visible on this menu. For each item return a JSON array with this exact structure:\n[\n  {\n    "itemName": "dish name as written on menu",\n    "englishName": "name in English",\n    "overallStatus": "safe" | "caution" | "unsafe",\n    "summary": "one sentence explanation why it is safe/caution/unsafe for this user",\n    "flags": []\n  }\n]\n\nReturn ONLY the JSON array, no other text. Respond in ${uiLanguage}.`;
+
+  const Anthropic = require('@anthropic-ai/sdk');
+  const client = new Anthropic.default({ apiKey: process.env.EXPO_PUBLIC_ANTHROPIC_API_KEY });
+  const response = await client.messages.create({
+    model: 'claude-opus-4-6',
+    max_tokens: 2048,
+    messages: [{
+      role: 'user',
+      content: [{
+        type: 'image',
+        source: { type: 'base64', media_type: mimeType as 'image/jpeg', data: base64 },
+      }, { type: 'text', text: prompt }],
+    }],
+  });
+
+  const text = (response.content[0] as { type: string; text: string }).text.trim();
+  const match = text.match(/\[[\s\S]*\]/);
+  if (!match) return [];
+  return JSON.parse(match[0]) as MenuAnalysisItem[];
+}
