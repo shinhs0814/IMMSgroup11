@@ -29,24 +29,6 @@ export default function QRPassportScreen({ onBack }: Props) {
 
   if (!dietaryProfile) return null;
 
-  // Build QR payload as human-readable text in current UI language
-  const qrLines: string[] = [
-    `${t.authNameLabel} : ${user?.displayName || 'User'}`,
-  ];
-  if (allergyLabels.length > 0) {
-    qrLines.push(`🚨 ${t.allergiesTitle} : ${allergyLabels.map(l => l).join(', ')}`);
-  }
-  if (restrictionLabels.length > 0) {
-    qrLines.push(`⚠️ ${t.restrictionsTitle} : ${restrictionLabels.map(l => l).join(', ')}`);
-  }
-  if (preferenceLabels.length > 0) {
-    qrLines.push(`🌿 ${t.preferencesTitle} : ${preferenceLabels.map(l => l).join(', ')}`);
-  }
-  if (hasNothing) {
-    qrLines.push(`✅ ${t.safeLabel}`);
-  }
-  const qrPayload = qrLines.join('\n');
-
   // Get human-readable labels in current UI language
   const allergyLabels = ALLERGIES
     .filter((a) => dietaryProfile.allergies.includes(a.id))
@@ -61,6 +43,24 @@ export default function QRPassportScreen({ onBack }: Props) {
     .map((p) => `${p.emoji} ${(t as any)[`pref_${p.id}`] || p.label}`);
 
   const hasNothing = allergyLabels.length === 0 && restrictionLabels.length === 0 && preferenceLabels.length === 0;
+
+  // Build QR payload as human-readable text in current UI language
+  const qrLines: string[] = [
+    `${t.authNameLabel} : ${user?.displayName || 'User'}`,
+  ];
+  if (allergyLabels.length > 0) {
+    qrLines.push(`🚨 ${t.allergiesTitle} : ${allergyLabels.join(', ')}`);
+  }
+  if (restrictionLabels.length > 0) {
+    qrLines.push(`⚠️ ${t.restrictionsTitle} : ${restrictionLabels.join(', ')}`);
+  }
+  if (preferenceLabels.length > 0) {
+    qrLines.push(`🌿 ${t.preferencesTitle} : ${preferenceLabels.join(', ')}`);
+  }
+  if (hasNothing) {
+    qrLines.push(`✅ ${t.safeLabel}`);
+  }
+  const qrPayload = qrLines.join('\n');
 
   const handleShare = async () => {
     try {
