@@ -86,8 +86,7 @@ export default function CameraScreen({ onResult, onMenuResult, onCancel }: Props
     const result = await ImagePicker.launchCameraAsync({
       mediaTypes: 'images',
       quality: 0.9,
-      allowsEditing: mode !== 'menu',
-      aspect: mode !== 'menu' ? [4, 3] : undefined,
+      allowsEditing: false,
     });
     if (!result.canceled && result.assets[0]) {
       await processImage(result.assets[0].uri);
@@ -103,8 +102,7 @@ export default function CameraScreen({ onResult, onMenuResult, onCancel }: Props
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: 'images',
       quality: 0.9,
-      allowsEditing: mode !== 'menu',
-      aspect: mode !== 'menu' ? [4, 3] : undefined,
+      allowsEditing: false,
     });
     if (!result.canceled && result.assets[0]) {
       await processImage(result.assets[0].uri);
@@ -153,12 +151,16 @@ export default function CameraScreen({ onResult, onMenuResult, onCancel }: Props
             </TouchableOpacity>
           </View>
 
+          <View style={styles.warningBanner}>
+            <AppText weight="700" style={styles.warningText}>{t.menuScanNote}</AppText>
+          </View>
+
           <View style={styles.tips}>
             <AppText weight="700" style={styles.tipsTitle}>{t.tipsTitle}</AppText>
             <AppText style={styles.tipItem}>• {t.tipLabel}</AppText>
             <AppText style={styles.tipItem}>• {t.tipFood}</AppText>
             <AppText style={styles.tipItem}>• {t.tipBlurry}</AppText>
-            <AppText style={styles.tipItem}>• {t.menuScanNote}</AppText>
+
           </View>
         </ScrollView>
       </View>
@@ -255,6 +257,8 @@ const styles = StyleSheet.create({
   optionEmoji: { fontSize: 40 },
   optionTitle: { fontSize: 16, color: Colors.text },
   optionDesc: { fontSize: 12, color: Colors.textSecondary },
+  warningBanner: { backgroundColor: '#FFF3CD', borderRadius: 14, padding: 14, width: '100%', borderLeftWidth: 4, borderLeftColor: '#D97706', marginBottom: 12 },
+  warningText: { fontSize: 13, color: '#92400E', lineHeight: 20 },
   tips: { backgroundColor: Colors.primaryBg, borderRadius: 16, padding: 16, width: '100%', gap: 4 },
   tipsTitle: { fontSize: 13, color: Colors.primary, marginBottom: 4 },
   tipItem: { fontSize: 13, color: Colors.text, lineHeight: 20 },
