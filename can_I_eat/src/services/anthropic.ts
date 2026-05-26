@@ -34,6 +34,16 @@ export type FoodFlag = {
   severity: 'safe' | 'caution' | 'unsafe';
 };
 
+export type MenuAnalysisItem = {
+  originalName: string;
+  translatedName: string;
+  box: { x: number; y: number; w: number; h: number }; // 0-1 fractions of image dimensions
+  overallStatus: 'safe' | 'caution' | 'unsafe';
+  ingredients: string[];
+  flags: FoodFlag[];
+  summary: string;
+};
+
 export async function analyzeFoodImage(
   base64Image: string,
   mimeType: 'image/jpeg' | 'image/png',
@@ -208,6 +218,87 @@ Safety rules:
       summary: text.slice(0, 300) || 'Could not analyze this food. Please try again.',
       flags: [],
     };
+  }
+}
+
+export async function analyzeMenu(
+  base64Image: string,
+  mimeType: 'image/jpeg' | 'image/png',
+  dietaryProfile: DietaryProfile,
+  uiLanguage: string = 'English'
+): Promise<MenuAnalysisItem[]> {
+  const profileDescription = buildProfileDescription(dietaryProfile);
+
+  const prompt = `You are a multilingual menu analysis assistant. Analyze this menu image and extract every visible menu item.
+
+User's dietary profile:
+${profileDescription}
+
+For each menu item you can see in the image:
+1. Extract the original text as it appears on the menu
+2. Translate it to ${uiLanguage} (if already in ${uiLanguage}, use the same text)
+3. Estimate its bounding box as x, y, w, h fractions (0.0 to 1.0) of the full image
+4. List typical ingredients for this dish
+5. Determine if it is safe for the user based on their dietary profile
+6. Write a 1-sentence summary in ${uiLanguage}
+
+ALL ingredient names, flag reasons, and summaries MUST be in ${uiLanguage}.
+Your entire response must be valid JSON only — no markdown, no code blocks.
+
+Respond with ONLY a JSON array:
+[
+  {
+    "originalName": "exact text from menu in original language/script",
+    "translatedName": "dish name in ${uiLanguage}",
+    "box": { "x": 0.1, "y": 0.05, "w": 0.6, "h": 0.08 },
+    "overallStatus": "safe",
+    "ingredients": ["ingredient1 in ${uiLanguage}", "ingredient2 in ${uiLanguage}"],
+    "flags": [
+      { "ingredient": "name in ${uiLanguage}", "reason": "reason in ${uiLanguage}", "severity": "unsafe" }
+    ],
+    "summary": "1 sentence for this user in ${uiLanguage}"
+  }
+]
+
+Safety rules:
+- "safe" = no issues for this user
+- "caution" = possible concern or unclear ingredient
+- "unsafe" = confirmed allergen or violates dietary restriction
+- Vegan: flag honey, gelatin, carmine, casein, whey, animal fat, meat broths
+- Vegetarian: flag meat, fish, gelatin, rennet, animal fat
+- Lactose intolerant: flag all dairy
+- Always check all allergens in the user's profile
+- If you cannot clearly read a menu item, do your best estimate`;
+
+  const response = await client.messages.create({
+    model: MODEL,
+    max_tokens: 4096,
+    messages: [
+      {
+        role: 'user',
+        content: [
+          {
+            type: 'image',
+            source: { type: 'base64', media_type: mimeType, data: base64Image },
+          },
+          { type: 'text', text: prompt },
+        ],
+      },
+    ],
+  });
+
+  const text = response.content[0].type === 'text' ? response.content[0].text : '';
+
+  try {
+    const cleaned = text.replace(/```json|```/g, '').trim();
+    const arrayMatch = cleaned.match(/\[[\s\S]*\]/);
+    if (arrayMatch) {
+      const parsed = JSON.parse(arrayMatch[0]) as MenuAnalysisItem[];
+      return parsed.map((item) => ({ ...item, flags: item.flags || [] }));
+    }
+    throw new Error('No JSON array found');
+  } catch {
+    return [];
   }
 }
 

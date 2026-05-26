@@ -100,6 +100,18 @@ export type TranslationKeys = {
   scanOptionAlbum: string;
   scanOptionUseCamera: string;
   scanOptionGallery: string;
+  modeFood: string;
+  modeFoodDesc: string;
+  modeLabel: string;
+  modeLabelDesc: string;
+  modeMenu: string;
+  modeMenuDesc: string;
+  menuScanNote: string;
+  menuAnalysisTitle: string;
+  menuItemCount: string;
+  menuNoItems: string;
+  menuTapToExpand: string;
+  menuTranslation: string;
   analyzingCompressing: string;
   analyzingAI: string;
   analyzingProfile: string;
@@ -308,6 +320,18 @@ const en: TranslationKeys = {
   scanOptionAlbum: 'From Album',
   scanOptionUseCamera: 'Use your camera',
   scanOptionGallery: 'Choose from gallery',
+  modeFood: 'Food Photo',
+  modeFoodDesc: 'Identify dish ingredients',
+  modeLabel: 'Food Label',
+  modeLabelDesc: 'Scan a package label',
+  modeMenu: 'Menu Scan',
+  modeMenuDesc: 'Analyze a full menu',
+  menuScanNote: 'Note: Food photo results are based on typical recipes',
+  menuAnalysisTitle: 'Menu Analysis',
+  menuItemCount: 'items found',
+  menuNoItems: 'No menu items detected. Try a clearer photo.',
+  menuTapToExpand: 'Tap to see ingredients',
+  menuTranslation: 'Translation',
   analyzingCompressing: 'Compressing image...',
   analyzingAI: 'Analyzing with AI...',
   analyzingProfile: 'Checking ingredients against your dietary profile...',
@@ -518,6 +542,18 @@ const ko: TranslationKeys = {
   scanOptionAlbum: '앨범에서',
   scanOptionUseCamera: '카메라 사용',
   scanOptionGallery: '갤러리에서 선택',
+  modeFood: '음식 사진',
+  modeFoodDesc: '요리 재료 확인',
+  modeLabel: '포장 라벨',
+  modeLabelDesc: '포장지 라벨 스캔',
+  modeMenu: '메뉴판 스캔',
+  modeMenuDesc: '메뉴 전체 분석',
+  menuScanNote: '주의: 음식 사진은 일반적인 레시피를 기반으로 합니다',
+  menuAnalysisTitle: '메뉴 분석',
+  menuItemCount: '개 항목 발견',
+  menuNoItems: '메뉴 항목을 찾을 수 없습니다. 더 선명한 사진을 찍어주세요.',
+  menuTapToExpand: '재료 보기',
+  menuTranslation: '번역',
   analyzingCompressing: '이미지 압축 중...',
   analyzingAI: 'AI 분석 중...',
   analyzingProfile: '식이 프로필에 따라 성분 확인 중...',
@@ -728,6 +764,18 @@ const es: TranslationKeys = {
   scanOptionAlbum: 'Del Álbum',
   scanOptionUseCamera: 'Usar la cámara',
   scanOptionGallery: 'Elegir de la galería',
+  modeFood: 'Foto de comida',
+  modeFoodDesc: 'Identificar ingredientes',
+  modeLabel: 'Etiqueta',
+  modeLabelDesc: 'Escanear etiqueta del paquete',
+  modeMenu: 'Escanear menú',
+  modeMenuDesc: 'Analizar menú completo',
+  menuScanNote: 'Nota: Los resultados se basan en recetas típicas',
+  menuAnalysisTitle: 'Análisis del menú',
+  menuItemCount: 'elementos encontrados',
+  menuNoItems: 'No se detectaron elementos. Intenta con una foto más clara.',
+  menuTapToExpand: 'Ver ingredientes',
+  menuTranslation: 'Traducción',
   analyzingCompressing: 'Comprimiendo imagen...',
   analyzingAI: 'Analizando con IA...',
   analyzingProfile: 'Verificando ingredientes según tu perfil...',
@@ -938,6 +986,18 @@ const fr: TranslationKeys = {
   scanOptionAlbum: "Depuis l'Album",
   scanOptionUseCamera: 'Utiliser la caméra',
   scanOptionGallery: 'Choisir depuis la galerie',
+  modeFood: 'Photo de plat',
+  modeFoodDesc: 'Identifier les ingrédients',
+  modeLabel: 'Étiquette',
+  modeLabelDesc: 'Scanner une étiquette',
+  modeMenu: 'Scanner le menu',
+  modeMenuDesc: 'Analyser un menu complet',
+  menuScanNote: 'Note: Les résultats sont basés sur des recettes typiques',
+  menuAnalysisTitle: 'Analyse du menu',
+  menuItemCount: 'plats trouvés',
+  menuNoItems: 'Aucun plat détecté. Essayez une photo plus nette.',
+  menuTapToExpand: 'Voir les ingrédients',
+  menuTranslation: 'Traduction',
   analyzingCompressing: "Compression de l'image...",
   analyzingAI: 'Analyse par IA en cours...',
   analyzingProfile: 'Vérification des ingrédients selon votre profil...',
@@ -1148,6 +1208,18 @@ const ja: TranslationKeys = {
   scanOptionAlbum: 'アルバムから',
   scanOptionUseCamera: 'カメラを使用',
   scanOptionGallery: 'ギャラリーから選ぶ',
+  modeFood: '料理写真',
+  modeFoodDesc: '料理の食材を確認',
+  modeLabel: 'ラベルスキャン',
+  modeLabelDesc: 'パッケージラベルをスキャン',
+  modeMenu: 'メニュースキャン',
+  modeMenuDesc: 'メニュー全体を分析',
+  menuScanNote: '注意: 料理写真は一般的なレシピに基づいています',
+  menuAnalysisTitle: 'メニュー分析',
+  menuItemCount: '件のメニューを検出',
+  menuNoItems: 'メニューが検出されませんでした。鮮明な写真をお試しください。',
+  menuTapToExpand: '食材を見る',
+  menuTranslation: '翻訳',
   analyzingCompressing: '画像を圧縮中...',
   analyzingAI: 'AIで分析中...',
   analyzingProfile: '食事プロファイルに基づいて成分を確認中...',

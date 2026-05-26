@@ -14,13 +14,14 @@ import SearchScreen from '../screens/search/SearchScreen';
 import ProfileEditScreen from '../screens/settings/ProfileEditScreen';
 import RestaurantDetailScreen from '../screens/restaurant/RestaurantDetailScreen';
 import QRPassportScreen from '../screens/passport/QRPassportScreen';
+import MenuAnalysisScreen from '../screens/analysis/MenuAnalysisScreen';
 import SettingsSidebar from '../components/SettingsSidebar';
-import { AnalysisResult } from '../services/anthropic';
+import { AnalysisResult, MenuAnalysisItem } from '../services/anthropic';
 import { SavedFood } from '../services/storage';
 import { Restaurant } from '../types/restaurant';
 import { Colors } from '../constants/colors';
 
-type Screen = 'home' | 'camera' | 'result' | 'saved_result' | 'search' | 'search_result' | 'profile_edit' | 'restaurant_detail' | 'qr_passport';
+type Screen = 'home' | 'camera' | 'result' | 'saved_result' | 'search' | 'search_result' | 'profile_edit' | 'restaurant_detail' | 'qr_passport' | 'menu_result';
 
 function AuthenticatedApp() {
   const { t } = useLanguage();
@@ -31,6 +32,8 @@ function AuthenticatedApp() {
   const [analysisImageUrl, setAnalysisImageUrl] = useState<string | undefined>();
   const [viewingFood, setViewingFood] = useState<SavedFood | null>(null);
   const [selectedRestaurant, setSelectedRestaurant] = useState<Restaurant | null>(null);
+  const [menuItems, setMenuItems] = useState<MenuAnalysisItem[]>([]);
+  const [menuImage, setMenuImage] = useState<string>('');
   const [showSidebar, setShowSidebar] = useState(false);
 
   const goHome = () => {
@@ -46,7 +49,22 @@ function AuthenticatedApp() {
           setAnalysisImage(imageBase64);
           setScreen('result');
         }}
+        onMenuResult={(items, imageBase64) => {
+          setMenuItems(items);
+          setMenuImage(imageBase64);
+          setScreen('menu_result');
+        }}
         onCancel={goHome}
+      />
+    );
+  }
+
+  if (screen === 'menu_result') {
+    return (
+      <MenuAnalysisScreen
+        items={menuItems}
+        imageBase64={menuImage}
+        onBack={goHome}
       />
     );
   }
