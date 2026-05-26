@@ -140,6 +140,9 @@ export type TranslationKeys = {
   mealLoggedBtn: string;
   mealLogged: string;
   mealLogFailed: string;
+  logMealChooseDate: string;
+  logMealDateTitle: string;
+  logMealConfirm: string;
 
   // Deactivate / delete account
   deactivateAccount: string;
@@ -379,6 +382,9 @@ const en: TranslationKeys = {
   mealLoggedBtn: 'Logged!',
   mealLogged: 'Meal logged to your history.',
   mealLogFailed: 'Failed to log meal. Please try again.',
+  logMealChooseDate: 'Add to Meal History',
+  logMealDateTitle: 'Which day did you eat this?',
+  logMealConfirm: 'Log Meal',
 
   // Deactivate / delete account
   deactivateAccount: '🗑  Deactivate Account',
@@ -620,6 +626,9 @@ const ko: TranslationKeys = {
   mealLoggedBtn: '기록 완료!',
   mealLogged: '식사가 기록되었습니다.',
   mealLogFailed: '기록에 실패했습니다. 다시 시도해주세요.',
+  logMealChooseDate: '식사 기록에 추가',
+  logMealDateTitle: '언제 드셨나요?',
+  logMealConfirm: '기록하기',
 
   // Deactivate / delete account
   deactivateAccount: '🗑  계정 비활성화',
@@ -861,6 +870,9 @@ const es: TranslationKeys = {
   mealLoggedBtn: '¡Registrado!',
   mealLogged: 'Comida registrada en tu historial.',
   mealLogFailed: 'Error al registrar. Inténtalo de nuevo.',
+  logMealChooseDate: 'Añadir al historial',
+  logMealDateTitle: '¿Cuándo lo comiste?',
+  logMealConfirm: 'Registrar',
 
   // Deactivate / delete account
   deactivateAccount: '🗑  Desactivar Cuenta',
@@ -1102,6 +1114,9 @@ const fr: TranslationKeys = {
   mealLoggedBtn: 'Noté!',
   mealLogged: 'Repas enregistré dans votre historique.',
   mealLogFailed: "Échec de l'enregistrement. Veuillez réessayer.",
+  logMealChooseDate: "Ajouter à l'historique",
+  logMealDateTitle: 'Quand avez-vous mangé ceci ?',
+  logMealConfirm: 'Enregistrer',
 
   // Deactivate / delete account
   deactivateAccount: '🗑  Désactiver le Compte',
@@ -1343,6 +1358,9 @@ const ja: TranslationKeys = {
   mealLoggedBtn: '記録済み！',
   mealLogged: '食事が記録されました。',
   mealLogFailed: '記録に失敗しました。もう一度お試しください。',
+  logMealChooseDate: '食事履歴に追加',
+  logMealDateTitle: 'いつ食べましたか？',
+  logMealConfirm: '記録する',
 
   // Deactivate / delete account
   deactivateAccount: '🗑  アカウントを無効化',
