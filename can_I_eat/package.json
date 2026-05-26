@@ -6,7 +6,11 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "test": "bun test src",
+    "test:watch": "bun test --watch src",
+    "typecheck": "tsc --noEmit",
+    "health": "bun run typecheck && bun run test"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.82.0",
@@ -36,6 +40,7 @@
   },
   "devDependencies": {
     "@expo/ngrok": "^4.1.3",
+    "@types/bun": "^1.1.10",
     "@types/react": "~19.1.0",
     "typescript": "~5.9.2"
   },
