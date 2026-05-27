@@ -14,13 +14,26 @@ import SearchScreen from '../screens/search/SearchScreen';
 import ProfileEditScreen from '../screens/settings/ProfileEditScreen';
 import RestaurantDetailScreen from '../screens/restaurant/RestaurantDetailScreen';
 import QRPassportScreen from '../screens/passport/QRPassportScreen';
+import MenuAnalysisScreen from '../screens/analysis/MenuAnalysisScreen';
+import MealHistoryScreen from '../screens/history/MealHistoryScreen';
 import SettingsSidebar from '../components/SettingsSidebar';
-import { AnalysisResult } from '../services/anthropic';
+import { AnalysisResult, MenuAnalysisItem } from '../services/anthropic';
 import { SavedFood } from '../services/storage';
 import { Restaurant } from '../types/restaurant';
 import { Colors } from '../constants/colors';
 
-type Screen = 'home' | 'camera' | 'result' | 'saved_result' | 'search' | 'search_result' | 'profile_edit' | 'restaurant_detail' | 'qr_passport';
+type Screen =
+  | 'home'
+  | 'camera'
+  | 'result'
+  | 'saved_result'
+  | 'search'
+  | 'search_result'
+  | 'profile_edit'
+  | 'restaurant_detail'
+  | 'qr_passport'
+  | 'menu_result'
+  | 'history';
 
 function AuthenticatedApp() {
   const { t } = useLanguage();
@@ -31,6 +44,8 @@ function AuthenticatedApp() {
   const [analysisImageUrl, setAnalysisImageUrl] = useState<string | undefined>();
   const [viewingFood, setViewingFood] = useState<SavedFood | null>(null);
   const [selectedRestaurant, setSelectedRestaurant] = useState<Restaurant | null>(null);
+  const [menuItems, setMenuItems] = useState<MenuAnalysisItem[]>([]);
+  const [menuImage, setMenuImage] = useState<string>('');
   const [showSidebar, setShowSidebar] = useState(false);
 
   const goHome = () => {
@@ -46,7 +61,22 @@ function AuthenticatedApp() {
           setAnalysisImage(imageBase64);
           setScreen('result');
         }}
+        onMenuResult={(items, imageBase64) => {
+          setMenuItems(items);
+          setMenuImage(imageBase64);
+          setScreen('menu_result');
+        }}
         onCancel={goHome}
+      />
+    );
+  }
+
+  if (screen === 'menu_result') {
+    return (
+      <MenuAnalysisScreen
+        items={menuItems}
+        imageBase64={menuImage}
+        onBack={goHome}
       />
     );
   }
@@ -120,6 +150,10 @@ function AuthenticatedApp() {
     return <QRPassportScreen onBack={goHome} />;
   }
 
+  if (screen === 'history') {
+    return <MealHistoryScreen onOpenSettings={() => setShowSidebar(true)} onBack={goHome} />;
+  }
+
   return (
     <View style={styles.appContainer}>
       <HomeScreen
@@ -130,14 +164,12 @@ function AuthenticatedApp() {
           }
         }}
         onOpenSettings={() => setShowSidebar(true)}
+        onOpenHistory={() => setScreen('history')}
       />
 
       {/* Fixed bottom tab bar */}
       <View style={styles.tabBar}>
-        <TouchableOpacity
-          style={styles.tabBtn}
-          onPress={goHome}
-        >
+        <TouchableOpacity style={styles.tabBtn} onPress={goHome}>
           <Text style={[styles.tabIcon, activeTab === 'home' && styles.tabIconActive]}>🏠</Text>
           <Text style={[styles.tabLabel, activeTab === 'home' && styles.tabLabelActive]}>{t.home}</Text>
         </TouchableOpacity>
@@ -151,10 +183,7 @@ function AuthenticatedApp() {
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.tabBtn}
-          onPress={() => { setActiveTab('search'); setScreen('search'); }}
-        >
+        <TouchableOpacity style={styles.tabBtn} onPress={() => { setActiveTab('search'); setScreen('search'); }}>
           <Text style={[styles.tabIcon, activeTab === 'search' && styles.tabIconActive]}>🔍</Text>
           <Text style={[styles.tabLabel, activeTab === 'search' && styles.tabLabelActive]}>{t.search}</Text>
         </TouchableOpacity>
@@ -209,7 +238,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.tabBar,
     paddingBottom: 28,
     paddingTop: 12,
-    paddingHorizontal: 20,
+    paddingHorizontal: 8,
     borderTopWidth: 1,
     borderTopColor: Colors.border,
     shadowColor: '#000',
@@ -230,7 +259,7 @@ const styles = StyleSheet.create({
   },
   tabIcon: { fontSize: 22, opacity: 0.4 },
   tabIconActive: { opacity: 1 },
-  tabLabel: { fontSize: 11, color: Colors.tabInactive, fontWeight: '500' },
+  tabLabel: { fontSize: 10, color: Colors.tabInactive, fontWeight: '500' },
   tabLabelActive: { color: Colors.tabActive, fontWeight: '700' },
   cameraBtn: {
     width: 56,
