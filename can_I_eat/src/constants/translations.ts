@@ -256,6 +256,26 @@ export type TranslationKeys = {
   permissionRequiredTitle: string;
   cameraPermissionMsg: string;
   photoLibraryPermissionMsg: string;
+
+  // Family profiles
+  familyProfiles: string;
+  familyProfilesTitle: string;
+  familyProfilesSubtitle: string;
+  addFamilyMember: string;
+  editMember: string;
+  deleteMember: string;
+  deleteMemberConfirm: string;
+  memberNameLabel: string;
+  memberNamePlaceholder: string;
+  memberAvatarLabel: string;
+  saveMember: string;
+  memberAdded: string;
+  memberUpdated: string;
+  noFamilyMembers: string;
+  noFamilyMembersSub: string;
+  scanningFor: string;
+  switchProfile: string;
+  meLabel: string;
 };
 
 const en: TranslationKeys = {
@@ -500,6 +520,26 @@ const en: TranslationKeys = {
   permissionRequiredTitle: 'Permission Required',
   cameraPermissionMsg: 'Camera access is needed to take photos.',
   photoLibraryPermissionMsg: 'Photo library access is needed.',
+
+  // Family profiles
+  familyProfiles: 'Family Profiles',
+  familyProfilesTitle: 'Family Profiles',
+  familyProfilesSubtitle: 'Manage dietary profiles for your family',
+  addFamilyMember: 'Add Family Member',
+  editMember: 'Edit Profile',
+  deleteMember: 'Delete Member',
+  deleteMemberConfirm: 'Delete this family member profile?',
+  memberNameLabel: 'Name',
+  memberNamePlaceholder: 'e.g. Mom, Dad, Baby...',
+  memberAvatarLabel: 'Choose an avatar',
+  saveMember: 'Save Member',
+  memberAdded: 'Member added!',
+  memberUpdated: 'Member updated!',
+  noFamilyMembers: 'No family members yet',
+  noFamilyMembersSub: 'Add profiles for your family to scan food for them',
+  scanningFor: 'Scanning for:',
+  switchProfile: 'Switch',
+  meLabel: 'Me',
 };
 
 const ko: TranslationKeys = {
@@ -744,6 +784,26 @@ const ko: TranslationKeys = {
   permissionRequiredTitle: '권한 필요',
   cameraPermissionMsg: '사진 촬영을 위해 카메라 접근 권한이 필요합니다.',
   photoLibraryPermissionMsg: '사진 라이브러리 접근 권한이 필요합니다.',
+
+  // Family profiles
+  familyProfiles: '가족 프로필',
+  familyProfilesTitle: '가족 프로필',
+  familyProfilesSubtitle: '가족 구성원의 식이 프로필을 관리하세요',
+  addFamilyMember: '가족 구성원 추가',
+  editMember: '프로필 수정',
+  deleteMember: '구성원 삭제',
+  deleteMemberConfirm: '이 가족 구성원 프로필을 삭제하시겠습니까?',
+  memberNameLabel: '이름',
+  memberNamePlaceholder: '예: 엄마, 아빠, 아이...',
+  memberAvatarLabel: '아바타 선택',
+  saveMember: '구성원 저장',
+  memberAdded: '구성원이 추가되었습니다!',
+  memberUpdated: '구성원이 업데이트되었습니다!',
+  noFamilyMembers: '가족 구성원이 없습니다',
+  noFamilyMembersSub: '가족을 위한 프로필을 추가하면 음식을 대신 스캔할 수 있습니다',
+  scanningFor: '스캔 대상:',
+  switchProfile: '변경',
+  meLabel: '나',
 };
 
 const es: TranslationKeys = {
@@ -988,6 +1048,26 @@ const es: TranslationKeys = {
   permissionRequiredTitle: 'Permiso Requerido',
   cameraPermissionMsg: 'Se necesita acceso a la cámara para tomar fotos.',
   photoLibraryPermissionMsg: 'Se necesita acceso a la galería de fotos.',
+
+  // Family profiles
+  familyProfiles: 'Perfiles Familiares',
+  familyProfilesTitle: 'Perfiles Familiares',
+  familyProfilesSubtitle: 'Gestiona los perfiles dietéticos de tu familia',
+  addFamilyMember: 'Agregar Familiar',
+  editMember: 'Editar Perfil',
+  deleteMember: 'Eliminar Miembro',
+  deleteMemberConfirm: '¿Eliminar este perfil familiar?',
+  memberNameLabel: 'Nombre',
+  memberNamePlaceholder: 'ej. Mamá, Papá, Bebé...',
+  memberAvatarLabel: 'Elige un avatar',
+  saveMember: 'Guardar Miembro',
+  memberAdded: '¡Miembro agregado!',
+  memberUpdated: '¡Miembro actualizado!',
+  noFamilyMembers: 'Sin miembros familiares aún',
+  noFamilyMembersSub: 'Agrega perfiles para escanear alimentos para tu familia',
+  scanningFor: 'Escaneando para:',
+  switchProfile: 'Cambiar',
+  meLabel: 'Yo',
 };
 
 const fr: TranslationKeys = {
@@ -1232,6 +1312,26 @@ const fr: TranslationKeys = {
   permissionRequiredTitle: 'Autorisation Requise',
   cameraPermissionMsg: "L'accès à la caméra est nécessaire pour prendre des photos.",
   photoLibraryPermissionMsg: "L'accès à la galerie de photos est nécessaire.",
+
+  // Family profiles
+  familyProfiles: 'Profils Familiaux',
+  familyProfilesTitle: 'Profils Familiaux',
+  familyProfilesSubtitle: 'Gérez les profils alimentaires de votre famille',
+  addFamilyMember: 'Ajouter un Membre',
+  editMember: 'Modifier le Profil',
+  deleteMember: 'Supprimer le Membre',
+  deleteMemberConfirm: 'Supprimer ce profil familial?',
+  memberNameLabel: 'Nom',
+  memberNamePlaceholder: 'ex. Maman, Papa, Bébé...',
+  memberAvatarLabel: 'Choisir un avatar',
+  saveMember: 'Enregistrer le Membre',
+  memberAdded: 'Membre ajouté!',
+  memberUpdated: 'Membre mis à jour!',
+  noFamilyMembers: 'Aucun membre familial',
+  noFamilyMembersSub: 'Ajoutez des profils pour scanner des aliments pour votre famille',
+  scanningFor: 'Scan pour:',
+  switchProfile: 'Changer',
+  meLabel: 'Moi',
 };
 
 const ja: TranslationKeys = {
@@ -1476,6 +1576,26 @@ const ja: TranslationKeys = {
   permissionRequiredTitle: '権限が必要です',
   cameraPermissionMsg: '写真を撮影するためにカメラへのアクセスが必要です。',
   photoLibraryPermissionMsg: '写真ライブラリへのアクセスが必要です。',
+
+  // Family profiles
+  familyProfiles: '家族プロフィール',
+  familyProfilesTitle: '家族プロフィール',
+  familyProfilesSubtitle: '家族の食事プロフィールを管理',
+  addFamilyMember: '家族を追加',
+  editMember: 'プロフィール編集',
+  deleteMember: 'メンバーを削除',
+  deleteMemberConfirm: 'この家族プロフィールを削除しますか？',
+  memberNameLabel: '名前',
+  memberNamePlaceholder: '例: お母さん、お父さん、子供...',
+  memberAvatarLabel: 'アバターを選択',
+  saveMember: 'メンバーを保存',
+  memberAdded: 'メンバーが追加されました！',
+  memberUpdated: 'メンバーが更新されました！',
+  noFamilyMembers: '家族メンバーがいません',
+  noFamilyMembersSub: '家族のプロフィールを追加して、食品をスキャンしましょう',
+  scanningFor: 'スキャン対象:',
+  switchProfile: '切替',
+  meLabel: '自分',
 };
 
 export const TRANSLATIONS: Record<AppLanguage, TranslationKeys> = { en, ko, es, fr, ja };

@@ -16,6 +16,7 @@ import RestaurantDetailScreen from '../screens/restaurant/RestaurantDetailScreen
 import QRPassportScreen from '../screens/passport/QRPassportScreen';
 import MenuAnalysisScreen from '../screens/analysis/MenuAnalysisScreen';
 import MealHistoryScreen from '../screens/history/MealHistoryScreen';
+import FamilyProfilesScreen from '../screens/family/FamilyProfilesScreen';
 import SettingsSidebar from '../components/SettingsSidebar';
 import { AnalysisResult, MenuAnalysisItem } from '../services/anthropic';
 import { SavedFood } from '../services/storage';
@@ -33,7 +34,8 @@ type Screen =
   | 'restaurant_detail'
   | 'qr_passport'
   | 'menu_result'
-  | 'history';
+  | 'history'
+  | 'family_profiles';
 
 function AuthenticatedApp() {
   const { t } = useLanguage();
@@ -154,6 +156,10 @@ function AuthenticatedApp() {
     return <MealHistoryScreen onOpenSettings={() => setShowSidebar(true)} onBack={goHome} />;
   }
 
+  if (screen === 'family_profiles') {
+    return <FamilyProfilesScreen onBack={goHome} />;
+  }
+
   return (
     <View style={styles.appContainer}>
       <HomeScreen
@@ -195,6 +201,7 @@ function AuthenticatedApp() {
         onClose={() => setShowSidebar(false)}
         onMyProfile={() => setScreen('profile_edit')}
         onQRPassport={() => { setShowSidebar(false); setScreen('qr_passport'); }}
+        onFamilyProfiles={() => setScreen('family_profiles')}
       />
     </View>
   );
