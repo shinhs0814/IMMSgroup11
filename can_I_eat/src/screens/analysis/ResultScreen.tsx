@@ -9,6 +9,7 @@ import {
   Modal,
   FlatList,
   Alert,
+  Share,
 } from 'react-native';
 import { Colors } from '../../constants/colors';
 import { AnalysisResult } from '../../services/anthropic';
@@ -60,6 +61,33 @@ export default function ResultScreen({ result, imageBase64, imageUrl, savedFood,
     caution: { color: Colors.caution, bg: '#FFF8EC', emoji: '⚠️', label: t.cautionLabel },
     unsafe: { color: Colors.unsafe, bg: '#FEECEC', emoji: '🚫', label: t.unsafeLabel },
   }[result.overallStatus];
+
+  const handleShare = async () => {
+    try {
+      const verdictLine = `${statusConfig.emoji} ${statusConfig.label}`;
+      const lines: string[] = [
+        `🍱 Can I Eat? — ${result.foodName}`,
+        result.originalName ? `(${result.originalName})` : '',
+        '',
+        verdictLine,
+        '',
+        result.summary,
+      ].filter((l) => l !== undefined) as string[];
+
+      const topFlags = (result.flags ?? []).filter((f) => f.severity === 'unsafe').slice(0, 3);
+      if (topFlags.length > 0) {
+        lines.push('');
+        topFlags.forEach((f) => lines.push(`🚫 ${f.ingredient}: ${f.reason}`));
+      }
+
+      lines.push('');
+      lines.push('Checked with Can I Eat? 🍱');
+
+      await Share.share({ message: lines.join('\n') });
+    } catch {
+      Alert.alert('Error', 'Could not share result.');
+    }
+  };
 
   const handleSave = (groupId: string | null) => {
     setShowGroupPicker(false);
@@ -211,6 +239,7 @@ export default function ResultScreen({ result, imageBase64, imageUrl, savedFood,
         </View>
       </ScrollView>
 
+      {/* Footer: Save + Share */}
       {/* Action buttons (bottom) */}
       <View style={styles.footer}>
         {!savedFood && (
@@ -220,9 +249,15 @@ export default function ResultScreen({ result, imageBase64, imageUrl, savedFood,
             disabled={saved}
           >
             <Text style={styles.saveBtnIcon}>{saved ? '❤️' : '🤍'}</Text>
-            <Text style={[styles.saveBtnText, saved && styles.saveBtnTextSaved]}>{saved ? t.savedToLibrary : t.saveToMyFoods}</Text>
+            <Text style={[styles.saveBtnText, saved && styles.saveBtnTextSaved]}>
+              {saved ? t.savedToLibrary : t.saveToMyFoods}
+            </Text>
           </TouchableOpacity>
         )}
+        <TouchableOpacity style={styles.shareBtn} onPress={handleShare}>
+          <Text style={styles.shareBtnText}>📤  Share Result</Text>
+        </TouchableOpacity>
+      </View>
         <TouchableOpacity
           style={[styles.logBtn, logged && styles.logBtnDone, savedFood ? styles.logBtnFull : null]}
           onPress={() => !logged && setShowDatePicker(true)}
@@ -386,7 +421,7 @@ const styles = StyleSheet.create({
   ingredientsList: { fontSize: 13, color: Colors.textSecondary, lineHeight: 20 },
   caloriesText: { fontSize: 18, fontWeight: '700', color: Colors.primary },
   nutritionItem: { fontSize: 13, color: Colors.textSecondary, lineHeight: 22 },
-  footer: { padding: 20, paddingBottom: 36, backgroundColor: Colors.card, borderTopWidth: 1, borderTopColor: Colors.border },
+  footer: { padding: 20, paddingBottom: 36, backgroundColor: Colors.card, borderTopWidth: 1, borderTopColor: Colors.border, gap: 10 },
   saveBtn: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -422,6 +457,16 @@ const styles = StyleSheet.create({
   groupItemText: { fontSize: 15, color: Colors.text },
   modalCancel: { marginTop: 10, padding: 14, borderRadius: 12, borderWidth: 1, borderColor: Colors.border, alignItems: 'center' },
   modalCancelText: { fontWeight: '600', color: Colors.textSecondary },
+  shareBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 14,
+    paddingVertical: 14,
+    borderWidth: 1.5,
+    borderColor: Colors.primary,
+  },
+  shareBtnText: { fontSize: 15, fontWeight: '700', color: Colors.primary },
   logBtnFull: { marginTop: 0 },
   dateItem: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 13, borderBottomWidth: 1, borderBottomColor: Colors.border, paddingHorizontal: 4 },
   dateItemSelected: { backgroundColor: '#FEF0E7', borderRadius: 8, paddingHorizontal: 8, marginHorizontal: -4 },
