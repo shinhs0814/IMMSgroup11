@@ -17,6 +17,7 @@ import { useFoods } from '../../context/FoodContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { SavedFood, logMeal } from '../../services/storage';
 import { useAuth } from '../../context/AuthContext';
+import { analyzeFamilyCompatibility, FamilyCompatibilityResult } from '../../services/anthropic';
 
 type Props = {
   result: AnalysisResult;
@@ -30,12 +31,14 @@ type Props = {
 export default function ResultScreen({ result, imageBase64, imageUrl, savedFood, onBack, onSaved }: Props) {
   const { groups, addFood } = useFoods();
   const { t } = useLanguage();
-  const { user } = useAuth();
+  const { user, familyMembers, dietaryProfile } = useAuth();
   const [saved, setSaved] = useState(!!savedFood);
   const [showGroupPicker, setShowGroupPicker] = useState(false);
   const [logged, setLogged] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedLogDate, setSelectedLogDate] = useState(new Date().toISOString().slice(0, 10));
+  const [familyCheck, setFamilyCheck] = useState<FamilyCompatibilityResult[] | null>(null);
+  const [familyCheckLoading, setFamilyCheckLoading] = useState(false);
 
   // Build a list of the last 30 days for the date picker
   const recentDates = Array.from({ length: 30 }, (_, i) => {
@@ -43,6 +46,28 @@ export default function ResultScreen({ result, imageBase64, imageUrl, savedFood,
     d.setDate(d.getDate() - i);
     return d.toISOString().slice(0, 10);
   });
+
+  // Load family compatibility check when family members exist
+  React.useEffect(() => {
+    if (!familyMembers.length) return;
+    setFamilyCheckLoading(true);
+    const profiles = familyMembers.map((m) => ({
+      name: `${m.emoji} ${m.name}`,
+      allergies: m.allergies,
+      restrictions: m.restrictions,
+      preferences: m.preferences,
+    }));
+    analyzeFamilyCompatibility(
+      result.foodName,
+      result.ingredients ?? [],
+      result.flags ?? [],
+      profiles,
+      'English'
+    )
+      .then(setFamilyCheck)
+      .catch(() => setFamilyCheck(null))
+      .finally(() => setFamilyCheckLoading(false));
+  }, [result.foodName]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleLogMeal = async () => {
     if (!user) return;
@@ -56,11 +81,12 @@ export default function ResultScreen({ result, imageBase64, imageUrl, savedFood,
     }
   };
 
-  const statusConfig = {
+  const statusConfig = ({
     safe: { color: Colors.safe, bg: '#EFF8F0', emoji: '✅', label: t.safeLabel },
     caution: { color: Colors.caution, bg: '#FFF8EC', emoji: '⚠️', label: t.cautionLabel },
     unsafe: { color: Colors.unsafe, bg: '#FEECEC', emoji: '🚫', label: t.unsafeLabel },
-  }[result.overallStatus];
+  } as Record<string, { color: string; bg: string; emoji: string; label: string }>)[result.overallStatus]
+    ?? { color: Colors.caution, bg: '#FFF8EC', emoji: '⚠️', label: t.cautionLabel };
 
   const handleShare = async () => {
     try {
@@ -163,6 +189,31 @@ export default function ResultScreen({ result, imageBase64, imageUrl, savedFood,
 
           <Text style={styles.summary}>{result.summary}</Text>
 
+          {/* Family compatibility check */}
+          {(familyCheckLoading || (familyCheck && familyCheck.length > 0)) && (
+            <View style={styles.familySection}>
+              <Text style={styles.familySectionTitle}>👨‍👩‍👧 Family Check</Text>
+              {familyCheckLoading ? (
+                <Text style={styles.familyLoading}>Checking for family members...</Text>
+              ) : (
+                familyCheck!.map((item, i) => {
+                  const color = item.status === 'safe' ? Colors.safe : item.status === 'caution' ? Colors.caution : Colors.unsafe;
+                  const bg = item.status === 'safe' ? '#EFF8F0' : item.status === 'caution' ? '#FFF8EC' : '#FEECEC';
+                  const emoji = item.status === 'safe' ? '✅' : item.status === 'caution' ? '⚠️' : '🚫';
+                  return (
+                    <View key={i} style={[styles.familyRow, { backgroundColor: bg }]}>
+                      <Text style={styles.familyEmoji}>{emoji}</Text>
+                      <View style={styles.familyRowText}>
+                        <Text style={[styles.familyName, { color }]}>{item.name}</Text>
+                        <Text style={styles.familyReason}>{item.reason}</Text>
+                      </View>
+                    </View>
+                  );
+                })
+              )}
+            </View>
+          )}
+
           {/* Korean vegan classifier warning banner */}
           {result.veganWarning && (
             <View style={styles.veganWarningBanner}>
@@ -239,7 +290,6 @@ export default function ResultScreen({ result, imageBase64, imageUrl, savedFood,
         </View>
       </ScrollView>
 
-      {/* Footer: Save + Share */}
       {/* Action buttons (bottom) */}
       <View style={styles.footer}>
         {!savedFood && (
@@ -257,7 +307,6 @@ export default function ResultScreen({ result, imageBase64, imageUrl, savedFood,
         <TouchableOpacity style={styles.shareBtn} onPress={handleShare}>
           <Text style={styles.shareBtnText}>📤  Share Result</Text>
         </TouchableOpacity>
-      </View>
         <TouchableOpacity
           style={[styles.logBtn, logged && styles.logBtnDone, savedFood ? styles.logBtnFull : null]}
           onPress={() => !logged && setShowDatePicker(true)}
@@ -435,28 +484,6 @@ const styles = StyleSheet.create({
   saveBtnTextSaved: { color: Colors.primary },
   saveBtnIcon: { fontSize: 20 },
   saveBtnText: { fontSize: 16, fontWeight: '700', color: '#fff' },
-  logBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 10,
-    backgroundColor: Colors.background,
-    borderRadius: 14,
-    paddingVertical: 14,
-    borderWidth: 1.5,
-    borderColor: Colors.primary,
-    marginTop: 10,
-  },
-  logBtnDone: { borderColor: Colors.safe, backgroundColor: '#EFF8F0' },
-  logBtnIcon: { fontSize: 18 },
-  logBtnText: { fontSize: 15, fontWeight: '700', color: Colors.primary },
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' },
-  modalCard: { backgroundColor: Colors.card, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, paddingBottom: 40, maxHeight: '60%' },
-  modalTitle: { fontSize: 20, fontWeight: '700', color: Colors.text, marginBottom: 16 },
-  groupItem: { paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: Colors.border },
-  groupItemText: { fontSize: 15, color: Colors.text },
-  modalCancel: { marginTop: 10, padding: 14, borderRadius: 12, borderWidth: 1, borderColor: Colors.border, alignItems: 'center' },
-  modalCancelText: { fontWeight: '600', color: Colors.textSecondary },
   shareBtn: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -467,7 +494,28 @@ const styles = StyleSheet.create({
     borderColor: Colors.primary,
   },
   shareBtnText: { fontSize: 15, fontWeight: '700', color: Colors.primary },
-  logBtnFull: { marginTop: 0 },
+  logBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+    backgroundColor: Colors.background,
+    borderRadius: 14,
+    paddingVertical: 14,
+    borderWidth: 1.5,
+    borderColor: Colors.primary,
+  },
+  logBtnDone: { borderColor: Colors.safe, backgroundColor: '#EFF8F0' },
+  logBtnIcon: { fontSize: 18 },
+  logBtnText: { fontSize: 15, fontWeight: '700', color: Colors.primary },
+  logBtnFull: {},
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' },
+  modalCard: { backgroundColor: Colors.card, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, paddingBottom: 40, maxHeight: '60%' },
+  modalTitle: { fontSize: 20, fontWeight: '700', color: Colors.text, marginBottom: 16 },
+  groupItem: { paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: Colors.border },
+  groupItemText: { fontSize: 15, color: Colors.text },
+  modalCancel: { marginTop: 10, padding: 14, borderRadius: 12, borderWidth: 1, borderColor: Colors.border, alignItems: 'center' },
+  modalCancelText: { fontWeight: '600', color: Colors.textSecondary },
   dateItem: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 13, borderBottomWidth: 1, borderBottomColor: Colors.border, paddingHorizontal: 4 },
   dateItemSelected: { backgroundColor: '#FEF0E7', borderRadius: 8, paddingHorizontal: 8, marginHorizontal: -4 },
   dateItemText: { fontSize: 15, color: Colors.text },
@@ -475,4 +523,12 @@ const styles = StyleSheet.create({
   dateItemCheck: { fontSize: 16, color: Colors.primary },
   logConfirmBtn: { marginTop: 16, backgroundColor: Colors.primary, borderRadius: 14, paddingVertical: 14, alignItems: 'center' },
   logConfirmText: { color: '#fff', fontSize: 15, fontWeight: '700' },
+  familySection: { marginBottom: 20, borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: Colors.border },
+  familySectionTitle: { fontSize: 14, fontWeight: '700', color: Colors.text, padding: 12, paddingBottom: 8, backgroundColor: Colors.background },
+  familyLoading: { fontSize: 13, color: Colors.textSecondary, padding: 12, fontStyle: 'italic' },
+  familyRow: { flexDirection: 'row', alignItems: 'flex-start', padding: 10, gap: 10, borderTopWidth: 1, borderTopColor: Colors.border },
+  familyEmoji: { fontSize: 16, marginTop: 1 },
+  familyRowText: { flex: 1 },
+  familyName: { fontSize: 13, fontWeight: '700', marginBottom: 2 },
+  familyReason: { fontSize: 12, color: Colors.textSecondary, lineHeight: 16 },
 });

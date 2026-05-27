@@ -269,3 +269,60 @@ export async function analyzeMenu(
   if (!match) return [];
   return JSON.parse(match[0]) as MenuAnalysisItem[];
 }
+
+// ─── Family Compatibility ────────────────────────────────────────────────────
+
+export type FamilyCompatibilityResult = {
+  name: string;
+  status: 'safe' | 'caution' | 'unsafe';
+  reason: string;
+};
+
+export async function analyzeFamilyCompatibility(
+  foodName: string,
+  ingredients: string[],
+  flags: Array<{ ingredient: string; severity: string; reason: string }>,
+  familyProfiles: Array<{ name: string; allergies: string[]; restrictions: string[]; preferences: string[] }>,
+  uiLanguage: string
+): Promise<FamilyCompatibilityResult[]> {
+  const Anthropic = require('@anthropic-ai/sdk');
+  const client = new Anthropic.default({ apiKey: process.env.EXPO_PUBLIC_ANTHROPIC_API_KEY });
+
+  const profileLines = familyProfiles.map((p) => {
+    const parts: string[] = [];
+    if (p.allergies.length) parts.push(`allergies: ${p.allergies.join(', ')}`);
+    if (p.restrictions.length) parts.push(`restrictions: ${p.restrictions.join(', ')}`);
+    if (p.preferences.length) parts.push(`preferences: ${p.preferences.join(', ')}`);
+    return `- ${p.name}: ${parts.length ? parts.join('; ') : 'no restrictions'}`;
+  }).join('\n');
+
+  const flagSummary = flags.length
+    ? flags.map((f) => `${f.ingredient} (${f.severity}): ${f.reason}`).join('\n')
+    : 'No specific flags.';
+
+  const prompt = `You are evaluating food safety for multiple people.
+
+Food: ${foodName}
+Ingredients: ${ingredients.length ? ingredients.join(', ') : 'unknown'}
+Known flags from analysis:
+${flagSummary}
+
+Family members to evaluate:
+${profileLines}
+
+For each person, respond ONLY with a JSON array (no markdown, no extra text):
+[{"name":"...", "status":"safe"|"caution"|"unsafe", "reason":"one short sentence why"}]
+
+Respond in this language: ${uiLanguage}`;
+
+  const response = await client.messages.create({
+    model: 'claude-opus-4-6',
+    max_tokens: 1024,
+    messages: [{ role: 'user', content: prompt }],
+  });
+
+  const text = (response.content[0] as { type: string; text: string }).text.trim();
+  const match = text.match(/\[[\s\S]*\]/);
+  if (!match) return [];
+  return JSON.parse(match[0]) as FamilyCompatibilityResult[];
+}
