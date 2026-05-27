@@ -6,6 +6,8 @@ import {
   Alert,
   ActivityIndicator,
   ScrollView,
+  Modal,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
@@ -14,6 +16,7 @@ import AppText from '../../components/AppText';
 import { Colors } from '../../constants/colors';
 import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
+import { FamilyMember } from '../../services/storage';
 import { analyzeFoodImage, analyzeMenu, AnalysisResult, MenuAnalysisItem } from '../../services/anthropic';
 import { LANGUAGE_NAMES } from '../../constants/translations';
 import { classifyKoreanVegan, disagreesWithLLM } from '../../utils/koreanVeganClassifier';
@@ -42,13 +45,14 @@ async function fetchProductByBarcode(barcode: string): Promise<{ name: string; i
 }
 
 export default function CameraScreen({ onResult, onMenuResult, onCancel }: Props) {
-  const { dietaryProfile } = useAuth();
+  const { activeProfile, activeName, familyMembers, activeMemberId, setActiveMember, user } = useAuth();
   const { t, language } = useLanguage();
   const [mode, setMode] = useState<ScanMode | null>(null);
   const [analyzing, setAnalyzing] = useState(false);
   const [statusText, setStatusText] = useState('');
   const [barcodeScanned, setBarcodeScanned] = useState(false);
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
+  const [showProfilePicker, setShowProfilePicker] = useState(false);
 
   const processImage = async (uri: string) => {
     setAnalyzing(true);
@@ -62,7 +66,7 @@ export default function CameraScreen({ onResult, onMenuResult, onCancel }: Props
       const base64 = compressed.base64!;
       setStatusText(t.analyzingAI);
 
-      const profile = dietaryProfile || { name: '', allergies: [], restrictions: [], preferences: [] };
+      const profile = activeProfile || { name: '', allergies: [], restrictions: [], preferences: [] };
       const uiLanguage = LANGUAGE_NAMES[language];
 
       if (mode === 'menu') {
@@ -110,7 +114,7 @@ export default function CameraScreen({ onResult, onMenuResult, onCancel }: Props
         return;
       }
       setStatusText(t.analyzingAI);
-      const profile = dietaryProfile || { name: '', allergies: [], restrictions: [], preferences: [] };
+      const profile = activeProfile || { name: '', allergies: [], restrictions: [], preferences: [] };
       const uiLanguage = LANGUAGE_NAMES[language];
       const prompt = `Product: ${product.name}\nIngredients: ${product.ingredients}`;
       const result = await analyzeFoodImage(null, null, profile, uiLanguage, prompt);
@@ -210,6 +214,58 @@ export default function CameraScreen({ onResult, onMenuResult, onCancel }: Props
           <AppText style={styles.emoji}>📷</AppText>
           <AppText weight="800" style={styles.title}>{t.scanYourFood}</AppText>
           <AppText style={styles.subtitle}>{t.scanSubtitle}</AppText>
+
+          {/* Profile switcher banner */}
+          <TouchableOpacity
+            style={styles.profileBanner}
+            onPress={() => setShowProfilePicker(true)}
+          >
+            <AppText style={styles.profileBannerLabel}>{t.scanningFor}</AppText>
+            <AppText weight="700" style={styles.profileBannerName} numberOfLines={1}>
+              {activeMemberId === null
+                ? `👤 ${user?.displayName || t.meLabel}`
+                : activeName}
+            </AppText>
+            <AppText style={styles.profileBannerSwitch}>{t.switchProfile} ▾</AppText>
+          </TouchableOpacity>
+
+          {/* Profile picker modal */}
+          <Modal visible={showProfilePicker} transparent animationType="fade">
+            <TouchableWithoutFeedback onPress={() => setShowProfilePicker(false)}>
+              <View style={styles.pickerOverlay}>
+                <TouchableWithoutFeedback>
+                  <View style={styles.pickerSheet}>
+                    <AppText weight="700" style={styles.pickerTitle}>{t.switchProfile}</AppText>
+                    {/* Me */}
+                    <TouchableOpacity
+                      style={[styles.pickerItem, activeMemberId === null && styles.pickerItemActive]}
+                      onPress={() => { setActiveMember(null); setShowProfilePicker(false); }}
+                    >
+                      <AppText style={styles.pickerItemEmoji}>👤</AppText>
+                      <AppText weight="600" style={[styles.pickerItemName, activeMemberId === null && styles.pickerItemNameActive]}>
+                        {user?.displayName || t.meLabel}
+                      </AppText>
+                      {activeMemberId === null && <AppText style={styles.pickerCheck}>✓</AppText>}
+                    </TouchableOpacity>
+                    {/* Family members */}
+                    {familyMembers.map((member: FamilyMember) => (
+                      <TouchableOpacity
+                        key={member.id}
+                        style={[styles.pickerItem, activeMemberId === member.id && styles.pickerItemActive]}
+                        onPress={() => { setActiveMember(member.id); setShowProfilePicker(false); }}
+                      >
+                        <AppText style={styles.pickerItemEmoji}>{member.emoji}</AppText>
+                        <AppText weight="600" style={[styles.pickerItemName, activeMemberId === member.id && styles.pickerItemNameActive]}>
+                          {member.name}
+                        </AppText>
+                        {activeMemberId === member.id && <AppText style={styles.pickerCheck}>✓</AppText>}
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </TouchableWithoutFeedback>
+              </View>
+            </TouchableWithoutFeedback>
+          </Modal>
 
           <View style={styles.modeGrid}>
             <TouchableOpacity style={styles.modeCard} onPress={() => setMode('food')}>
@@ -379,4 +435,51 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 20,
   },
+
+  // Profile switcher
+  profileBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.primaryBg,
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderWidth: 1.5,
+    borderColor: Colors.primary,
+    width: '100%',
+    gap: 6,
+    marginBottom: 24,
+  },
+  profileBannerLabel: { fontSize: 12, color: Colors.primary },
+  profileBannerName: { flex: 1, fontSize: 14, color: Colors.primary },
+  profileBannerSwitch: { fontSize: 12, color: Colors.primary },
+
+  pickerOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.45)',
+    justifyContent: 'flex-end',
+  },
+  pickerSheet: {
+    backgroundColor: Colors.card,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 40,
+  },
+  pickerTitle: { fontSize: 16, color: Colors.text, marginBottom: 16 },
+  pickerItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 14,
+    paddingHorizontal: 12,
+    borderRadius: 12,
+    gap: 12,
+    marginBottom: 4,
+  },
+  pickerItemActive: { backgroundColor: Colors.primaryBg },
+  pickerItemEmoji: { fontSize: 26 },
+  pickerItemName: { flex: 1, fontSize: 15, color: Colors.text },
+  pickerItemNameActive: { color: Colors.primary },
+  pickerCheck: { fontSize: 16, color: Colors.primary },
 });

@@ -201,3 +201,58 @@ export async function getRecordedDates(userId: string): Promise<string[]> {
 export async function deleteMealRecord(recordId: string): Promise<void> {
   await deleteDoc(doc(db, 'mealRecords', recordId));
 }
+
+// ─── Family Members ───────────────────────────────────────────────────────────
+
+export type FamilyMember = {
+  id: string;
+  userId: string;
+  name: string;
+  emoji: string;
+  allergies: string[];
+  restrictions: string[];
+  preferences: string[];
+  createdAt: any;
+};
+
+export async function getFamilyMembers(userId: string): Promise<FamilyMember[]> {
+  const q = query(collection(db, 'familyMembers'), where('userId', '==', userId));
+  const snap = await getDocs(q);
+  const members = snap.docs.map((d) => ({ id: d.id, ...d.data() } as FamilyMember));
+  return members.sort((a, b) => {
+    const aTime = a.createdAt?.toMillis?.() ?? 0;
+    const bTime = b.createdAt?.toMillis?.() ?? 0;
+    return aTime - bTime;
+  });
+}
+
+export async function addFamilyMember(
+  userId: string,
+  name: string,
+  emoji: string,
+  allergies: string[],
+  restrictions: string[],
+  preferences: string[]
+): Promise<string> {
+  const ref = await addDoc(collection(db, 'familyMembers'), {
+    userId,
+    name,
+    emoji,
+    allergies,
+    restrictions,
+    preferences,
+    createdAt: serverTimestamp(),
+  });
+  return ref.id;
+}
+
+export async function updateFamilyMember(
+  memberId: string,
+  data: Partial<{ name: string; emoji: string; allergies: string[]; restrictions: string[]; preferences: string[] }>
+): Promise<void> {
+  await updateDoc(doc(db, 'familyMembers', memberId), data);
+}
+
+export async function deleteFamilyMember(memberId: string): Promise<void> {
+  await deleteDoc(doc(db, 'familyMembers', memberId));
+}

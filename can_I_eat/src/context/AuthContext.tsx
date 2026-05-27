@@ -9,7 +9,16 @@ import {
   User,
 } from 'firebase/auth';
 import { auth } from '../services/firebase';
-import { getUserProfile, saveUserProfile, deleteAllUserData } from '../services/storage';
+import {
+  getUserProfile,
+  saveUserProfile,
+  deleteAllUserData,
+  getFamilyMembers,
+  addFamilyMember as addFamilyMemberToDb,
+  updateFamilyMember as updateFamilyMemberInDb,
+  deleteFamilyMember as deleteFamilyMemberFromDb,
+  FamilyMember,
+} from '../services/storage';
 import { DietaryProfile } from '../constants/dietary';
 
 type AuthContextType = {
@@ -22,6 +31,16 @@ type AuthContextType = {
   deleteAccount: () => Promise<void>;
   updateDietaryProfile: (profile: DietaryProfile) => Promise<void>;
   hasSurveyCompleted: boolean;
+
+  // Family profiles
+  familyMembers: FamilyMember[];
+  activeMemberId: string | null;  // null = signed-in user themselves
+  activeProfile: DietaryProfile | null;  // computed: own profile or selected member
+  activeName: string;             // display name of the active profile
+  setActiveMember: (id: string | null) => void;
+  addFamilyMember: (name: string, emoji: string, allergies: string[], restrictions: string[], preferences: string[]) => Promise<FamilyMember>;
+  updateFamilyMember: (id: string, data: Partial<{ name: string; emoji: string; allergies: string[]; restrictions: string[]; preferences: string[] }>) => Promise<void>;
+  removeFamilyMember: (id: string) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -30,15 +49,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [dietaryProfile, setDietaryProfile] = useState<DietaryProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>([]);
+  const [activeMemberId, setActiveMemberId] = useState<string | null>(null);
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (firebaseUser) => {
       setUser(firebaseUser);
       if (firebaseUser) {
-        const profile = await getUserProfile(firebaseUser.uid);
+        const [profile, members] = await Promise.all([
+          getUserProfile(firebaseUser.uid),
+          getFamilyMembers(firebaseUser.uid),
+        ]);
         setDietaryProfile(profile);
+        setFamilyMembers(members);
       } else {
         setDietaryProfile(null);
+        setFamilyMembers([]);
+        setActiveMemberId(null);
       }
       setLoading(false);
     });
@@ -48,8 +75,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signUp = async (email: string, password: string, name: string) => {
     const cred = await createUserWithEmailAndPassword(auth, email, password);
     await updateProfile(cred.user, { displayName: name });
-    // Use the live Firebase User instance (preserves prototype methods like getIdToken).
-    // Spreading it would strip the prototype.
     setUser(auth.currentUser);
   };
 
@@ -63,11 +88,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const deleteAccount = async () => {
     if (!user) return;
-    // 1. Erase all Firestore data first
     await deleteAllUserData(user.uid);
-    // 2. Delete the Firebase Auth account
-    // Note: Firebase requires a recent sign-in for this operation.
-    // If it fails with 'requires-recent-login', the caller should catch and inform the user.
     await deleteUser(user);
   };
 
@@ -76,6 +97,67 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await saveUserProfile(user.uid, profile);
     setDietaryProfile(profile);
   };
+
+  const setActiveMember = (id: string | null) => {
+    setActiveMemberId(id);
+  };
+
+  const addFamilyMember = async (
+    name: string,
+    emoji: string,
+    allergies: string[],
+    restrictions: string[],
+    preferences: string[]
+  ): Promise<FamilyMember> => {
+    if (!user) throw new Error('Not authenticated');
+    const id = await addFamilyMemberToDb(user.uid, name, emoji, allergies, restrictions, preferences);
+    const newMember: FamilyMember = {
+      id,
+      userId: user.uid,
+      name,
+      emoji,
+      allergies,
+      restrictions,
+      preferences,
+      createdAt: new Date(),
+    };
+    setFamilyMembers((prev) => [...prev, newMember]);
+    return newMember;
+  };
+
+  const updateFamilyMember = async (
+    id: string,
+    data: Partial<{ name: string; emoji: string; allergies: string[]; restrictions: string[]; preferences: string[] }>
+  ) => {
+    await updateFamilyMemberInDb(id, data);
+    setFamilyMembers((prev) =>
+      prev.map((m) => (m.id === id ? { ...m, ...data } : m))
+    );
+  };
+
+  const removeFamilyMember = async (id: string) => {
+    await deleteFamilyMemberFromDb(id);
+    setFamilyMembers((prev) => prev.filter((m) => m.id !== id));
+    // If this member was active, revert to self
+    if (activeMemberId === id) {
+      setActiveMemberId(null);
+    }
+  };
+
+  // Computed: active dietary profile
+  const activeMember = familyMembers.find((m) => m.id === activeMemberId);
+  const activeProfile: DietaryProfile | null = activeMemberId && activeMember
+    ? {
+        name: activeMember.name,
+        allergies: activeMember.allergies,
+        restrictions: activeMember.restrictions,
+        preferences: activeMember.preferences,
+      }
+    : dietaryProfile;
+
+  const activeName: string = activeMemberId && activeMember
+    ? `${activeMember.emoji} ${activeMember.name}`
+    : user?.displayName || '';
 
   const hasSurveyCompleted = !!dietaryProfile;
 
@@ -91,6 +173,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         deleteAccount,
         updateDietaryProfile,
         hasSurveyCompleted,
+        familyMembers,
+        activeMemberId,
+        activeProfile,
+        activeName,
+        setActiveMember,
+        addFamilyMember,
+        updateFamilyMember,
+        removeFamilyMember,
       }}
     >
       {children}
