@@ -29,19 +29,72 @@ type Props = {
   onCancel: () => void;
 };
 
-async function fetchProductByBarcode(barcode: string): Promise<{ name: string; ingredients: string } | null> {
+async function fetchFromOpenFoodFacts(barcode: string): Promise<{ name: string; ingredients: string } | null> {
   try {
-    const res = await fetch(`https://world.openfoodfacts.org/api/v0/product/${barcode}.json`);
+    const res = await fetch(`https://world.openfoodfacts.org/api/v0/product/${barcode}.json`, { signal: AbortSignal.timeout(6000) });
     const data = await res.json();
     if (data.status !== 1) return null;
     const p = data.product;
-    const name = p.product_name || p.product_name_en || '';
-    const ingredients = p.ingredients_text || p.ingredients_text_en || '';
+    const name = p.product_name || p.product_name_en || p.product_name_ko || '';
+    const ingredients = p.ingredients_text || p.ingredients_text_en || p.ingredients_text_ko || '';
     if (!name) return null;
     return { name, ingredients };
   } catch {
     return null;
   }
+}
+
+async function fetchFromUPCItemDB(barcode: string): Promise<{ name: string; ingredients: string } | null> {
+  try {
+    const res = await fetch(`https://api.upcitemdb.com/prod/trial/lookup?upc=${barcode}`, { signal: AbortSignal.timeout(6000) });
+    const data = await res.json();
+    if (data.code !== 'OK' || !data.items?.length) return null;
+    const item = data.items[0];
+    const name = item.title || '';
+    const ingredients = item.description || '';
+    if (!name) return null;
+    return { name, ingredients };
+  } catch {
+    return null;
+  }
+}
+
+async function fetchFromKoreanFoodDB(barcode: string): Promise<{ name: string; ingredients: string } | null> {
+  // 식품안전나라 (Korean Food Safety Korea) — Open Food Facts Korea mirror
+  // Falls back to the Korean-specific Open Food Facts endpoint
+  try {
+    const res = await fetch(`https://kr.openfoodfacts.org/api/v0/product/${barcode}.json`, { signal: AbortSignal.timeout(6000) });
+    const data = await res.json();
+    if (data.status !== 1) return null;
+    const p = data.product;
+    const name = p.product_name_ko || p.product_name || '';
+    const ingredients = p.ingredients_text_ko || p.ingredients_text || '';
+    if (!name) return null;
+    return { name, ingredients };
+  } catch {
+    return null;
+  }
+}
+
+async function fetchProductByBarcode(barcode: string): Promise<{ name: string; ingredients: string } | null> {
+  // Check Korean barcode prefix first (880 = South Korea)
+  const isKoreanBarcode = barcode.startsWith('880');
+
+  if (isKoreanBarcode) {
+    // Try Korean-specific sources first
+    const korean = await fetchFromKoreanFoodDB(barcode);
+    if (korean) return korean;
+  }
+
+  // Try Open Food Facts (global)
+  const off = await fetchFromOpenFoodFacts(barcode);
+  if (off) return off;
+
+  // Try UPC Item DB as fallback
+  const upc = await fetchFromUPCItemDB(barcode);
+  if (upc) return upc;
+
+  return null;
 }
 
 export default function CameraScreen({ onResult, onMenuResult, onCancel }: Props) {
@@ -108,9 +161,16 @@ export default function CameraScreen({ onResult, onMenuResult, onCancel }: Props
     try {
       const product = await fetchProductByBarcode(data);
       if (!product) {
-        Alert.alert('', t.barcodeNotFound, [{ text: 'OK', onPress: () => setBarcodeScanned(false) }]);
         setAnalyzing(false);
         setStatusText('');
+        Alert.alert(
+          '📦 Barcode Detected',
+          `Barcode: ${data}\n\nThis product isn't in our database yet. Try the Label Scan mode to photograph the ingredient list instead.`,
+          [
+            { text: 'Label Scan', onPress: () => setMode('label') },
+            { text: 'OK', style: 'cancel', onPress: () => setBarcodeScanned(false) },
+          ]
+        );
         return;
       }
       setStatusText(t.analyzingAI);
