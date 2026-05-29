@@ -17,6 +17,7 @@ import { useFoods } from '../../context/FoodContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { SavedFood, logMeal } from '../../services/storage';
 import { useAuth } from '../../context/AuthContext';
+import { analyzeFamilyCompatibility, FamilyCompatibilityResult } from '../../services/anthropic';
 
 type Props = {
   result: AnalysisResult;
@@ -30,12 +31,14 @@ type Props = {
 export default function ResultScreen({ result, imageBase64, imageUrl, savedFood, onBack, onSaved }: Props) {
   const { groups, addFood } = useFoods();
   const { t } = useLanguage();
-  const { user } = useAuth();
+  const { user, familyMembers, dietaryProfile } = useAuth();
   const [saved, setSaved] = useState(!!savedFood);
   const [showGroupPicker, setShowGroupPicker] = useState(false);
   const [logged, setLogged] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedLogDate, setSelectedLogDate] = useState(new Date().toISOString().slice(0, 10));
+  const [familyCheck, setFamilyCheck] = useState<FamilyCompatibilityResult[] | null>(null);
+  const [familyCheckLoading, setFamilyCheckLoading] = useState(false);
 
   // Build a list of the last 30 days for the date picker
   const recentDates = Array.from({ length: 30 }, (_, i) => {
@@ -43,6 +46,28 @@ export default function ResultScreen({ result, imageBase64, imageUrl, savedFood,
     d.setDate(d.getDate() - i);
     return d.toISOString().slice(0, 10);
   });
+
+  // Load family compatibility check when family members exist
+  React.useEffect(() => {
+    if (!familyMembers.length) return;
+    setFamilyCheckLoading(true);
+    const profiles = familyMembers.map((m) => ({
+      name: `${m.emoji} ${m.name}`,
+      allergies: m.allergies,
+      restrictions: m.restrictions,
+      preferences: m.preferences,
+    }));
+    analyzeFamilyCompatibility(
+      result.foodName,
+      result.ingredients ?? [],
+      result.flags ?? [],
+      profiles,
+      'English'
+    )
+      .then(setFamilyCheck)
+      .catch(() => setFamilyCheck(null))
+      .finally(() => setFamilyCheckLoading(false));
+  }, [result.foodName]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleLogMeal = async () => {
     if (!user) return;
@@ -56,11 +81,12 @@ export default function ResultScreen({ result, imageBase64, imageUrl, savedFood,
     }
   };
 
-  const statusConfig = {
+  const statusConfig = ({
     safe: { color: Colors.safe, bg: '#EFF8F0', emoji: '✅', label: t.safeLabel },
     caution: { color: Colors.caution, bg: '#FFF8EC', emoji: '⚠️', label: t.cautionLabel },
     unsafe: { color: Colors.unsafe, bg: '#FEECEC', emoji: '🚫', label: t.unsafeLabel },
-  }[result.overallStatus];
+  } as Record<string, { color: string; bg: string; emoji: string; label: string }>)[result.overallStatus]
+    ?? { color: Colors.caution, bg: '#FFF8EC', emoji: '⚠️', label: t.cautionLabel };
 
   const handleShare = async () => {
     try {
@@ -162,6 +188,31 @@ export default function ResultScreen({ result, imageBase64, imageUrl, savedFood,
           </View>
 
           <Text style={styles.summary}>{result.summary}</Text>
+
+          {/* Family compatibility check */}
+          {(familyCheckLoading || (familyCheck && familyCheck.length > 0)) && (
+            <View style={styles.familySection}>
+              <Text style={styles.familySectionTitle}>👨‍👩‍👧 Family Check</Text>
+              {familyCheckLoading ? (
+                <Text style={styles.familyLoading}>Checking for family members...</Text>
+              ) : (
+                familyCheck!.map((item, i) => {
+                  const color = item.status === 'safe' ? Colors.safe : item.status === 'caution' ? Colors.caution : Colors.unsafe;
+                  const bg = item.status === 'safe' ? '#EFF8F0' : item.status === 'caution' ? '#FFF8EC' : '#FEECEC';
+                  const emoji = item.status === 'safe' ? '✅' : item.status === 'caution' ? '⚠️' : '🚫';
+                  return (
+                    <View key={i} style={[styles.familyRow, { backgroundColor: bg }]}>
+                      <Text style={styles.familyEmoji}>{emoji}</Text>
+                      <View style={styles.familyRowText}>
+                        <Text style={[styles.familyName, { color }]}>{item.name}</Text>
+                        <Text style={styles.familyReason}>{item.reason}</Text>
+                      </View>
+                    </View>
+                  );
+                })
+              )}
+            </View>
+          )}
 
           {/* Korean vegan classifier warning banner */}
           {result.veganWarning && (
@@ -472,4 +523,12 @@ const styles = StyleSheet.create({
   dateItemCheck: { fontSize: 16, color: Colors.primary },
   logConfirmBtn: { marginTop: 16, backgroundColor: Colors.primary, borderRadius: 14, paddingVertical: 14, alignItems: 'center' },
   logConfirmText: { color: '#fff', fontSize: 15, fontWeight: '700' },
+  familySection: { marginBottom: 20, borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: Colors.border },
+  familySectionTitle: { fontSize: 14, fontWeight: '700', color: Colors.text, padding: 12, paddingBottom: 8, backgroundColor: Colors.background },
+  familyLoading: { fontSize: 13, color: Colors.textSecondary, padding: 12, fontStyle: 'italic' },
+  familyRow: { flexDirection: 'row', alignItems: 'flex-start', padding: 10, gap: 10, borderTopWidth: 1, borderTopColor: Colors.border },
+  familyEmoji: { fontSize: 16, marginTop: 1 },
+  familyRowText: { flex: 1 },
+  familyName: { fontSize: 13, fontWeight: '700', marginBottom: 2 },
+  familyReason: { fontSize: 12, color: Colors.textSecondary, lineHeight: 16 },
 });

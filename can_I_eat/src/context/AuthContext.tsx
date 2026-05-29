@@ -57,8 +57,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(firebaseUser);
       if (firebaseUser) {
         const [profile, members] = await Promise.all([
-          getUserProfile(firebaseUser.uid),
-          getFamilyMembers(firebaseUser.uid),
+          getUserProfile(firebaseUser.uid).catch(() => null),
+          getFamilyMembers(firebaseUser.uid).catch(() => []),
         ]);
         setDietaryProfile(profile);
         setFamilyMembers(members);
