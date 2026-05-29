@@ -250,8 +250,6 @@ export async function analyzeMenu(
   const profileDesc = buildProfileDescription(profile);
   const prompt = `You are analyzing a restaurant menu image for a user with these dietary needs:\n${profileDesc}\n\nIdentify every dish/item visible on this menu. Return ONLY a JSON array, no other text:\n[\n  {\n    "originalName": "dish name exactly as written on the menu",\n    "translatedName": "dish name in ${uiLanguage}",\n    "box": { "x": 0.0, "y": 0.0, "w": 1.0, "h": 0.05 },\n    "overallStatus": "safe",\n    "ingredients": ["likely ingredient 1", "likely ingredient 2"],\n    "flags": [{ "ingredient": "name", "reason": "why flagged for this user", "severity": "unsafe" }],\n    "summary": "one sentence why safe/caution/unsafe for this user in ${uiLanguage}"\n  }\n]\n\nEstimate box x/y/w/h as 0.0-1.0 fractions of where the item appears in the image. severity must be safe, caution, or unsafe. Respond in ${uiLanguage}.`;
 
-  const Anthropic = require('@anthropic-ai/sdk');
-  const client = new Anthropic.default({ apiKey: process.env.EXPO_PUBLIC_ANTHROPIC_API_KEY });
   const response = await client.messages.create({
     model: 'claude-opus-4-6',
     max_tokens: 2048,
@@ -266,7 +264,7 @@ export async function analyzeMenu(
 
   const text = (response.content[0] as { type: string; text: string }).text.trim();
   const match = text.match(/\[[\s\S]*\]/);
-  if (!match) return [];
+  if (!match) throw new Error('Could not parse menu items from AI response. Please try a clearer photo of the menu.');
   return JSON.parse(match[0]) as MenuAnalysisItem[];
 }
 
@@ -285,9 +283,6 @@ export async function analyzeFamilyCompatibility(
   familyProfiles: Array<{ name: string; allergies: string[]; restrictions: string[]; preferences: string[] }>,
   uiLanguage: string
 ): Promise<FamilyCompatibilityResult[]> {
-  const Anthropic = require('@anthropic-ai/sdk');
-  const client = new Anthropic.default({ apiKey: process.env.EXPO_PUBLIC_ANTHROPIC_API_KEY });
-
   const profileLines = familyProfiles.map((p) => {
     const parts: string[] = [];
     if (p.allergies.length) parts.push(`allergies: ${p.allergies.join(', ')}`);
