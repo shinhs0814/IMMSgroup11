@@ -248,7 +248,7 @@ export async function analyzeMenu(
   uiLanguage: string
 ): Promise<MenuAnalysisItem[]> {
   const profileDesc = buildProfileDescription(profile);
-  const prompt = `You are analyzing a restaurant menu image for a user with these dietary needs:\n${profileDesc}\n\nIdentify every dish/item visible on this menu. For each item return a JSON array with this exact structure:\n[\n  {\n    "itemName": "dish name as written on menu",\n    "englishName": "name in English",\n    "overallStatus": "safe" | "caution" | "unsafe",\n    "summary": "one sentence explanation why it is safe/caution/unsafe for this user",\n    "flags": []\n  }\n]\n\nReturn ONLY the JSON array, no other text. Respond in ${uiLanguage}.`;
+  const prompt = `You are analyzing a restaurant menu image for a user with these dietary needs:\n${profileDesc}\n\nIdentify every dish/item visible on this menu. Return ONLY a JSON array, no other text:\n[\n  {\n    "originalName": "dish name exactly as written on the menu",\n    "translatedName": "dish name in ${uiLanguage}",\n    "box": { "x": 0.0, "y": 0.0, "w": 1.0, "h": 0.05 },\n    "overallStatus": "safe",\n    "ingredients": ["likely ingredient 1", "likely ingredient 2"],\n    "flags": [{ "ingredient": "name", "reason": "why flagged for this user", "severity": "unsafe" }],\n    "summary": "one sentence why safe/caution/unsafe for this user in ${uiLanguage}"\n  }\n]\n\nEstimate box x/y/w/h as 0.0-1.0 fractions of where the item appears in the image. severity must be safe, caution, or unsafe. Respond in ${uiLanguage}.`;
 
   const Anthropic = require('@anthropic-ai/sdk');
   const client = new Anthropic.default({ apiKey: process.env.EXPO_PUBLIC_ANTHROPIC_API_KEY });
