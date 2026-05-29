@@ -108,9 +108,16 @@ export default function CameraScreen({ onResult, onMenuResult, onCancel }: Props
     try {
       const product = await fetchProductByBarcode(data);
       if (!product) {
-        Alert.alert('', t.barcodeNotFound, [{ text: 'OK', onPress: () => setBarcodeScanned(false) }]);
         setAnalyzing(false);
         setStatusText('');
+        Alert.alert(
+          '📦 Barcode Detected',
+          `Barcode: ${data}\n\nThis product isn't in our database yet. Try the Label Scan mode to photograph the ingredient list instead.`,
+          [
+            { text: 'Label Scan', onPress: () => setMode('label') },
+            { text: 'OK', style: 'cancel', onPress: () => setBarcodeScanned(false) },
+          ]
+        );
         return;
       }
       setStatusText(t.analyzingAI);
