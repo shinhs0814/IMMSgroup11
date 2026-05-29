@@ -239,7 +239,6 @@ export default function ResultScreen({ result, imageBase64, imageUrl, savedFood,
         </View>
       </ScrollView>
 
-      {/* Footer: Save + Share */}
       {/* Action buttons (bottom) */}
       <View style={styles.footer}>
         {!savedFood && (
@@ -257,7 +256,6 @@ export default function ResultScreen({ result, imageBase64, imageUrl, savedFood,
         <TouchableOpacity style={styles.shareBtn} onPress={handleShare}>
           <Text style={styles.shareBtnText}>📤  Share Result</Text>
         </TouchableOpacity>
-      </View>
         <TouchableOpacity
           style={[styles.logBtn, logged && styles.logBtnDone, savedFood ? styles.logBtnFull : null]}
           onPress={() => !logged && setShowDatePicker(true)}
@@ -435,28 +433,6 @@ const styles = StyleSheet.create({
   saveBtnTextSaved: { color: Colors.primary },
   saveBtnIcon: { fontSize: 20 },
   saveBtnText: { fontSize: 16, fontWeight: '700', color: '#fff' },
-  logBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 10,
-    backgroundColor: Colors.background,
-    borderRadius: 14,
-    paddingVertical: 14,
-    borderWidth: 1.5,
-    borderColor: Colors.primary,
-    marginTop: 10,
-  },
-  logBtnDone: { borderColor: Colors.safe, backgroundColor: '#EFF8F0' },
-  logBtnIcon: { fontSize: 18 },
-  logBtnText: { fontSize: 15, fontWeight: '700', color: Colors.primary },
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' },
-  modalCard: { backgroundColor: Colors.card, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, paddingBottom: 40, maxHeight: '60%' },
-  modalTitle: { fontSize: 20, fontWeight: '700', color: Colors.text, marginBottom: 16 },
-  groupItem: { paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: Colors.border },
-  groupItemText: { fontSize: 15, color: Colors.text },
-  modalCancel: { marginTop: 10, padding: 14, borderRadius: 12, borderWidth: 1, borderColor: Colors.border, alignItems: 'center' },
-  modalCancelText: { fontWeight: '600', color: Colors.textSecondary },
   shareBtn: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -467,7 +443,28 @@ const styles = StyleSheet.create({
     borderColor: Colors.primary,
   },
   shareBtnText: { fontSize: 15, fontWeight: '700', color: Colors.primary },
-  logBtnFull: { marginTop: 0 },
+  logBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+    backgroundColor: Colors.background,
+    borderRadius: 14,
+    paddingVertical: 14,
+    borderWidth: 1.5,
+    borderColor: Colors.primary,
+  },
+  logBtnDone: { borderColor: Colors.safe, backgroundColor: '#EFF8F0' },
+  logBtnIcon: { fontSize: 18 },
+  logBtnText: { fontSize: 15, fontWeight: '700', color: Colors.primary },
+  logBtnFull: {},
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' },
+  modalCard: { backgroundColor: Colors.card, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, paddingBottom: 40, maxHeight: '60%' },
+  modalTitle: { fontSize: 20, fontWeight: '700', color: Colors.text, marginBottom: 16 },
+  groupItem: { paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: Colors.border },
+  groupItemText: { fontSize: 15, color: Colors.text },
+  modalCancel: { marginTop: 10, padding: 14, borderRadius: 12, borderWidth: 1, borderColor: Colors.border, alignItems: 'center' },
+  modalCancelText: { fontWeight: '600', color: Colors.textSecondary },
   dateItem: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 13, borderBottomWidth: 1, borderBottomColor: Colors.border, paddingHorizontal: 4 },
   dateItemSelected: { backgroundColor: '#FEF0E7', borderRadius: 8, paddingHorizontal: 8, marginHorizontal: -4 },
   dateItemText: { fontSize: 15, color: Colors.text },
