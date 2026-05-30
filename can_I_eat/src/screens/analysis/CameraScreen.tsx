@@ -60,8 +60,7 @@ async function fetchFromUPCItemDB(barcode: string): Promise<{ name: string; ingr
 }
 
 async function fetchFromKoreanFoodDB(barcode: string): Promise<{ name: string; ingredients: string } | null> {
-  // 식품안전나라 (Korean Food Safety Korea) — Open Food Facts Korea mirror
-  // Falls back to the Korean-specific Open Food Facts endpoint
+  // Open Food Facts Korea mirror
   try {
     const res = await fetch(`https://kr.openfoodfacts.org/api/v0/product/${barcode}.json`, { signal: AbortSignal.timeout(6000) });
     const data = await res.json();
@@ -76,21 +75,60 @@ async function fetchFromKoreanFoodDB(barcode: string): Promise<{ name: string; i
   }
 }
 
+async function fetchFromFoodSafetyKorea(barcode: string): Promise<{ name: string; ingredients: string } | null> {
+  // 식품안전나라 (Ministry of Food and Drug Safety, Korea) — official Korean food DB
+  const apiKey = process.env.EXPO_PUBLIC_FOOD_SAFETY_KOREA_API_KEY;
+  if (!apiKey) return null;
+  try {
+    // Step 1: look up barcode → product report number + product name
+    const c005Res = await fetch(
+      `https://openapi.foodsafetykorea.go.kr/api/${apiKey}/C005/json/1/1/BAR_CD=${barcode}`,
+      { signal: AbortSignal.timeout(6000) }
+    );
+    const c005Data = await c005Res.json();
+    if (!c005Data?.C005?.row?.length) return null;
+    const row = c005Data.C005.row[0];
+    const name = row.PRDLST_NM || '';
+    const reportNo = row.PRDLST_REPORT_NO || '';
+    if (!name) return null;
+
+    // Step 2: look up report number → ingredients
+    let ingredients = '';
+    if (reportNo) {
+      const c002Res = await fetch(
+        `https://openapi.foodsafetykorea.go.kr/api/${apiKey}/C002/json/1/100/PRDLST_REPORT_NO=${reportNo}`,
+        { signal: AbortSignal.timeout(6000) }
+      );
+      const c002Data = await c002Res.json();
+      if (c002Data?.C002?.row?.length) {
+        ingredients = c002Data.C002.row.map((r: any) => r.RAWMTRL_NM).join(', ');
+      }
+    }
+
+    return { name, ingredients };
+  } catch {
+    return null;
+  }
+}
+
 async function fetchProductByBarcode(barcode: string): Promise<{ name: string; ingredients: string } | null> {
-  // Check Korean barcode prefix first (880 = South Korea)
+  // Check Korean barcode prefix (880 = South Korea)
   const isKoreanBarcode = barcode.startsWith('880');
 
   if (isKoreanBarcode) {
-    // Try Korean-specific sources first
+    // 1. 식품안전나라 — official Korean government DB (most comprehensive for Korean products)
+    const fsk = await fetchFromFoodSafetyKorea(barcode);
+    if (fsk) return fsk;
+    // 2. Open Food Facts Korea mirror
     const korean = await fetchFromKoreanFoodDB(barcode);
     if (korean) return korean;
   }
 
-  // Try Open Food Facts (global)
+  // 3. Open Food Facts (global)
   const off = await fetchFromOpenFoodFacts(barcode);
   if (off) return off;
 
-  // Try UPC Item DB as fallback
+  // 4. UPC Item DB fallback
   const upc = await fetchFromUPCItemDB(barcode);
   if (upc) return upc;
 
@@ -363,6 +401,10 @@ export default function CameraScreen({ onResult, onMenuResult, onCancel }: Props
             <AppText style={styles.tipItem}>• {t.tipFood}</AppText>
             <AppText style={styles.tipItem}>• {t.tipBlurry}</AppText>
           </View>
+
+          <AppText style={styles.dataAttribution}>
+            Barcode data: 식품안전나라 (foodsafetykorea.go.kr) · Open Food Facts (openfoodfacts.org) · UPC Item DB
+          </AppText>
         </ScrollView>
       </View>
     );
@@ -462,6 +504,7 @@ const styles = StyleSheet.create({
   tips: { backgroundColor: Colors.primaryBg, borderRadius: 16, padding: 16, width: '100%', gap: 4 },
   tipsTitle: { fontSize: 13, color: Colors.primary, marginBottom: 4 },
   tipItem: { fontSize: 13, color: Colors.text, lineHeight: 20 },
+  dataAttribution: { fontSize: 10, color: Colors.textSecondary, textAlign: 'center', marginTop: 12, marginBottom: 8, lineHeight: 15, opacity: 0.7 },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
