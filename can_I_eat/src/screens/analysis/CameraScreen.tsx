@@ -144,6 +144,7 @@ export default function CameraScreen({ onResult, onMenuResult, onCancel }: Props
   const [barcodeScanned, setBarcodeScanned] = useState(false);
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
   const [showProfilePicker, setShowProfilePicker] = useState(false);
+  const [lastError, setLastError] = useState<string | null>(null);
 
   const processImage = async (uri: string) => {
     setAnalyzing(true);
@@ -151,10 +152,15 @@ export default function CameraScreen({ onResult, onMenuResult, onCancel }: Props
     try {
       const compressed = await ImageManipulator.manipulateAsync(
         uri,
-        [{ resize: { width: 1024 } }],
-        { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG, base64: true }
+        [{ resize: { width: 800 } }],
+        { compress: 0.6, format: ImageManipulator.SaveFormat.JPEG, base64: true }
       );
-      const base64 = compressed.base64!;
+      // On web, base64 may be missing but the URI is a data: URL containing base64
+      let base64 = compressed.base64;
+      if (!base64 && compressed.uri?.startsWith('data:')) {
+        base64 = compressed.uri.split(',')[1];
+      }
+      if (!base64) throw new Error('Image compression did not produce base64 output. Try a different image.');
       setStatusText(t.analyzingAI);
 
       const profile = activeProfile || { name: '', allergies: [], restrictions: [], preferences: [] };
@@ -183,7 +189,10 @@ export default function CameraScreen({ onResult, onMenuResult, onCancel }: Props
         onResult(result, base64, result.foodName);
       }
     } catch (e: any) {
-      Alert.alert(t.analysisFailedTitle, e.message || 'Please try again with a clearer image.');
+      console.error('[processImage error]', e?.message, e);
+      const msg = e?.message || 'Please try again with a clearer image.';
+      setLastError(msg);
+      Alert.alert(t.analysisFailedTitle, msg);
     } finally {
       setAnalyzing(false);
       setStatusText('');
@@ -426,6 +435,12 @@ export default function CameraScreen({ onResult, onMenuResult, onCancel }: Props
           {mode === 'menu' ? t.modeMenuDesc : mode === 'label' ? t.modeLabelDesc : t.modeFoodDesc}
         </AppText>
 
+        {lastError && (
+          <View style={styles.errorBanner}>
+            <AppText weight="700" style={styles.errorText}>⚠️ {lastError}</AppText>
+          </View>
+        )}
+
         <View style={styles.options}>
           <TouchableOpacity style={styles.optionCard} onPress={openCamera}>
             <AppText style={styles.optionEmoji}>📸</AppText>
@@ -505,6 +520,8 @@ const styles = StyleSheet.create({
   tipsTitle: { fontSize: 13, color: Colors.primary, marginBottom: 4 },
   tipItem: { fontSize: 13, color: Colors.text, lineHeight: 20 },
   dataAttribution: { fontSize: 10, color: Colors.textSecondary, textAlign: 'center', marginTop: 12, marginBottom: 8, lineHeight: 15, opacity: 0.7 },
+  errorBanner: { backgroundColor: '#FEECEC', borderRadius: 12, padding: 12, width: '100%', borderLeftWidth: 3, borderLeftColor: Colors.unsafe, marginBottom: 12 },
+  errorText: { fontSize: 12, color: Colors.unsafe, lineHeight: 18 },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',

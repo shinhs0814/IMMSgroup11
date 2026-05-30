@@ -248,11 +248,11 @@ export async function analyzeMenu(
   uiLanguage: string
 ): Promise<MenuAnalysisItem[]> {
   const profileDesc = buildProfileDescription(profile);
-  const prompt = `You are analyzing a restaurant menu image for a user with these dietary needs:\n${profileDesc}\n\nIdentify every dish/item visible on this menu. Return ONLY a JSON array, no other text:\n[\n  {\n    "originalName": "dish name exactly as written on the menu",\n    "translatedName": "dish name in ${uiLanguage}",\n    "box": { "x": 0.0, "y": 0.0, "w": 1.0, "h": 0.05 },\n    "overallStatus": "safe",\n    "ingredients": ["likely ingredient 1", "likely ingredient 2"],\n    "flags": [{ "ingredient": "name", "reason": "why flagged for this user", "severity": "unsafe" }],\n    "summary": "one sentence why safe/caution/unsafe for this user in ${uiLanguage}"\n  }\n]\n\nEstimate box x/y/w/h as 0.0-1.0 fractions of where the item appears in the image. severity must be safe, caution, or unsafe. Respond in ${uiLanguage}.`;
+  const prompt = `You are analyzing a restaurant menu image for a user with these dietary needs:\n${profileDesc}\n\nIdentify up to 15 of the most prominent dish/items visible on this menu. Return ONLY a JSON array, no other text:\n[\n  {\n    "originalName": "dish name exactly as written on the menu",\n    "translatedName": "dish name in ${uiLanguage}",\n    "box": { "x": 0.0, "y": 0.0, "w": 1.0, "h": 0.05 },\n    "overallStatus": "safe",\n    "ingredients": ["main ingredient 1", "main ingredient 2"],\n    "flags": [{ "ingredient": "name", "reason": "why flagged for this user", "severity": "unsafe" }],\n    "summary": "one sentence why safe/caution/unsafe for this user in ${uiLanguage}"\n  }\n]\n\nFor "box", always use { "x": 0, "y": 0, "w": 1, "h": 0.05 } — do not estimate positions. Keep ingredients to 3-5 key items only. severity must be safe, caution, or unsafe. Respond in ${uiLanguage}.`;
 
   const response = await client.messages.create({
-    model: 'claude-opus-4-6',
-    max_tokens: 2048,
+    model: MODEL,
+    max_tokens: 4096,
     messages: [{
       role: 'user',
       content: [{
@@ -311,7 +311,7 @@ For each person, respond ONLY with a JSON array (no markdown, no extra text):
 Respond in this language: ${uiLanguage}`;
 
   const response = await client.messages.create({
-    model: 'claude-opus-4-6',
+    model: MODEL,
     max_tokens: 1024,
     messages: [{ role: 'user', content: prompt }],
   });
