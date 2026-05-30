@@ -6,10 +6,13 @@ import {
   TouchableOpacity,
   StyleSheet,
   Dimensions,
+  Modal,
+  FlatList,
 } from 'react-native';
 import AppText from '../../components/AppText';
 import { Colors } from '../../constants/colors';
 import { useLanguage } from '../../context/LanguageContext';
+import { useFoods } from '../../context/FoodContext';
 import { MenuAnalysisItem } from '../../services/anthropic';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -35,8 +38,29 @@ const STATUS_BG: Record<string, string> = {
 
 export default function MenuAnalysisScreen({ items, imageBase64, onBack }: Props) {
   const { t } = useLanguage();
+  const { groups, addFood } = useFoods();
   const [expanded, setExpanded] = useState<number | null>(null);
   const [showBoxes, setShowBoxes] = useState(true);
+  const [savingItemIdx, setSavingItemIdx] = useState<number | null>(null);
+  const [savedItems, setSavedItems] = useState<Set<number>>(new Set());
+
+  const handleSaveItem = (groupId: string | null) => {
+    if (savingItemIdx === null) return;
+    const item = items[savingItemIdx];
+    const analysisResult = {
+      foodName: item.translatedName || item.originalName,
+      originalName: item.originalName,
+      type: 'food_image' as const,
+      overallStatus: item.overallStatus,
+      summary: item.summary,
+      ingredients: item.ingredients,
+      flags: item.flags,
+    };
+    addFood(groupId, analysisResult.foodName, analysisResult).then(() => {
+      setSavedItems(prev => new Set(prev).add(savingItemIdx));
+      setSavingItemIdx(null);
+    });
+  };
 
   const safeCount = items.filter(i => i.overallStatus === 'safe').length;
   const unsafeCount = items.filter(i => i.overallStatus === 'unsafe').length;
@@ -134,10 +158,19 @@ export default function MenuAnalysisScreen({ items, imageBase64, onBack }: Props
                       </AppText>
                     )}
                   </View>
-                  <View style={[styles.statusBadge, { backgroundColor: STATUS_BG[item.overallStatus] }]}>
-                    <AppText style={[styles.statusText, { color: STATUS_COLOR[item.overallStatus] }]}>
-                      {item.overallStatus === 'safe' ? '✓' : item.overallStatus === 'caution' ? '!' : '✗'}
-                    </AppText>
+                  <View style={styles.itemActions}>
+                    <TouchableOpacity
+                      style={styles.saveIconBtn}
+                      onPress={(e) => { e.stopPropagation?.(); setSavingItemIdx(savedItems.has(idx) ? null : idx); }}
+                      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                    >
+                      <AppText style={styles.saveIcon}>{savedItems.has(idx) ? '❤️' : '🤍'}</AppText>
+                    </TouchableOpacity>
+                    <View style={[styles.statusBadge, { backgroundColor: STATUS_BG[item.overallStatus] }]}>
+                      <AppText style={[styles.statusText, { color: STATUS_COLOR[item.overallStatus] }]}>
+                        {item.overallStatus === 'safe' ? '✓' : item.overallStatus === 'caution' ? '!' : '✗'}
+                      </AppText>
+                    </View>
                   </View>
                 </View>
 
@@ -174,6 +207,27 @@ export default function MenuAnalysisScreen({ items, imageBase64, onBack }: Props
           </View>
         )}
       </ScrollView>
+
+      {/* Group picker modal */}
+      <Modal visible={savingItemIdx !== null} transparent animationType="slide">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalCard}>
+            <AppText weight="700" style={styles.modalTitle}>{t.saveToGroup}</AppText>
+            <FlatList
+              data={[{ id: null as string | null, name: t.uncategorized }, ...groups]}
+              keyExtractor={(item) => item.id || 'none'}
+              renderItem={({ item: g }) => (
+                <TouchableOpacity style={styles.groupItem} onPress={() => handleSaveItem(g.id)}>
+                  <AppText style={styles.groupItemText}>{g.name}</AppText>
+                </TouchableOpacity>
+              )}
+            />
+            <TouchableOpacity style={styles.modalCancel} onPress={() => setSavingItemIdx(null)}>
+              <AppText style={styles.modalCancelText}>{t.cancel}</AppText>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -248,6 +302,9 @@ const styles = StyleSheet.create({
   },
   itemHeader: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 6 },
   itemNames: { flex: 1 },
+  itemActions: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  saveIconBtn: { padding: 2 },
+  saveIcon: { fontSize: 18 },
   itemOriginal: { fontSize: 16, color: Colors.text },
   itemTranslated: { fontSize: 13, color: Colors.textSecondary, marginTop: 2 },
   statusBadge: {
@@ -274,4 +331,11 @@ const styles = StyleSheet.create({
   ingredientsTitle: { fontSize: 13, color: Colors.text, marginBottom: 4 },
   ingredientItem: { fontSize: 13, color: Colors.textSecondary },
   tapHint: { fontSize: 11, color: Colors.textSecondary, marginTop: 6, textAlign: 'right' },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' },
+  modalCard: { backgroundColor: Colors.card, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, paddingBottom: 40, maxHeight: '60%' },
+  modalTitle: { fontSize: 20, color: Colors.text, marginBottom: 16 },
+  groupItem: { paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: Colors.border },
+  groupItemText: { fontSize: 15, color: Colors.text },
+  modalCancel: { marginTop: 10, padding: 14, borderRadius: 12, borderWidth: 1, borderColor: Colors.border, alignItems: 'center' },
+  modalCancelText: { fontWeight: '600', color: Colors.textSecondary },
 });
