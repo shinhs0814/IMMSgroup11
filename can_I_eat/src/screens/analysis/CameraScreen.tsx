@@ -111,15 +111,45 @@ async function fetchFromFoodSafetyKorea(barcode: string): Promise<{ name: string
   }
 }
 
+async function fetchFromNaverShopping(barcode: string): Promise<{ name: string; ingredients: string } | null> {
+  const clientId = process.env.EXPO_PUBLIC_NAVER_CLIENT_ID;
+  const clientSecret = process.env.EXPO_PUBLIC_NAVER_CLIENT_SECRET;
+  if (!clientId || !clientSecret) return null;
+  try {
+    const res = await fetch(
+      `https://openapi.naver.com/v1/search/shop.json?query=${encodeURIComponent(barcode)}&display=1`,
+      {
+        headers: {
+          'X-Naver-Client-Id': clientId,
+          'X-Naver-Client-Secret': clientSecret,
+        },
+        signal: AbortSignal.timeout(6000),
+      }
+    );
+    const data = await res.json();
+    if (!data.items?.length) return null;
+    const item = data.items[0];
+    // Strip HTML tags from title
+    const name = item.title?.replace(/<[^>]+>/g, '') || '';
+    if (!name) return null;
+    return { name, ingredients: '' };
+  } catch {
+    return null;
+  }
+}
+
 async function fetchProductByBarcode(barcode: string): Promise<{ name: string; ingredients: string } | null> {
   // Check Korean barcode prefix (880 = South Korea)
   const isKoreanBarcode = barcode.startsWith('880');
 
   if (isKoreanBarcode) {
-    // 1. 식품안전나라 — official Korean government DB (most comprehensive for Korean products)
+    // 1. Naver Shopping — best Korean product coverage
+    const naver = await fetchFromNaverShopping(barcode);
+    if (naver) return naver;
+    // 2. 식품안전나라 — official Korean government DB
     const fsk = await fetchFromFoodSafetyKorea(barcode);
     if (fsk) return fsk;
-    // 2. Open Food Facts Korea mirror
+    // 3. Open Food Facts Korea mirror
     const korean = await fetchFromKoreanFoodDB(barcode);
     if (korean) return korean;
   }
@@ -128,7 +158,11 @@ async function fetchProductByBarcode(barcode: string): Promise<{ name: string; i
   const off = await fetchFromOpenFoodFacts(barcode);
   if (off) return off;
 
-  // 4. UPC Item DB fallback
+  // 4. Naver Shopping (also strong for non-Korean products sold in Korea)
+  const naver2 = await fetchFromNaverShopping(barcode);
+  if (naver2) return naver2;
+
+  // 5. UPC Item DB fallback (global)
   const upc = await fetchFromUPCItemDB(barcode);
   if (upc) return upc;
 
@@ -412,7 +446,7 @@ export default function CameraScreen({ onResult, onMenuResult, onCancel }: Props
           </View>
 
           <AppText style={styles.dataAttribution}>
-            Barcode data: 식품안전나라 (foodsafetykorea.go.kr) · Open Food Facts (openfoodfacts.org) · UPC Item DB
+            Barcode data: 식품안전나라 (foodsafetykorea.go.kr) · Open Food Facts (openfoodfacts.org) · UPC Item DB · Naver Shopping
           </AppText>
         </ScrollView>
       </View>
