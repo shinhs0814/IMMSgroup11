@@ -212,6 +212,10 @@ export default function ResultScreen({ result, imageBase64, imageUrl, savedFood,
               ))}
             </View>
           )}
+        {/* AI Disclaimer */}
+        <View style={styles.disclaimer}>
+          <Text style={styles.disclaimerText}>⚠️ {t.aiDisclaimerText}</Text>
+        </View>
         </View>
       </ScrollView>
 
@@ -373,6 +377,19 @@ const styles = StyleSheet.create({
   groupItemText: { fontSize: 15, color: Colors.text },
   modalCancel: { marginTop: 12, padding: 14, borderRadius: 12, borderWidth: 1, borderColor: Colors.border, alignItems: 'center' },
   modalCancelText: { fontWeight: '600', color: Colors.textSecondary },
+  disclaimer: {
+    marginTop: 16,
+    padding: 14,
+    backgroundColor: '#FFF8EC',
+    borderRadius: 12,
+    borderLeftWidth: 3,
+    borderLeftColor: '#F59E0B',
+  },
+  disclaimerText: {
+    fontSize: 12,
+    color: '#92400E',
+    lineHeight: 18,
+  },
   shareBtn: {
     flexDirection: 'row',
     alignItems: 'center',

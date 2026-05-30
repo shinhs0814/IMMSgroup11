@@ -222,6 +222,9 @@ export type TranslationKeys = {
   permissionRequiredTitle: string;
   cameraPermissionMsg: string;
   photoLibraryPermissionMsg: string;
+
+  // AI disclaimer
+  aiDisclaimerText: string;
 };
 
 const en: TranslationKeys = {
@@ -432,6 +435,7 @@ const en: TranslationKeys = {
   permissionRequiredTitle: 'Permission Required',
   cameraPermissionMsg: 'Camera access is needed to take photos.',
   photoLibraryPermissionMsg: 'Photo library access is needed.',
+  aiDisclaimerText: 'AI analysis may not detect hidden ingredients (e.g. broth, sauces, oils). For severe allergies, always verify directly with restaurant staff.',
 };
 
 const ko: TranslationKeys = {
@@ -642,6 +646,7 @@ const ko: TranslationKeys = {
   permissionRequiredTitle: '권한 필요',
   cameraPermissionMsg: '사진 촬영을 위해 카메라 접근 권한이 필요합니다.',
   photoLibraryPermissionMsg: '사진 라이브러리 접근 권한이 필요합니다.',
+  aiDisclaimerText: 'AI 분석은 숨겨진 성분(예: 육수, 소스, 기름 등)을 감지하지 못할 수 있습니다. 심각한 알레르기가 있는 경우 반드시 식당 직원에게 직접 확인하세요.',
 };
 
 const es: TranslationKeys = {
@@ -852,6 +857,7 @@ const es: TranslationKeys = {
   permissionRequiredTitle: 'Permiso Requerido',
   cameraPermissionMsg: 'Se necesita acceso a la cámara para tomar fotos.',
   photoLibraryPermissionMsg: 'Se necesita acceso a la galería de fotos.',
+  aiDisclaimerText: 'El análisis de IA puede no detectar ingredientes ocultos (p. ej. caldos, salsas, aceites). Para alergias graves, siempre verifique directamente con el personal del restaurante.',
 };
 
 const fr: TranslationKeys = {
@@ -1062,6 +1068,7 @@ const fr: TranslationKeys = {
   permissionRequiredTitle: 'Autorisation Requise',
   cameraPermissionMsg: "L'accès à la caméra est nécessaire pour prendre des photos.",
   photoLibraryPermissionMsg: "L'accès à la galerie de photos est nécessaire.",
+  aiDisclaimerText: "L'analyse IA peut ne pas détecter les ingrédients cachés (ex. bouillons, sauces, huiles). En cas d'allergie grave, vérifiez toujours directement auprès du personnel du restaurant.",
 };
 
 const ja: TranslationKeys = {
@@ -1272,6 +1279,7 @@ const ja: TranslationKeys = {
   permissionRequiredTitle: '権限が必要です',
   cameraPermissionMsg: '写真を撮影するためにカメラへのアクセスが必要です。',
   photoLibraryPermissionMsg: '写真ライブラリへのアクセスが必要です。',
+  aiDisclaimerText: 'AI分析では隠れた成分（例：だし、ソース、油など）を検出できない場合があります。重篤なアレルギーがある場合は、必ずレストランのスタッフに直接確認してください。',
 };
 
 export const TRANSLATIONS: Record<AppLanguage, TranslationKeys> = { en, ko, es, fr, ja };
