@@ -15,6 +15,7 @@ import { Colors } from '../../constants/colors';
 import { AnalysisResult } from '../../services/anthropic';
 import { useFoods } from '../../context/FoodContext';
 import { useLanguage } from '../../context/LanguageContext';
+import { LANGUAGE_NAMES } from '../../constants/translations';
 import { SavedFood, logMeal } from '../../services/storage';
 import { useAuth } from '../../context/AuthContext';
 import { analyzeFamilyCompatibility, FamilyCompatibilityResult } from '../../services/anthropic';
@@ -30,7 +31,7 @@ type Props = {
 
 export default function ResultScreen({ result, imageBase64, imageUrl, savedFood, onBack, onSaved }: Props) {
   const { groups, addFood } = useFoods();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { user, familyMembers, dietaryProfile } = useAuth();
   const [saved, setSaved] = useState(!!savedFood);
   const [showGroupPicker, setShowGroupPicker] = useState(false);
@@ -62,7 +63,7 @@ export default function ResultScreen({ result, imageBase64, imageUrl, savedFood,
       result.ingredients ?? [],
       result.flags ?? [],
       profiles,
-      'English'
+      LANGUAGE_NAMES[language] ?? 'English'
     )
       .then(setFamilyCheck)
       .catch(() => setFamilyCheck(null))
