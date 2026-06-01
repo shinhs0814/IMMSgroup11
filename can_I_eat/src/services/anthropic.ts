@@ -34,15 +34,36 @@ export type FoodFlag = {
   severity: 'safe' | 'caution' | 'unsafe';
 };
 
+export type MenuAnalysisItem = {
+  originalName: string;
+  translatedName: string;
+  box: { x: number; y: number; w: number; h: number }; // 0-1 fractions of image dimensions
+  overallStatus: 'safe' | 'caution' | 'unsafe';
+  ingredients: string[];
+  flags: FoodFlag[];
+  summary: string;
+};
+
 export async function analyzeFoodImage(
-  base64Image: string,
-  mimeType: 'image/jpeg' | 'image/png',
+  base64Image: string | null,
+  mimeType: 'image/jpeg' | 'image/png' | null,
   dietaryProfile: DietaryProfile,
-  uiLanguage: string = 'English'
+  uiLanguage: string = 'English',
+  textOverride?: string
 ): Promise<AnalysisResult> {
   const profileDescription = buildProfileDescription(dietaryProfile);
 
-  const prompt = `You are a multilingual global food safety assistant. Analyze this image — it may be a food dish or a product package label in ANY language (Korean, Japanese, Arabic, French, Spanish, Chinese, Thai, etc.).
+  const prompt = textOverride
+    ? `You are a food safety assistant. Analyze this product for the user's dietary profile.
+
+User's dietary profile:
+${buildProfileDescription(dietaryProfile)}
+
+${textOverride}
+
+Respond with ONLY the JSON schema below.
+`
+    : `You are a multilingual global food safety assistant. Analyze this image — it may be a food dish or a product package label in ANY language (Korean, Japanese, Arabic, French, Spanish, Chinese, Thai, etc.).
 
 User's dietary profile:
 ${profileDescription}
@@ -88,28 +109,17 @@ Safety rules:
 - Always check for all allergens in the user's profile
 - For food images (not labels): identify the dish by appearance and flag likely ingredients`;
 
+  const messageContent: any[] = base64Image
+    ? [
+        { type: 'image', source: { type: 'base64', media_type: mimeType, data: base64Image } },
+        { type: 'text', text: prompt },
+      ]
+    : [{ type: 'text', text: prompt }];
+
   const response = await client.messages.create({
     model: MODEL,
     max_tokens: 2048,
-    messages: [
-      {
-        role: 'user',
-        content: [
-          {
-            type: 'image',
-            source: {
-              type: 'base64',
-              media_type: mimeType,
-              data: base64Image,
-            },
-          },
-          {
-            type: 'text',
-            text: prompt,
-          },
-        ],
-      },
-    ],
+    messages: [{ role: 'user', content: messageContent }],
   });
 
   const text = response.content[0].type === 'text' ? response.content[0].text : '';
@@ -229,4 +239,85 @@ export function buildProfileDescription(profile: DietaryProfile): string {
   }
 
   return lines.join('\n');
+}
+
+export async function analyzeMenu(
+  base64: string,
+  mimeType: string,
+  profile: DietaryProfile,
+  uiLanguage: string
+): Promise<MenuAnalysisItem[]> {
+  const profileDesc = buildProfileDescription(profile);
+  const prompt = `You are analyzing a restaurant menu image for a user with these dietary needs:\n${profileDesc}\n\nIdentify up to 15 of the most prominent dish/items visible on this menu. Return ONLY a JSON array, no other text:\n[\n  {\n    "originalName": "dish name exactly as written on the menu",\n    "translatedName": "dish name in ${uiLanguage}",\n    "box": { "x": 0.0, "y": 0.0, "w": 1.0, "h": 0.05 },\n    "overallStatus": "safe",\n    "ingredients": ["main ingredient 1", "main ingredient 2"],\n    "flags": [{ "ingredient": "name", "reason": "why flagged for this user", "severity": "unsafe" }],\n    "summary": "one sentence why safe/caution/unsafe for this user in ${uiLanguage}"\n  }\n]\n\nFor "box", always use { "x": 0, "y": 0, "w": 1, "h": 0.05 } — do not estimate positions. Keep ingredients to 3-5 key items only. severity must be safe, caution, or unsafe. Respond in ${uiLanguage}.`;
+
+  const response = await client.messages.create({
+    model: MODEL,
+    max_tokens: 4096,
+    messages: [{
+      role: 'user',
+      content: [{
+        type: 'image',
+        source: { type: 'base64', media_type: mimeType as 'image/jpeg', data: base64 },
+      }, { type: 'text', text: prompt }],
+    }],
+  });
+
+  const text = (response.content[0] as { type: string; text: string }).text.trim();
+  const match = text.match(/\[[\s\S]*\]/);
+  if (!match) throw new Error('Could not parse menu items from AI response. Please try a clearer photo of the menu.');
+  return JSON.parse(match[0]) as MenuAnalysisItem[];
+}
+
+// ─── Family Compatibility ────────────────────────────────────────────────────
+
+export type FamilyCompatibilityResult = {
+  name: string;
+  status: 'safe' | 'caution' | 'unsafe';
+  reason: string;
+};
+
+export async function analyzeFamilyCompatibility(
+  foodName: string,
+  ingredients: string[],
+  flags: Array<{ ingredient: string; severity: string; reason: string }>,
+  familyProfiles: Array<{ name: string; allergies: string[]; restrictions: string[]; preferences: string[] }>,
+  uiLanguage: string
+): Promise<FamilyCompatibilityResult[]> {
+  const profileLines = familyProfiles.map((p) => {
+    const parts: string[] = [];
+    if (p.allergies.length) parts.push(`allergies: ${p.allergies.join(', ')}`);
+    if (p.restrictions.length) parts.push(`restrictions: ${p.restrictions.join(', ')}`);
+    if (p.preferences.length) parts.push(`preferences: ${p.preferences.join(', ')}`);
+    return `- ${p.name}: ${parts.length ? parts.join('; ') : 'no restrictions'}`;
+  }).join('\n');
+
+  const flagSummary = flags.length
+    ? flags.map((f) => `${f.ingredient} (${f.severity}): ${f.reason}`).join('\n')
+    : 'No specific flags.';
+
+  const prompt = `You are evaluating food safety for multiple people.
+
+Food: ${foodName}
+Ingredients: ${ingredients.length ? ingredients.join(', ') : 'unknown'}
+Known flags from analysis:
+${flagSummary}
+
+Family members to evaluate:
+${profileLines}
+
+For each person, respond ONLY with a JSON array (no markdown, no extra text):
+[{"name":"...", "status":"safe"|"caution"|"unsafe", "reason":"one short sentence why"}]
+
+Respond in this language: ${uiLanguage}`;
+
+  const response = await client.messages.create({
+    model: MODEL,
+    max_tokens: 1024,
+    messages: [{ role: 'user', content: prompt }],
+  });
+
+  const text = (response.content[0] as { type: string; text: string }).text.trim();
+  const match = text.match(/\[[\s\S]*\]/);
+  if (!match) return [];
+  return JSON.parse(match[0]) as FamilyCompatibilityResult[];
 }

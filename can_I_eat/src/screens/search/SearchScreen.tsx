@@ -27,18 +27,18 @@ type Props = {
 };
 
 export default function SearchScreen({ onResult, onCancel, onRestaurantSelect }: Props) {
-  const { dietaryProfile } = useAuth();
+  const { activeProfile } = useAuth();
   const { t, language } = useLanguage();
   const [activeTab, setActiveTab] = useState<'food' | 'restaurants'>('food');
   const [query, setQuery] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSearch = async () => {
-    if (!query.trim() || !dietaryProfile) return;
+    if (!query.trim() || !activeProfile) return;
     setLoading(true);
     try {
       const [result, imageFromQuery] = await Promise.all([
-        analyzeFoodText(query.trim(), dietaryProfile, LANGUAGE_NAMES[language]),
+        analyzeFoodText(query.trim(), activeProfile, LANGUAGE_NAMES[language]),
         fetchFoodImageUrl(query.trim()),
       ]);
 
