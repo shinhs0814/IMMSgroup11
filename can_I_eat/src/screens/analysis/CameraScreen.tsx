@@ -29,9 +29,16 @@ type Props = {
   onCancel: () => void;
 };
 
+// AbortSignal.timeout() is not supported on all Android/Hermes versions — use this instead
+function timeoutSignal(ms: number): AbortSignal {
+  const controller = new AbortController();
+  setTimeout(() => controller.abort(), ms);
+  return controller.signal;
+}
+
 async function fetchFromOpenFoodFacts(barcode: string): Promise<{ name: string; ingredients: string } | null> {
   try {
-    const res = await fetch(`https://world.openfoodfacts.org/api/v0/product/${barcode}.json`, { signal: AbortSignal.timeout(6000) });
+    const res = await fetch(`https://world.openfoodfacts.org/api/v0/product/${barcode}.json`, { signal: timeoutSignal(6000) });
     const data = await res.json();
     if (data.status !== 1) return null;
     const p = data.product;
@@ -46,7 +53,7 @@ async function fetchFromOpenFoodFacts(barcode: string): Promise<{ name: string; 
 
 async function fetchFromUPCItemDB(barcode: string): Promise<{ name: string; ingredients: string } | null> {
   try {
-    const res = await fetch(`https://api.upcitemdb.com/prod/trial/lookup?upc=${barcode}`, { signal: AbortSignal.timeout(6000) });
+    const res = await fetch(`https://api.upcitemdb.com/prod/trial/lookup?upc=${barcode}`, { signal: timeoutSignal(6000) });
     const data = await res.json();
     if (data.code !== 'OK' || !data.items?.length) return null;
     const item = data.items[0];
@@ -62,7 +69,7 @@ async function fetchFromUPCItemDB(barcode: string): Promise<{ name: string; ingr
 async function fetchFromKoreanFoodDB(barcode: string): Promise<{ name: string; ingredients: string } | null> {
   // Open Food Facts Korea mirror
   try {
-    const res = await fetch(`https://kr.openfoodfacts.org/api/v0/product/${barcode}.json`, { signal: AbortSignal.timeout(6000) });
+    const res = await fetch(`https://kr.openfoodfacts.org/api/v0/product/${barcode}.json`, { signal: timeoutSignal(6000) });
     const data = await res.json();
     if (data.status !== 1) return null;
     const p = data.product;
@@ -83,7 +90,7 @@ async function fetchFromFoodSafetyKorea(barcode: string): Promise<{ name: string
     // Step 1: look up barcode → product report number + product name
     const c005Res = await fetch(
       `https://openapi.foodsafetykorea.go.kr/api/${apiKey}/C005/json/1/1/BAR_CD=${barcode}`,
-      { signal: AbortSignal.timeout(6000) }
+      { signal: timeoutSignal(6000) }
     );
     const c005Data = await c005Res.json();
     if (!c005Data?.C005?.row?.length) return null;
@@ -97,7 +104,7 @@ async function fetchFromFoodSafetyKorea(barcode: string): Promise<{ name: string
     if (reportNo) {
       const c002Res = await fetch(
         `https://openapi.foodsafetykorea.go.kr/api/${apiKey}/C002/json/1/100/PRDLST_REPORT_NO=${reportNo}`,
-        { signal: AbortSignal.timeout(6000) }
+        { signal: timeoutSignal(6000) }
       );
       const c002Data = await c002Res.json();
       if (c002Data?.C002?.row?.length) {
@@ -123,7 +130,7 @@ async function fetchFromNaverShopping(barcode: string): Promise<{ name: string; 
           'X-Naver-Client-Id': clientId,
           'X-Naver-Client-Secret': clientSecret,
         },
-        signal: AbortSignal.timeout(6000),
+        signal: timeoutSignal(6000),
       }
     );
     const data = await res.json();
