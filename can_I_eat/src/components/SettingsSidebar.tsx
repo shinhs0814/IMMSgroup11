@@ -22,9 +22,10 @@ type Props = {
   onClose: () => void;
   onMyProfile: () => void;
   onQRPassport?: () => void;
+  onFamilyProfiles?: () => void;
 };
 
-export default function SettingsSidebar({ visible, onClose, onMyProfile, onQRPassport }: Props) {
+export default function SettingsSidebar({ visible, onClose, onMyProfile, onQRPassport, onFamilyProfiles }: Props) {
   const { user, logOut } = useAuth();
   const { t, language, setLanguage } = useLanguage();
 
@@ -121,6 +122,21 @@ export default function SettingsSidebar({ visible, onClose, onMyProfile, onQRPas
             >
               <Text style={styles.menuIcon}>📋</Text>
               <Text style={styles.menuText}>QR Passport</Text>
+              <Text style={styles.menuArrow}>›</Text>
+            </TouchableOpacity>
+          )}
+
+          {/* Family Profiles */}
+          {onFamilyProfiles && (
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() => {
+                onClose();
+                setTimeout(onFamilyProfiles, 280);
+              }}
+            >
+              <Text style={styles.menuIcon}>👨‍👩‍👧‍👦</Text>
+              <Text style={styles.menuText}>{t.familyProfiles}</Text>
               <Text style={styles.menuArrow}>›</Text>
             </TouchableOpacity>
           )}

@@ -100,6 +100,23 @@ export type TranslationKeys = {
   scanOptionAlbum: string;
   scanOptionUseCamera: string;
   scanOptionGallery: string;
+  modeFood: string;
+  modeFoodDesc: string;
+  modeLabel: string;
+  modeLabelDesc: string;
+  modeBarcode: string;
+  modeBarcodeDesc: string;
+  barcodeScanning: string;
+  barcodeNotFound: string;
+  barcodeSuccess: string;
+  modeMenu: string;
+  modeMenuDesc: string;
+  menuScanNote: string;
+  menuAnalysisTitle: string;
+  menuItemCount: string;
+  menuNoItems: string;
+  menuTapToExpand: string;
+  menuTranslation: string;
   analyzingCompressing: string;
   analyzingAI: string;
   analyzingProfile: string;
@@ -109,6 +126,23 @@ export type TranslationKeys = {
   noFoodsInGroup: string;
   deleteGroupConfirm: string;
   removeFoodConfirm: string;
+
+  // Meal history
+  mealHistory: string;
+  mealHistoryTitle: string;
+  mealHistorySubtitle: string;
+  mealHistoryToday: string;
+  mealHistoryEmpty: string;
+  mealHistoryEmptySub: string;
+  mealHistoryDelete: string;
+  mealHistoryDeleteConfirm: string;
+  logMealBtn: string;
+  mealLoggedBtn: string;
+  mealLogged: string;
+  mealLogFailed: string;
+  logMealChooseDate: string;
+  logMealDateTitle: string;
+  logMealConfirm: string;
 
   // Deactivate / delete account
   deactivateAccount: string;
@@ -223,8 +257,27 @@ export type TranslationKeys = {
   cameraPermissionMsg: string;
   photoLibraryPermissionMsg: string;
 
-  // AI disclaimer
+// AI disclaimer
   aiDisclaimerText: string;
+  // Family profiles
+  familyProfiles: string;
+  familyProfilesTitle: string;
+  familyProfilesSubtitle: string;
+  addFamilyMember: string;
+  editMember: string;
+  deleteMember: string;
+  deleteMemberConfirm: string;
+  memberNameLabel: string;
+  memberNamePlaceholder: string;
+  memberAvatarLabel: string;
+  saveMember: string;
+  memberAdded: string;
+  memberUpdated: string;
+  noFamilyMembers: string;
+  noFamilyMembersSub: string;
+  scanningFor: string;
+  switchProfile: string;
+  meLabel: string;
 };
 
 const en: TranslationKeys = {
@@ -311,6 +364,23 @@ const en: TranslationKeys = {
   scanOptionAlbum: 'From Album',
   scanOptionUseCamera: 'Use your camera',
   scanOptionGallery: 'Choose from gallery',
+  modeFood: 'Food Photo',
+  modeFoodDesc: 'Identify dish ingredients',
+  modeLabel: 'Food Label',
+  modeLabelDesc: 'Scan a package label',
+  modeBarcode: 'Barcode Scan',
+  modeBarcodeDesc: 'Scan a product barcode',
+  barcodeScanning: 'Scanning barcode...',
+  barcodeNotFound: 'Product not found. Try label scan instead.',
+  barcodeSuccess: 'Product found!',
+  modeMenu: 'Menu Scan',
+  modeMenuDesc: 'Analyze a full menu',
+  menuScanNote: '⚠️ Warning: Food or menu photo results are based on typical recipes and may not be exact. Use Food Label search for the most accurate results.',
+  menuAnalysisTitle: 'Menu Analysis',
+  menuItemCount: 'items found',
+  menuNoItems: 'No menu items detected. Try a clearer photo.',
+  menuTapToExpand: 'Tap to see ingredients',
+  menuTranslation: 'Translation',
   analyzingCompressing: 'Compressing image...',
   analyzingAI: 'Analyzing with AI...',
   analyzingProfile: 'Checking ingredients against your dietary profile...',
@@ -320,6 +390,23 @@ const en: TranslationKeys = {
   noFoodsInGroup: 'No foods yet. Scan something!',
   deleteGroupConfirm: 'Delete this group? Foods will move to uncategorized.',
   removeFoodConfirm: 'Remove this food from your saved foods?',
+
+  // Meal history
+  mealHistory: 'History',
+  mealHistoryTitle: 'Meal History',
+  mealHistorySubtitle: 'Track what you eat every day',
+  mealHistoryToday: 'Today',
+  mealHistoryEmpty: 'No meals logged',
+  mealHistoryEmptySub: 'Scan or search food and tap\n"I ate this" to log your meal',
+  mealHistoryDelete: 'Delete Record',
+  mealHistoryDeleteConfirm: 'Remove this meal from your history?',
+  logMealBtn: 'I ate this today',
+  mealLoggedBtn: 'Logged!',
+  mealLogged: 'Meal logged to your history.',
+  mealLogFailed: 'Failed to log meal. Please try again.',
+  logMealChooseDate: 'Add to Meal History',
+  logMealDateTitle: 'Which day did you eat this?',
+  logMealConfirm: 'Log Meal',
 
   // Deactivate / delete account
   deactivateAccount: '🗑  Deactivate Account',
@@ -435,7 +522,26 @@ const en: TranslationKeys = {
   permissionRequiredTitle: 'Permission Required',
   cameraPermissionMsg: 'Camera access is needed to take photos.',
   photoLibraryPermissionMsg: 'Photo library access is needed.',
-  aiDisclaimerText: 'AI analysis may not detect hidden ingredients (e.g. broth, sauces, oils). For severe allergies, always verify directly with restaurant staff.',
+aiDisclaimerText: 'AI analysis may not detect hidden ingredients (e.g. broth, sauces, oils). For severe allergies, always verify directly with restaurant staff.',
+  // Family profiles
+  familyProfiles: 'Family Profiles',
+  familyProfilesTitle: 'Family Profiles',
+  familyProfilesSubtitle: 'Manage dietary profiles for your family',
+  addFamilyMember: 'Add Family Member',
+  editMember: 'Edit Profile',
+  deleteMember: 'Delete Member',
+  deleteMemberConfirm: 'Delete this family member profile?',
+  memberNameLabel: 'Name',
+  memberNamePlaceholder: 'e.g. Mom, Dad, Baby...',
+  memberAvatarLabel: 'Choose an avatar',
+  saveMember: 'Save Member',
+  memberAdded: 'Member added!',
+  memberUpdated: 'Member updated!',
+  noFamilyMembers: 'No family members yet',
+  noFamilyMembersSub: 'Add profiles for your family to scan food for them',
+  scanningFor: 'Scanning for:',
+  switchProfile: 'Switch',
+  meLabel: 'Me',
 };
 
 const ko: TranslationKeys = {
@@ -522,6 +628,23 @@ const ko: TranslationKeys = {
   scanOptionAlbum: '앨범에서',
   scanOptionUseCamera: '카메라 사용',
   scanOptionGallery: '갤러리에서 선택',
+  modeFood: '음식 사진',
+  modeFoodDesc: '요리 재료 확인',
+  modeLabel: '포장 라벨',
+  modeLabelDesc: '포장지 라벨 스캔',
+  modeBarcode: '바코드 스캔',
+  modeBarcodeDesc: '제품 바코드를 스캔하세요',
+  barcodeScanning: '바코드 스캔 중...',
+  barcodeNotFound: '제품을 찾을 수 없습니다. 라벨 스캔을 시도해 보세요.',
+  barcodeSuccess: '제품을 찾았습니다!',
+  modeMenu: '메뉴판 스캔',
+  modeMenuDesc: '메뉴 전체 분석',
+  menuScanNote: '⚠️ 주의: 음식 또는 메뉴 사진 결과는 일반적인 레시피를 기반으로 하며 정확하지 않을 수 있습니다. 가장 정확한 결과를 위해 식품 라벨 검색을 이용하세요.',
+  menuAnalysisTitle: '메뉴 분석',
+  menuItemCount: '개 항목 발견',
+  menuNoItems: '메뉴 항목을 찾을 수 없습니다. 더 선명한 사진을 찍어주세요.',
+  menuTapToExpand: '재료 보기',
+  menuTranslation: '번역',
   analyzingCompressing: '이미지 압축 중...',
   analyzingAI: 'AI 분석 중...',
   analyzingProfile: '식이 프로필에 따라 성분 확인 중...',
@@ -531,6 +654,23 @@ const ko: TranslationKeys = {
   noFoodsInGroup: '음식이 없습니다. 스캔해보세요!',
   deleteGroupConfirm: '이 그룹을 삭제하시겠습니까? 음식이 미분류로 이동합니다.',
   removeFoodConfirm: '이 음식을 저장된 목록에서 제거하시겠습니까?',
+
+  // Meal history
+  mealHistory: '기록',
+  mealHistoryTitle: '섭취 기록',
+  mealHistorySubtitle: '매일 먹은 음식을 기록해보세요',
+  mealHistoryToday: '오늘',
+  mealHistoryEmpty: '기록된 식사가 없습니다',
+  mealHistoryEmptySub: '음식을 스캔하거나 검색한 뒤\n"오늘 먹었어요"를 눌러 기록하세요',
+  mealHistoryDelete: '기록 삭제',
+  mealHistoryDeleteConfirm: '이 식사 기록을 삭제하시겠습니까?',
+  logMealBtn: '오늘 먹었어요',
+  mealLoggedBtn: '기록 완료!',
+  mealLogged: '식사가 기록되었습니다.',
+  mealLogFailed: '기록에 실패했습니다. 다시 시도해주세요.',
+  logMealChooseDate: '식사 기록에 추가',
+  logMealDateTitle: '언제 드셨나요?',
+  logMealConfirm: '기록하기',
 
   // Deactivate / delete account
   deactivateAccount: '🗑  계정 비활성화',
@@ -646,7 +786,26 @@ const ko: TranslationKeys = {
   permissionRequiredTitle: '권한 필요',
   cameraPermissionMsg: '사진 촬영을 위해 카메라 접근 권한이 필요합니다.',
   photoLibraryPermissionMsg: '사진 라이브러리 접근 권한이 필요합니다.',
-  aiDisclaimerText: 'AI 분석은 숨겨진 성분(예: 육수, 소스, 기름 등)을 감지하지 못할 수 있습니다. 심각한 알레르기가 있는 경우 반드시 식당 직원에게 직접 확인하세요.',
+aiDisclaimerText: 'AI 분석은 숨겨진 성분(예: 육수, 소스, 기름 등)을 감지하지 못할 수 있습니다. 심각한 알레르기가 있는 경우 반드시 식당 직원에게 직접 확인하세요.',
+  // Family profiles
+  familyProfiles: '가족 프로필',
+  familyProfilesTitle: '가족 프로필',
+  familyProfilesSubtitle: '가족 구성원의 식이 프로필을 관리하세요',
+  addFamilyMember: '가족 구성원 추가',
+  editMember: '프로필 수정',
+  deleteMember: '구성원 삭제',
+  deleteMemberConfirm: '이 가족 구성원 프로필을 삭제하시겠습니까?',
+  memberNameLabel: '이름',
+  memberNamePlaceholder: '예: 엄마, 아빠, 아이...',
+  memberAvatarLabel: '아바타 선택',
+  saveMember: '구성원 저장',
+  memberAdded: '구성원이 추가되었습니다!',
+  memberUpdated: '구성원이 업데이트되었습니다!',
+  noFamilyMembers: '가족 구성원이 없습니다',
+  noFamilyMembersSub: '가족을 위한 프로필을 추가하면 음식을 대신 스캔할 수 있습니다',
+  scanningFor: '스캔 대상:',
+  switchProfile: '변경',
+  meLabel: '나',
 };
 
 const es: TranslationKeys = {
@@ -733,6 +892,23 @@ const es: TranslationKeys = {
   scanOptionAlbum: 'Del Álbum',
   scanOptionUseCamera: 'Usar la cámara',
   scanOptionGallery: 'Elegir de la galería',
+  modeFood: 'Foto de comida',
+  modeFoodDesc: 'Identificar ingredientes',
+  modeLabel: 'Etiqueta',
+  modeLabelDesc: 'Escanear etiqueta del paquete',
+  modeBarcode: 'Escanear código de barras',
+  modeBarcodeDesc: 'Escanea un código de barras',
+  barcodeScanning: 'Escaneando código de barras...',
+  barcodeNotFound: 'Producto no encontrado. Intenta escanear la etiqueta.',
+  barcodeSuccess: '¡Producto encontrado!',
+  modeMenu: 'Escanear menú',
+  modeMenuDesc: 'Analizar menú completo',
+  menuScanNote: '⚠️ Advertencia: Los resultados de fotos de comida o menú se basan en recetas típicas y pueden no ser exactos. Use la búsqueda de etiquetas para resultados más precisos.',
+  menuAnalysisTitle: 'Análisis del menú',
+  menuItemCount: 'elementos encontrados',
+  menuNoItems: 'No se detectaron elementos. Intenta con una foto más clara.',
+  menuTapToExpand: 'Ver ingredientes',
+  menuTranslation: 'Traducción',
   analyzingCompressing: 'Comprimiendo imagen...',
   analyzingAI: 'Analizando con IA...',
   analyzingProfile: 'Verificando ingredientes según tu perfil...',
@@ -742,6 +918,23 @@ const es: TranslationKeys = {
   noFoodsInGroup: '¡Sin alimentos. Escanea algo!',
   deleteGroupConfirm: '¿Eliminar este grupo? Los alimentos pasarán a sin categoría.',
   removeFoodConfirm: '¿Eliminar este alimento de tus guardados?',
+
+  // Meal history
+  mealHistory: 'Historial',
+  mealHistoryTitle: 'Historial de Comidas',
+  mealHistorySubtitle: 'Registra lo que comes cada día',
+  mealHistoryToday: 'Hoy',
+  mealHistoryEmpty: 'Sin comidas registradas',
+  mealHistoryEmptySub: 'Escanea o busca un alimento y toca\n"Lo comí hoy" para registrarlo',
+  mealHistoryDelete: 'Eliminar Registro',
+  mealHistoryDeleteConfirm: '¿Eliminar este registro de comida?',
+  logMealBtn: 'Lo comí hoy',
+  mealLoggedBtn: '¡Registrado!',
+  mealLogged: 'Comida registrada en tu historial.',
+  mealLogFailed: 'Error al registrar. Inténtalo de nuevo.',
+  logMealChooseDate: 'Añadir al historial',
+  logMealDateTitle: '¿Cuándo lo comiste?',
+  logMealConfirm: 'Registrar',
 
   // Deactivate / delete account
   deactivateAccount: '🗑  Desactivar Cuenta',
@@ -857,7 +1050,26 @@ const es: TranslationKeys = {
   permissionRequiredTitle: 'Permiso Requerido',
   cameraPermissionMsg: 'Se necesita acceso a la cámara para tomar fotos.',
   photoLibraryPermissionMsg: 'Se necesita acceso a la galería de fotos.',
-  aiDisclaimerText: 'El análisis de IA puede no detectar ingredientes ocultos (p. ej. caldos, salsas, aceites). Para alergias graves, siempre verifique directamente con el personal del restaurante.',
+aiDisclaimerText: 'El análisis de IA puede no detectar ingredientes ocultos (p. ej. caldos, salsas, aceites). Para alergias graves, siempre verifique directamente con el personal del restaurante.',
+  // Family profiles
+  familyProfiles: 'Perfiles Familiares',
+  familyProfilesTitle: 'Perfiles Familiares',
+  familyProfilesSubtitle: 'Gestiona los perfiles dietéticos de tu familia',
+  addFamilyMember: 'Agregar Familiar',
+  editMember: 'Editar Perfil',
+  deleteMember: 'Eliminar Miembro',
+  deleteMemberConfirm: '¿Eliminar este perfil familiar?',
+  memberNameLabel: 'Nombre',
+  memberNamePlaceholder: 'ej. Mamá, Papá, Bebé...',
+  memberAvatarLabel: 'Elige un avatar',
+  saveMember: 'Guardar Miembro',
+  memberAdded: '¡Miembro agregado!',
+  memberUpdated: '¡Miembro actualizado!',
+  noFamilyMembers: 'Sin miembros familiares aún',
+  noFamilyMembersSub: 'Agrega perfiles para escanear alimentos para tu familia',
+  scanningFor: 'Escaneando para:',
+  switchProfile: 'Cambiar',
+  meLabel: 'Yo',
 };
 
 const fr: TranslationKeys = {
@@ -944,6 +1156,23 @@ const fr: TranslationKeys = {
   scanOptionAlbum: "Depuis l'Album",
   scanOptionUseCamera: 'Utiliser la caméra',
   scanOptionGallery: 'Choisir depuis la galerie',
+  modeFood: 'Photo de plat',
+  modeFoodDesc: 'Identifier les ingrédients',
+  modeLabel: 'Étiquette',
+  modeLabelDesc: 'Scanner une étiquette',
+  modeBarcode: 'Scanner le code-barres',
+  modeBarcodeDesc: 'Scannez un code-barres produit',
+  barcodeScanning: 'Scan du code-barres...',
+  barcodeNotFound: "Produit introuvable. Essayez le scan d'étiquette.",
+  barcodeSuccess: 'Produit trouvé !',
+  modeMenu: 'Scanner le menu',
+  modeMenuDesc: 'Analyser un menu complet',
+  menuScanNote: '⚠️ Avertissement: Les résultats des photos de plats ou de menus sont basés sur des recettes typiques et peuvent ne pas être exacts. Utilisez la recherche par étiquette pour de meilleurs résultats.',
+  menuAnalysisTitle: 'Analyse du menu',
+  menuItemCount: 'plats trouvés',
+  menuNoItems: 'Aucun plat détecté. Essayez une photo plus nette.',
+  menuTapToExpand: 'Voir les ingrédients',
+  menuTranslation: 'Traduction',
   analyzingCompressing: "Compression de l'image...",
   analyzingAI: 'Analyse par IA en cours...',
   analyzingProfile: 'Vérification des ingrédients selon votre profil...',
@@ -953,6 +1182,23 @@ const fr: TranslationKeys = {
   noFoodsInGroup: 'Aucun aliment. Scannez quelque chose!',
   deleteGroupConfirm: 'Supprimer ce groupe? Les aliments seront déplacés vers non classifié.',
   removeFoodConfirm: 'Supprimer cet aliment de vos sauvegardes?',
+
+  // Meal history
+  mealHistory: 'Historique',
+  mealHistoryTitle: 'Historique des Repas',
+  mealHistorySubtitle: 'Suivez ce que vous mangez chaque jour',
+  mealHistoryToday: "Aujourd'hui",
+  mealHistoryEmpty: 'Aucun repas enregistré',
+  mealHistoryEmptySub: 'Scannez ou cherchez un aliment et appuyez\nsur "Je l\'ai mangé" pour le noter',
+  mealHistoryDelete: 'Supprimer le Repas',
+  mealHistoryDeleteConfirm: 'Supprimer ce repas de votre historique?',
+  logMealBtn: "Je l'ai mangé aujourd'hui",
+  mealLoggedBtn: 'Noté!',
+  mealLogged: 'Repas enregistré dans votre historique.',
+  mealLogFailed: "Échec de l'enregistrement. Veuillez réessayer.",
+  logMealChooseDate: "Ajouter à l'historique",
+  logMealDateTitle: 'Quand avez-vous mangé ceci ?',
+  logMealConfirm: 'Enregistrer',
 
   // Deactivate / delete account
   deactivateAccount: '🗑  Désactiver le Compte',
@@ -1068,7 +1314,26 @@ const fr: TranslationKeys = {
   permissionRequiredTitle: 'Autorisation Requise',
   cameraPermissionMsg: "L'accès à la caméra est nécessaire pour prendre des photos.",
   photoLibraryPermissionMsg: "L'accès à la galerie de photos est nécessaire.",
-  aiDisclaimerText: "L'analyse IA peut ne pas détecter les ingrédients cachés (ex. bouillons, sauces, huiles). En cas d'allergie grave, vérifiez toujours directement auprès du personnel du restaurant.",
+aiDisclaimerText: "L'analyse IA peut ne pas détecter les ingrédients cachés (ex. bouillons, sauces, huiles). En cas d'allergie grave, vérifiez toujours directement auprès du personnel du restaurant.",
+  // Family profiles
+  familyProfiles: 'Profils Familiaux',
+  familyProfilesTitle: 'Profils Familiaux',
+  familyProfilesSubtitle: 'Gérez les profils alimentaires de votre famille',
+  addFamilyMember: 'Ajouter un Membre',
+  editMember: 'Modifier le Profil',
+  deleteMember: 'Supprimer le Membre',
+  deleteMemberConfirm: 'Supprimer ce profil familial?',
+  memberNameLabel: 'Nom',
+  memberNamePlaceholder: 'ex. Maman, Papa, Bébé...',
+  memberAvatarLabel: 'Choisir un avatar',
+  saveMember: 'Enregistrer le Membre',
+  memberAdded: 'Membre ajouté!',
+  memberUpdated: 'Membre mis à jour!',
+  noFamilyMembers: 'Aucun membre familial',
+  noFamilyMembersSub: 'Ajoutez des profils pour scanner des aliments pour votre famille',
+  scanningFor: 'Scan pour:',
+  switchProfile: 'Changer',
+  meLabel: 'Moi',
 };
 
 const ja: TranslationKeys = {
@@ -1155,6 +1420,23 @@ const ja: TranslationKeys = {
   scanOptionAlbum: 'アルバムから',
   scanOptionUseCamera: 'カメラを使用',
   scanOptionGallery: 'ギャラリーから選ぶ',
+  modeFood: '料理写真',
+  modeFoodDesc: '料理の食材を確認',
+  modeLabel: 'ラベルスキャン',
+  modeLabelDesc: 'パッケージラベルをスキャン',
+  modeBarcode: 'バーコードスキャン',
+  modeBarcodeDesc: '商品のバーコードをスキャン',
+  barcodeScanning: 'バーコードをスキャン中...',
+  barcodeNotFound: '商品が見つかりません。ラベルスキャンをお試しください。',
+  barcodeSuccess: '商品が見つかりました！',
+  modeMenu: 'メニュースキャン',
+  modeMenuDesc: 'メニュー全体を分析',
+  menuScanNote: '⚠️ 注意: 料理やメニュー写真の結果は一般的なレシピに基づいており、正確でない場合があります。最も正確な結果はフードラベル検索をご利用ください。',
+  menuAnalysisTitle: 'メニュー分析',
+  menuItemCount: '件のメニューを検出',
+  menuNoItems: 'メニューが検出されませんでした。鮮明な写真をお試しください。',
+  menuTapToExpand: '食材を見る',
+  menuTranslation: '翻訳',
   analyzingCompressing: '画像を圧縮中...',
   analyzingAI: 'AIで分析中...',
   analyzingProfile: '食事プロファイルに基づいて成分を確認中...',
@@ -1164,6 +1446,23 @@ const ja: TranslationKeys = {
   noFoodsInGroup: '食品なし。スキャンしてみて！',
   deleteGroupConfirm: 'このグループを削除しますか？食品は未分類に移動します。',
   removeFoodConfirm: 'この食品を保存済みリストから削除しますか？',
+
+  // Meal history
+  mealHistory: '記録',
+  mealHistoryTitle: '食事記録',
+  mealHistorySubtitle: '毎日の食事を記録しましょう',
+  mealHistoryToday: '今日',
+  mealHistoryEmpty: '記録がありません',
+  mealHistoryEmptySub: '食品をスキャンまたは検索して\n「今日食べた」を押して記録してください',
+  mealHistoryDelete: '記録を削除',
+  mealHistoryDeleteConfirm: 'この食事記録を削除しますか？',
+  logMealBtn: '今日食べた',
+  mealLoggedBtn: '記録済み！',
+  mealLogged: '食事が記録されました。',
+  mealLogFailed: '記録に失敗しました。もう一度お試しください。',
+  logMealChooseDate: '食事履歴に追加',
+  logMealDateTitle: 'いつ食べましたか？',
+  logMealConfirm: '記録する',
 
   // Deactivate / delete account
   deactivateAccount: '🗑  アカウントを無効化',
@@ -1279,7 +1578,26 @@ const ja: TranslationKeys = {
   permissionRequiredTitle: '権限が必要です',
   cameraPermissionMsg: '写真を撮影するためにカメラへのアクセスが必要です。',
   photoLibraryPermissionMsg: '写真ライブラリへのアクセスが必要です。',
-  aiDisclaimerText: 'AI分析では隠れた成分（例：だし、ソース、油など）を検出できない場合があります。重篤なアレルギーがある場合は、必ずレストランのスタッフに直接確認してください。',
+aiDisclaimerText: 'AI分析では隠れた成分（例：だし、ソース、油など）を検出できない場合があります。重篤なアレルギーがある場合は、必ずレストランのスタッフに直接確認してください。',
+  // Family profiles
+  familyProfiles: '家族プロフィール',
+  familyProfilesTitle: '家族プロフィール',
+  familyProfilesSubtitle: '家族の食事プロフィールを管理',
+  addFamilyMember: '家族を追加',
+  editMember: 'プロフィール編集',
+  deleteMember: 'メンバーを削除',
+  deleteMemberConfirm: 'この家族プロフィールを削除しますか？',
+  memberNameLabel: '名前',
+  memberNamePlaceholder: '例: お母さん、お父さん、子供...',
+  memberAvatarLabel: 'アバターを選択',
+  saveMember: 'メンバーを保存',
+  memberAdded: 'メンバーが追加されました！',
+  memberUpdated: 'メンバーが更新されました！',
+  noFamilyMembers: '家族メンバーがいません',
+  noFamilyMembersSub: '家族のプロフィールを追加して、食品をスキャンしましょう',
+  scanningFor: 'スキャン対象:',
+  switchProfile: '切替',
+  meLabel: '自分',
 };
 
 export const TRANSLATIONS: Record<AppLanguage, TranslationKeys> = { en, ko, es, fr, ja };
