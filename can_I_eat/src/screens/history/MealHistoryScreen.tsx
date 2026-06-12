@@ -10,10 +10,13 @@ import {
   RefreshControl,
   ActivityIndicator,
 } from 'react-native';
-import { Colors } from '../../constants/colors';
+import { Colors, verdictColors } from '../../constants/colors';
+import { Radius, Shadow } from '../../constants/theme';
 import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
 import AppText from '../../components/AppText';
+import Icon from '../../components/Icon';
+import StatusPill from '../../components/StatusPill';
 import {
   MealRecord,
   getMealsByDate,
@@ -97,18 +100,6 @@ export default function MealHistoryScreen({ onOpenSettings, onBack }: Props) {
     );
   };
 
-  const statusColor = (status: string) => {
-    if (status === 'safe') return Colors.safe;
-    if (status === 'caution') return Colors.caution;
-    return Colors.unsafe;
-  };
-
-  const statusEmoji = (status: string) => {
-    if (status === 'safe') return '✅';
-    if (status === 'caution') return '⚠️';
-    return '🚫';
-  };
-
   const today = todayString();
   const isToday = selectedDate === today;
   const canGoForward = selectedDate < today;
@@ -120,68 +111,54 @@ export default function MealHistoryScreen({ onOpenSettings, onBack }: Props) {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={onBack} style={styles.backBtn}>
-          <Text style={styles.backText}>←</Text>
-        </TouchableOpacity>
-        <View>
-          <AppText weight="800" style={styles.title}>{t.mealHistoryTitle}</AppText>
-          <AppText weight="400" style={styles.subtitle}>{t.mealHistorySubtitle}</AppText>
+        <View style={styles.headerTop}>
+          <TouchableOpacity onPress={onBack} style={styles.backBtn}>
+            <Icon name="chevronLeft" size={22} color={Colors.text} stroke={2.4} />
+          </TouchableOpacity>
+          <View style={{ flex: 1 }}>
+            <AppText weight="800" display style={styles.title}>{t.mealHistoryTitle}</AppText>
+            <AppText style={styles.subtitle}>{t.mealHistorySubtitle}</AppText>
+          </View>
+          <TouchableOpacity onPress={onOpenSettings} style={styles.profileBtn}>
+            <AppText weight="800" display style={styles.profileInitial}>
+              {user?.displayName?.charAt(0).toUpperCase() || '?'}
+            </AppText>
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity onPress={onOpenSettings} style={styles.profileBtn}>
-          <Text style={styles.profileInitial}>
-            {user?.displayName?.charAt(0).toUpperCase() || '?'}
-          </Text>
-        </TouchableOpacity>
-      </View>
 
-      {/* Date navigator */}
-      <View style={styles.dateNav}>
-        <TouchableOpacity
-          style={styles.arrowBtn}
-          onPress={() => setSelectedDate(addDays(selectedDate, -1))}
-        >
-          <Text style={styles.arrowText}>‹</Text>
-        </TouchableOpacity>
-
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.weekRow}
-        >
+        {/* Week strip */}
+        <View style={styles.weekStrip}>
           {weekDates.map((d) => {
             const isSelected = d === selectedDate;
             const hasRecord = recordedDates.has(d);
             const isFuture = d > today;
+            const dow = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][new Date(d + 'T00:00:00').getDay()];
             return (
               <TouchableOpacity
                 key={d}
-                style={[styles.dayDot, isSelected && styles.dayDotSelected]}
+                style={[styles.dayBtn, isSelected && styles.dayBtnSelected]}
                 onPress={() => !isFuture && setSelectedDate(d)}
                 disabled={isFuture}
+                activeOpacity={0.7}
               >
-                <Text style={[styles.dayLabel, isSelected && styles.dayLabelSelected, isFuture && styles.dayFuture]}>
+                <AppText style={[styles.dayDow, isSelected && styles.dayDowSelected, isFuture && styles.dayFuture]}>
+                  {dow}
+                </AppText>
+                <AppText weight="800" display style={[styles.dayNum, isSelected && styles.dayNumSelected, isFuture && styles.dayFuture]}>
                   {d.slice(8)}
-                </Text>
-                {hasRecord && !isSelected && <View style={styles.recordDot} />}
+                </AppText>
+                <View style={[styles.recordDot, { backgroundColor: hasRecord ? (isSelected ? '#fff' : Colors.brand) : 'transparent' }]} />
               </TouchableOpacity>
             );
           })}
-        </ScrollView>
-
-        <TouchableOpacity
-          style={[styles.arrowBtn, !canGoForward && styles.arrowDisabled]}
-          onPress={() => canGoForward && setSelectedDate(addDays(selectedDate, 1))}
-          disabled={!canGoForward}
-        >
-          <Text style={[styles.arrowText, !canGoForward && styles.arrowTextDisabled]}>›</Text>
-        </TouchableOpacity>
+        </View>
       </View>
 
       {/* Selected date label */}
       <View style={styles.dateLabelRow}>
-        <Text style={styles.dateLabel}>
-          {isToday ? `${t.mealHistoryToday} (${formatDate(selectedDate)})` : formatDate(selectedDate)}
-        </Text>
+        <AppText weight="700" display style={styles.dateLabel}>
+          {isToday ? `${t.mealHistoryToday}` : `${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][new Date(selectedDate + 'T00:00:00').getDay()]}, ${selectedDate.slice(5)}`}
+        </AppText>
       </View>
 
       {/* Meal list */}
@@ -196,52 +173,43 @@ export default function MealHistoryScreen({ onOpenSettings, onBack }: Props) {
         }
       >
         {loading ? (
-          <ActivityIndicator color={Colors.primary} style={styles.loader} />
+          <ActivityIndicator color={Colors.brand} style={styles.loader} />
         ) : meals.length === 0 ? (
           <View style={styles.emptyState}>
             <Text style={styles.emptyEmoji}>🍽️</Text>
-            <Text style={styles.emptyTitle}>{t.mealHistoryEmpty}</Text>
-            <Text style={styles.emptySubtitle}>{t.mealHistoryEmptySub}</Text>
+            <AppText weight="700" display style={styles.emptyTitle}>{t.mealHistoryEmpty}</AppText>
+            <AppText style={styles.emptySubtitle}>{t.mealHistoryEmptySub}</AppText>
           </View>
         ) : (
-          meals.map((meal) => (
-            <View key={meal.id} style={styles.mealCard}>
-              {meal.imageBase64 ? (
-                <Image
-                  source={{ uri: `data:image/jpeg;base64,${meal.imageBase64}` }}
-                  style={styles.mealImage}
-                />
-              ) : meal.imageUrl ? (
-                <Image source={{ uri: meal.imageUrl }} style={styles.mealImage} resizeMode="cover" />
-              ) : (
-                <View style={[styles.mealImage, styles.mealImagePlaceholder]}>
-                  <Text style={{ fontSize: 26 }}>🍽️</Text>
-                </View>
-              )}
-
-              <View style={styles.mealInfo}>
-                <Text style={styles.mealName} numberOfLines={1}>{meal.foodName}</Text>
-                <View style={styles.statusRow}>
-                  <Text style={styles.statusEmoji}>
-                    {statusEmoji(meal.analysisResult.overallStatus)}
-                  </Text>
-                  <Text style={[styles.statusText, { color: statusColor(meal.analysisResult.overallStatus) }]}>
-                    {meal.analysisResult.overallStatus.charAt(0).toUpperCase() +
-                      meal.analysisResult.overallStatus.slice(1)}
-                  </Text>
-                </View>
-                {meal.eatenAt?.toDate && (
-                  <Text style={styles.timeText}>
-                    {meal.eatenAt.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </Text>
+          meals.map((meal) => {
+            const verdict = meal.analysisResult.overallStatus as 'safe' | 'caution' | 'unsafe';
+            const vc = verdictColors(verdict)!;
+            return (
+              <View key={meal.id} style={styles.mealCard}>
+                {meal.imageBase64 ? (
+                  <Image source={{ uri: `data:image/jpeg;base64,${meal.imageBase64}` }} style={styles.mealImage} />
+                ) : meal.imageUrl ? (
+                  <Image source={{ uri: meal.imageUrl }} style={styles.mealImage} resizeMode="cover" />
+                ) : (
+                  <View style={[styles.mealImagePlaceholder, { backgroundColor: vc.soft }]}>
+                    <Text style={{ fontSize: 24 }}>🍽️</Text>
+                  </View>
                 )}
+                <View style={styles.mealInfo}>
+                  <AppText weight="700" display style={styles.mealName} numberOfLines={1}>{meal.foodName}</AppText>
+                  <StatusPill verdict={verdict} size="sm" />
+                  {meal.eatenAt?.toDate && (
+                    <AppText style={styles.timeText}>
+                      {meal.eatenAt.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </AppText>
+                  )}
+                </View>
+                <TouchableOpacity style={styles.deleteBtn} onPress={() => handleDelete(meal)}>
+                  <Icon name="x" size={16} color={Colors.textSecondary} stroke={2.5} />
+                </TouchableOpacity>
               </View>
-
-              <TouchableOpacity style={styles.deleteBtn} onPress={() => handleDelete(meal)}>
-                <Text style={styles.deleteBtnText}>×</Text>
-              </TouchableOpacity>
-            </View>
-          ))
+            );
+          })
         )}
       </ScrollView>
     </View>
@@ -249,106 +217,87 @@ export default function MealHistoryScreen({ onOpenSettings, onBack }: Props) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background },
+  container: { flex: 1, backgroundColor: Colors.bg },
+
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingTop: 60,
-    paddingHorizontal: 24,
-    paddingBottom: 16,
-    backgroundColor: Colors.card,
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
-    shadowColor: '#000',
-    shadowOpacity: 0.06,
-    shadowRadius: 10,
-    elevation: 4,
+    paddingTop: 58,
+    paddingHorizontal: 20,
+    paddingBottom: 18,
+    backgroundColor: Colors.surface,
+    borderBottomLeftRadius: Radius.card,
+    borderBottomRightRadius: Radius.card,
+    ...Shadow.soft,
   },
-  title: { fontSize: 26, fontWeight: '800', color: Colors.text },
-  subtitle: { fontSize: 14, color: Colors.textSecondary, marginTop: 2 },
-  backBtn: { padding: 8, marginRight: 8 },
-  backText: { fontSize: 22, color: Colors.primary, fontWeight: "600" },
+  headerTop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 16,
+  },
+  title: { fontSize: 22, color: Colors.text },
+  subtitle: { fontSize: 13, color: Colors.textSecondary, marginTop: 1 },
+  backBtn: {
+    width: 38,
+    height: 38,
+    borderRadius: Radius.pill,
+    backgroundColor: Colors.surfaceAlt,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   profileBtn: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: Colors.primary,
+    width: 42,
+    height: 42,
+    borderRadius: Radius.pill,
+    backgroundColor: Colors.brand,
     justifyContent: 'center',
     alignItems: 'center',
+    ...Shadow.brand,
   },
-  profileInitial: { color: '#fff', fontWeight: '700', fontSize: 18 },
+  profileInitial: { color: '#fff', fontSize: 17 },
 
-  dateNav: {
-    flexDirection: 'row',
+  // Week strip
+  weekStrip: { flexDirection: 'row', gap: 6 },
+  dayBtn: {
+    flex: 1,
+    paddingVertical: 10,
+    borderRadius: Radius.xs,
     alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 8,
-    backgroundColor: Colors.card,
-    marginTop: 12,
-    marginHorizontal: 16,
-    borderRadius: 16,
-    shadowColor: '#000',
-    shadowOpacity: 0.04,
-    shadowRadius: 6,
-    elevation: 2,
+    backgroundColor: Colors.surfaceAlt,
+    gap: 2,
   },
-  arrowBtn: { paddingHorizontal: 8 },
-  arrowDisabled: { opacity: 0.3 },
-  arrowText: { fontSize: 28, color: Colors.primary, lineHeight: 32 },
-  arrowTextDisabled: { color: Colors.textLight },
-  weekRow: { flexDirection: 'row', gap: 4, paddingHorizontal: 4 },
-  dayDot: {
-    width: 36,
-    height: 44,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  dayDotSelected: { backgroundColor: Colors.primary },
-  dayLabel: { fontSize: 14, fontWeight: '600', color: Colors.text },
-  dayLabelSelected: { color: '#fff' },
-  dayFuture: { color: Colors.textLight },
-  recordDot: {
-    width: 5,
-    height: 5,
-    borderRadius: 3,
-    backgroundColor: Colors.primary,
-    marginTop: 3,
-  },
+  dayBtnSelected: { backgroundColor: Colors.brand },
+  dayDow: { fontSize: 11, fontWeight: '700', color: Colors.textSecondary },
+  dayDowSelected: { color: 'rgba(255,255,255,0.85)' },
+  dayNum: { fontSize: 18, color: Colors.text },
+  dayNumSelected: { color: '#fff' },
+  dayFuture: { opacity: 0.35 },
+  recordDot: { width: 5, height: 5, borderRadius: Radius.pill, marginTop: 1 },
 
-  dateLabelRow: { paddingHorizontal: 24, paddingTop: 16, paddingBottom: 6 },
-  dateLabel: { fontSize: 16, fontWeight: '700', color: Colors.text },
+  dateLabelRow: { paddingHorizontal: 22, paddingTop: 18, paddingBottom: 6 },
+  dateLabel: { fontSize: 17, color: Colors.text },
 
   scroll: { flex: 1 },
-  scrollContent: { padding: 16, paddingBottom: 100 },
+  scrollContent: { padding: 18, paddingBottom: 110 },
   loader: { marginTop: 60 },
 
   emptyState: { alignItems: 'center', paddingVertical: 60 },
-  emptyEmoji: { fontSize: 52, marginBottom: 12 },
-  emptyTitle: { fontSize: 18, fontWeight: '700', color: Colors.text, marginBottom: 6 },
-  emptySubtitle: { fontSize: 13, color: Colors.textSecondary, textAlign: 'center', lineHeight: 18 },
+  emptyEmoji: { fontSize: 52, marginBottom: 14 },
+  emptyTitle: { fontSize: 18, color: Colors.text, marginBottom: 8 },
+  emptySubtitle: { fontSize: 13, color: Colors.textSecondary, textAlign: 'center', lineHeight: 19 },
 
   mealCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.card,
-    borderRadius: 16,
+    backgroundColor: Colors.surface,
+    borderRadius: Radius.sm,
     marginBottom: 10,
     overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
+    ...Shadow.soft,
   },
   mealImage: { width: 72, height: 72, resizeMode: 'cover' },
-  mealImagePlaceholder: { justifyContent: 'center', alignItems: 'center', backgroundColor: Colors.border },
-  mealInfo: { flex: 1, paddingHorizontal: 14, paddingVertical: 10 },
-  mealName: { fontSize: 15, fontWeight: '600', color: Colors.text, marginBottom: 4 },
-  statusRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginBottom: 2 },
-  statusEmoji: { fontSize: 12 },
-  statusText: { fontSize: 12, fontWeight: '600' },
-  timeText: { fontSize: 11, color: Colors.textSecondary },
-  deleteBtn: { paddingHorizontal: 14, paddingVertical: 12 },
-  deleteBtnText: { fontSize: 20, color: Colors.textSecondary },
+  mealImagePlaceholder: { width: 72, height: 72, justifyContent: 'center', alignItems: 'center' },
+  mealInfo: { flex: 1, paddingHorizontal: 14, paddingVertical: 12, gap: 6 },
+  mealName: { fontSize: 15, color: Colors.text },
+  timeText: { fontSize: 11, color: Colors.textSecondary, marginTop: 2 },
+  deleteBtn: { paddingHorizontal: 14, paddingVertical: 16 },
 });

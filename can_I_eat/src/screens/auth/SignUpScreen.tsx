@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import AppText from '../../components/AppText';
 import { Colors } from '../../constants/colors';
+import { Radius, Shadow } from '../../constants/theme';
 import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
 
@@ -131,62 +132,66 @@ export default function SignUpScreen({ onSignIn }: Props) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background },
+  container: { flex: 1, backgroundColor: Colors.bg },
   content: { padding: 28, alignItems: 'center', paddingBottom: 48 },
   logo: { width: 160, height: 160, marginTop: 40, marginBottom: 4 },
   tagline: { fontSize: 14, color: Colors.textSecondary, marginBottom: 32 },
   tabRow: {
     flexDirection: 'row',
-    borderRadius: 12,
-    overflow: 'hidden',
+    borderRadius: Radius.pill,
     marginBottom: 32,
-    borderWidth: 1,
-    borderColor: Colors.border,
+    backgroundColor: Colors.surfaceAlt,
+    padding: 4,
+    gap: 4,
     width: '100%',
   },
   tabActive: {
     flex: 1,
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.brand,
     paddingVertical: 12,
     alignItems: 'center',
+    borderRadius: Radius.pill,
+    ...Shadow.brand,
   },
   tabInactive: {
     flex: 1,
-    backgroundColor: Colors.card,
+    backgroundColor: 'transparent',
     paddingVertical: 12,
     alignItems: 'center',
+    borderRadius: Radius.pill,
   },
   tabTextActive: { color: '#fff', fontSize: 15 },
   tabTextInactive: { color: Colors.textSecondary, fontSize: 15 },
   form: { width: '100%', gap: 4, marginBottom: 24 },
   label: { fontSize: 13, color: Colors.textSecondary, marginBottom: 4, marginTop: 12 },
   input: {
-    backgroundColor: Colors.card,
-    borderRadius: 12,
+    backgroundColor: Colors.surface,
+    borderRadius: Radius.xs,
     paddingHorizontal: 16,
     paddingVertical: 14,
     fontSize: 15,
     color: Colors.text,
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: Colors.border,
     marginBottom: 4,
   },
   passwordRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   eyeBtn: {
     padding: 14,
-    backgroundColor: Colors.card,
-    borderRadius: 12,
-    borderWidth: 1,
+    backgroundColor: Colors.surface,
+    borderRadius: Radius.xs,
+    borderWidth: 1.5,
     borderColor: Colors.border,
   },
   eyeIcon: { fontSize: 18 },
   btn: {
-    backgroundColor: Colors.primary,
-    borderRadius: 14,
+    backgroundColor: Colors.brand,
+    borderRadius: Radius.pill,
     paddingVertical: 16,
     width: '100%',
     alignItems: 'center',
     marginTop: 8,
+    ...Shadow.brand,
   },
   btnText: { color: '#fff', fontSize: 16 },
   legalNote: {

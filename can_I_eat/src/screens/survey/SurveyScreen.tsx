@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import AppText from '../../components/AppText';
 import { Colors } from '../../constants/colors';
+import { Radius, Shadow } from '../../constants/theme';
 import { ALLERGIES, DIETARY_RESTRICTIONS, DIETARY_PREFERENCES } from '../../constants/dietary';
 import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
@@ -79,16 +80,12 @@ export default function SurveyScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <AppText weight="800" style={styles.title}>{t.surveyTitle}</AppText>
+        <AppText weight="800" display style={styles.title}>{t.surveyTitle}</AppText>
         <View style={styles.stepRow}>
           {STEPS.map((s, i) => (
             <View key={s} style={styles.stepItem}>
-              <View style={[styles.stepDot, i <= step && styles.stepDotActive]}>
-                <AppText weight="700" style={[styles.stepNum, i <= step && styles.stepNumActive]}>
-                  {i < step ? '✓' : `${i + 1}`}
-                </AppText>
-              </View>
-              <AppText style={[styles.stepLabel, i === step && styles.stepLabelActive]}>{s}</AppText>
+              <View style={[styles.stepBar, (i <= step) && styles.stepBarActive]} />
+              <AppText weight={i === step ? '700' : '600'} style={[styles.stepLabel, i === step && styles.stepLabelActive]}>{s}</AppText>
             </View>
           ))}
         </View>
@@ -97,7 +94,7 @@ export default function SurveyScreen() {
       <ScrollView style={styles.body} contentContainerStyle={styles.bodyContent}>
         {step === 0 && (
           <>
-            <AppText weight="700" style={styles.sectionTitle}>{t.surveyQ1}</AppText>
+            <AppText weight="700" display style={styles.sectionTitle}>{t.surveyQ1}</AppText>
             <AppText style={styles.sectionSubtitle}>{t.selectAllApply}</AppText>
             <View style={styles.grid}>
               {ALLERGIES.map((item) => {
@@ -152,7 +149,7 @@ export default function SurveyScreen() {
 
         {step === 1 && (
           <>
-            <AppText weight="700" style={styles.sectionTitle}>{t.surveyQ2}</AppText>
+            <AppText weight="700" display style={styles.sectionTitle}>{t.surveyQ2}</AppText>
             <AppText style={styles.sectionSubtitle}>{t.selectAllApply}</AppText>
             <View style={styles.grid}>
               {DIETARY_RESTRICTIONS.map((item) => {
@@ -177,7 +174,7 @@ export default function SurveyScreen() {
 
         {step === 2 && (
           <>
-            <AppText weight="700" style={styles.sectionTitle}>{t.surveyQ3}</AppText>
+            <AppText weight="700" display style={styles.sectionTitle}>{t.surveyQ3}</AppText>
             <AppText style={styles.sectionSubtitle}>{t.selectOne}</AppText>
             <View style={styles.prefList}>
               {DIETARY_PREFERENCES.map((item) => {
@@ -192,7 +189,7 @@ export default function SurveyScreen() {
                   >
                     <AppText style={styles.prefEmoji}>{item.emoji}</AppText>
                     <View style={styles.prefText}>
-                      <AppText weight="600" style={[styles.prefLabel, selected && styles.prefLabelSelected]}>{label}</AppText>
+                      <AppText weight="600" display style={[styles.prefLabel, selected && styles.prefLabelSelected]}>{label}</AppText>
                       <AppText style={styles.prefDesc}>{desc}</AppText>
                     </View>
                     <View style={[styles.radio, selected && styles.radioSelected]}>
@@ -208,14 +205,15 @@ export default function SurveyScreen() {
 
       <View style={styles.footer}>
         {step > 0 && (
-          <TouchableOpacity style={styles.backBtn} onPress={() => setStep(step - 1)}>
-            <AppText weight="600" style={styles.backBtnText}>{t.back}</AppText>
+          <TouchableOpacity style={styles.backBtn} onPress={() => setStep(step - 1)} activeOpacity={0.7}>
+            <AppText weight="700" style={styles.backBtnText}>{t.back}</AppText>
           </TouchableOpacity>
         )}
         <TouchableOpacity
           style={[styles.nextBtn, step === 0 && { flex: 1 }]}
           onPress={handleNext}
           disabled={saving}
+          activeOpacity={0.85}
         >
           {saving ? (
             <ActivityIndicator color="#fff" />
@@ -231,119 +229,128 @@ export default function SurveyScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background },
+  container: { flex: 1, backgroundColor: Colors.bg },
+
   header: {
     paddingTop: 60,
     paddingHorizontal: 24,
-    paddingBottom: 20,
-    backgroundColor: Colors.card,
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
-    shadowColor: '#000',
-    shadowOpacity: 0.06,
-    shadowRadius: 10,
-    elevation: 4,
+    paddingBottom: 22,
+    backgroundColor: Colors.surface,
+    borderBottomLeftRadius: Radius.card,
+    borderBottomRightRadius: Radius.card,
+    ...Shadow.soft,
   },
-  title: { fontSize: 26, color: Colors.text, lineHeight: 34, marginBottom: 20 },
-  stepRow: { flexDirection: 'row', gap: 12, marginBottom: 8 },
-  stepItem: { alignItems: 'center', gap: 4 },
-  stepDot: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: Colors.border,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  stepDotActive: { backgroundColor: Colors.primary },
-  stepNum: { fontSize: 13, color: Colors.textSecondary },
-  stepNumActive: { color: '#fff' },
-  stepLabel: { fontSize: 11, color: Colors.textSecondary },
-  stepLabelActive: { color: Colors.primary },
+  title: { fontSize: 24, color: Colors.text, lineHeight: 32, marginBottom: 18 },
+
+  // Wide progress bars
+  stepRow: { flexDirection: 'row', gap: 10, marginTop: 4 },
+  stepItem: { flex: 1, gap: 5 },
+  stepBar: { width: '100%', height: 6, borderRadius: Radius.pill, backgroundColor: Colors.surfaceAlt },
+  stepBarActive: { backgroundColor: Colors.brand },
+  stepLabel: { fontSize: 11.5, color: Colors.textSecondary, textAlign: 'center' },
+  stepLabelActive: { color: Colors.brand },
+
   body: { flex: 1 },
-  bodyContent: { padding: 24, paddingBottom: 32 },
-  sectionTitle: { fontSize: 20, color: Colors.text, marginBottom: 6 },
-  sectionSubtitle: { fontSize: 13, color: Colors.textSecondary, marginBottom: 20 },
-  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 16 },
+  bodyContent: { padding: 22, paddingBottom: 32 },
+  sectionTitle: { fontSize: 19, color: Colors.text, marginBottom: 5 },
+  sectionSubtitle: { fontSize: 13, color: Colors.textSecondary, marginBottom: 18 },
+
+  // Chip grid (allergies/restrictions)
+  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 9, marginBottom: 16 },
   chip: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    borderRadius: 20,
-    backgroundColor: Colors.card,
-    borderWidth: 1.5,
-    borderColor: Colors.border,
+    gap: 7,
+    paddingHorizontal: 15,
+    paddingVertical: 11,
+    borderRadius: Radius.pill,
+    backgroundColor: Colors.surface,
+    borderWidth: 2,
+    borderColor: Colors.surfaceAlt,
   },
-  chipSelected: { borderColor: Colors.primary, backgroundColor: Colors.primaryBg },
+  chipSelected: { borderColor: Colors.brand, backgroundColor: Colors.brandSoft },
   chipCustom: { borderStyle: 'dashed' },
-  chipEmoji: { fontSize: 16 },
-  chipLabel: { fontSize: 13, color: Colors.text },
-  chipLabelSelected: { color: Colors.primary },
-  chipRemove: { fontSize: 11, color: Colors.primary, marginLeft: 2 },
-  customInputRow: {
-    flexDirection: 'row',
-    gap: 8,
-    marginTop: 4,
-  },
+  chipEmoji: { fontSize: 15 },
+  chipLabel: { fontSize: 13.5, color: Colors.text },
+  chipLabelSelected: { color: Colors.brand },
+  chipRemove: { fontSize: 11, color: Colors.brand, marginLeft: 2 },
+
+  customInputRow: { flexDirection: 'row', gap: 8, marginTop: 4 },
   customInput: {
     flex: 1,
-    backgroundColor: Colors.card,
-    borderRadius: 12,
+    backgroundColor: Colors.surface,
+    borderRadius: Radius.xs,
     paddingHorizontal: 14,
-    paddingVertical: 12,
-    fontSize: 14,
+    paddingVertical: 13,
+    fontSize: 14.5,
     color: Colors.text,
-    borderWidth: 1.5,
-    borderColor: Colors.border,
+    ...Shadow.soft,
   },
   customAddBtn: {
-    backgroundColor: Colors.primary,
-    borderRadius: 12,
-    paddingHorizontal: 16,
+    backgroundColor: Colors.brand,
+    borderRadius: Radius.xs,
+    paddingHorizontal: 18,
     paddingVertical: 12,
     justifyContent: 'center',
+    ...Shadow.brand,
   },
   customAddBtnText: { color: '#fff', fontSize: 14 },
+
+  // Preference cards (step 3)
   prefList: { gap: 12 },
   prefCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-    padding: 16,
-    borderRadius: 16,
-    backgroundColor: Colors.card,
-    borderWidth: 1.5,
-    borderColor: Colors.border,
+    gap: 13,
+    padding: 14,
+    borderRadius: Radius.sm,
+    backgroundColor: Colors.surface,
+    borderWidth: 2,
+    borderColor: Colors.surfaceAlt,
   },
-  prefCardSelected: { borderColor: Colors.primary, backgroundColor: Colors.primaryBg },
-  prefEmoji: { fontSize: 28 },
+  prefCardSelected: { borderColor: Colors.brand, backgroundColor: Colors.brandSoft },
+  prefEmoji: { fontSize: 26 },
   prefText: { flex: 1 },
-  prefLabel: { fontSize: 16, color: Colors.text },
-  prefLabelSelected: { color: Colors.primary },
-  prefDesc: { fontSize: 12, color: Colors.textSecondary, marginTop: 2 },
+  prefLabel: { fontSize: 15.5, color: Colors.text },
+  prefLabelSelected: { color: Colors.brand },
+  prefDesc: { fontSize: 12.5, color: Colors.textSecondary, marginTop: 2 },
   radio: {
     width: 22,
     height: 22,
-    borderRadius: 11,
+    borderRadius: Radius.pill,
     borderWidth: 2,
     borderColor: Colors.border,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  radioSelected: { borderColor: Colors.primary },
-  radioDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: Colors.primary },
-  footer: { flexDirection: 'row', gap: 12, padding: 20, paddingBottom: 36 },
+  radioSelected: { borderColor: Colors.brand },
+  radioDot: { width: 10, height: 10, borderRadius: Radius.pill, backgroundColor: Colors.brand },
+
+  footer: {
+    flexDirection: 'row',
+    gap: 12,
+    padding: 20,
+    paddingBottom: 36,
+    backgroundColor: Colors.surface,
+    borderTopWidth: 1,
+    borderTopColor: Colors.surfaceAlt,
+  },
   backBtn: {
-    paddingVertical: 16,
+    paddingVertical: 15,
     paddingHorizontal: 24,
-    borderRadius: 14,
-    backgroundColor: Colors.card,
-    borderWidth: 1,
+    borderRadius: Radius.pill,
+    backgroundColor: Colors.surface,
+    borderWidth: 1.5,
     borderColor: Colors.border,
   },
   backBtnText: { color: Colors.textSecondary, fontSize: 15 },
-  nextBtn: { flex: 2, backgroundColor: Colors.primary, borderRadius: 14, paddingVertical: 16, alignItems: 'center' },
+  nextBtn: {
+    flex: 2,
+    backgroundColor: Colors.brand,
+    borderRadius: Radius.pill,
+    paddingVertical: 15,
+    alignItems: 'center',
+    ...Shadow.brand,
+  },
   nextBtnText: { color: '#fff', fontSize: 16 },
 });

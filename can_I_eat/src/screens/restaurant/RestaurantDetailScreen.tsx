@@ -9,7 +9,10 @@ import {
   Alert,
 } from 'react-native';
 import { Colors } from '../../constants/colors';
+import { Radius, Shadow } from '../../constants/theme';
 import { useLanguage } from '../../context/LanguageContext';
+import AppText from '../../components/AppText';
+import Icon from '../../components/Icon';
 import { Restaurant } from '../../types/restaurant';
 
 type Props = {
@@ -36,10 +39,10 @@ export default function RestaurantDetailScreen({ restaurant, onBack }: Props) {
   };
 
   const badges = [
-    restaurant.vegetarian && { label: t.restaurantFilterVegetarian, color: '#4CAF50', bg: '#E8F5E9', emoji: '🥗' },
-    restaurant.halal && { label: t.restaurantFilterHalal, color: '#2196F3', bg: '#E3F2FD', emoji: '🌙' },
-    restaurant.glutenFree && { label: t.restaurantFilterGlutenFree, color: '#FF9800', bg: '#FFF3E0', emoji: '🌾' },
-  ].filter(Boolean) as { label: string; color: string; bg: string; emoji: string }[];
+    restaurant.vegetarian && { label: t.restaurantFilterVegetarian, color: '#1BB377', emoji: '🥗' },
+    restaurant.halal && { label: t.restaurantFilterHalal, color: '#2A8DD4', emoji: '🌙' },
+    restaurant.glutenFree && { label: t.restaurantFilterGlutenFree, color: '#F0A019', emoji: '🌾' },
+  ].filter(Boolean) as { label: string; color: string; emoji: string }[];
 
   const isInfoAvailable = (val: string) =>
     val && val.trim() !== '' && val.trim() !== '정보없음';
@@ -48,91 +51,106 @@ export default function RestaurantDetailScreen({ restaurant, onBack }: Props) {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={onBack} style={styles.backBtn}>
-          <Text style={styles.backBtnText}>←</Text>
+        <TouchableOpacity onPress={onBack} style={styles.backBtn} activeOpacity={0.7}>
+          <Icon name="chevronLeft" size={22} color={Colors.text} stroke={2.4} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle} numberOfLines={1}>{restaurant.name}</Text>
-        <View style={{ width: 40 }} />
+        <AppText weight="700" display style={styles.headerTitle} numberOfLines={1}>
+          {restaurant.name}
+        </AppText>
       </View>
 
       <ScrollView contentContainerStyle={styles.scroll}>
-        {/* Name + category */}
-        <View style={styles.nameCard}>
-          <Text style={styles.restaurantName}>{restaurant.name}</Text>
-          {restaurant.category ? (
-            <Text style={styles.category}>{restaurant.category}</Text>
-          ) : null}
+        {/* Hero card */}
+        <View style={styles.heroCard}>
+          <View style={styles.heroRow}>
+            <View style={styles.emojiTile}>
+              <Text style={{ fontSize: 32 }}>{(restaurant as any).emoji || '🍽️'}</Text>
+            </View>
+            <View style={styles.heroInfo}>
+              <AppText weight="800" display style={styles.restaurantName}>{restaurant.name}</AppText>
+              <View style={styles.metaRow}>
+                {restaurant.category ? (
+                  <AppText weight="700" style={styles.category}>{restaurant.category}</AppText>
+                ) : null}
+                {(restaurant as any).rating ? (
+                  <AppText weight="800" display style={styles.rating}>★ {(restaurant as any).rating}</AppText>
+                ) : null}
+              </View>
+            </View>
+          </View>
           {badges.length > 0 && (
             <View style={styles.badges}>
               {badges.map((b) => (
-                <View key={b.label} style={[styles.badge, { backgroundColor: b.bg }]}>
-                  <Text style={styles.badgeEmoji}>{b.emoji}</Text>
-                  <Text style={[styles.badgeText, { color: b.color }]}>{b.label}</Text>
+                <View key={b.label} style={[styles.badge, { backgroundColor: b.color + '1A' }]}>
+                  <Text style={{ fontSize: 12 }}>{b.emoji}</Text>
+                  <AppText weight="700" style={[styles.badgeText, { color: b.color }]}>{b.label}</AppText>
                 </View>
               ))}
             </View>
           )}
         </View>
 
-        {/* Address */}
+        {/* Info card */}
         <View style={styles.infoCard}>
           <View style={styles.infoRow}>
-            <Text style={styles.infoIcon}>📍</Text>
+            <View style={styles.iconBox}>
+              <Icon name="home" size={20} color={Colors.brand} stroke={2} />
+            </View>
             <View style={styles.infoContent}>
-              <Text style={styles.infoLabel}>{t.restaurantAddress}</Text>
-              <Text style={styles.infoValue}>
+              <AppText weight="800" style={styles.infoLabel}>{t.restaurantAddress}</AppText>
+              <AppText weight="700" style={styles.infoValue}>
                 {isInfoAvailable(restaurant.address) ? restaurant.address : t.restaurantInfoNotAvailable}
-              </Text>
+              </AppText>
               {isInfoAvailable(restaurant.district) && (
-                <Text style={styles.infoSub}>{restaurant.district}</Text>
+                <AppText style={styles.infoSub}>{restaurant.district}</AppText>
               )}
             </View>
           </View>
 
-          {/* Hours */}
           <View style={styles.divider} />
+
           <View style={styles.infoRow}>
-            <Text style={styles.infoIcon}>🕐</Text>
+            <View style={styles.iconBox}>
+              <Icon name="clock" size={20} color={Colors.brand} stroke={2} />
+            </View>
             <View style={styles.infoContent}>
-              <Text style={styles.infoLabel}>{t.restaurantHours}</Text>
+              <AppText weight="800" style={styles.infoLabel}>{t.restaurantHours}</AppText>
               <View style={styles.hoursRow}>
-                <Text style={styles.hoursLabel}>{t.restaurantWeekdays}</Text>
-                <Text style={styles.hoursValue}>
-                  {isInfoAvailable(restaurant.weekdayHours)
-                    ? restaurant.weekdayHours
-                    : t.restaurantInfoNotAvailable}
-                </Text>
+                <AppText style={styles.hoursLabel}>{t.restaurantWeekdays}</AppText>
+                <AppText weight="700" style={styles.hoursValue}>
+                  {isInfoAvailable(restaurant.weekdayHours) ? restaurant.weekdayHours : t.restaurantInfoNotAvailable}
+                </AppText>
               </View>
               <View style={styles.hoursRow}>
-                <Text style={styles.hoursLabel}>{t.restaurantWeekends}</Text>
-                <Text style={styles.hoursValue}>
-                  {isInfoAvailable(restaurant.weekendHours)
-                    ? restaurant.weekendHours
-                    : t.restaurantInfoNotAvailable}
-                </Text>
+                <AppText style={styles.hoursLabel}>{t.restaurantWeekends}</AppText>
+                <AppText weight="700" style={styles.hoursValue}>
+                  {isInfoAvailable(restaurant.weekendHours) ? restaurant.weekendHours : t.restaurantInfoNotAvailable}
+                </AppText>
               </View>
             </View>
           </View>
 
-          {/* Phone */}
           {isInfoAvailable(restaurant.phone) && (
             <>
               <View style={styles.divider} />
-              <TouchableOpacity style={styles.infoRow} onPress={callPhone}>
-                <Text style={styles.infoIcon}>📞</Text>
+              <TouchableOpacity style={styles.infoRow} onPress={callPhone} activeOpacity={0.7}>
+                <View style={styles.iconBox}>
+                  <Icon name="bell" size={20} color={Colors.brand} stroke={2} />
+                </View>
                 <View style={styles.infoContent}>
-                  <Text style={styles.infoLabel}>{t.restaurantPhone}</Text>
-                  <Text style={[styles.infoValue, styles.phoneLink]}>{restaurant.phone}</Text>
+                  <AppText weight="800" style={styles.infoLabel}>{t.restaurantPhone}</AppText>
+                  <AppText weight="700" style={[styles.infoValue, styles.phoneLink]}>{restaurant.phone}</AppText>
                 </View>
               </TouchableOpacity>
             </>
           )}
         </View>
 
-        {/* Google Maps button */}
+        {/* Directions button */}
         {isInfoAvailable(restaurant.address) && (
-          <TouchableOpacity style={styles.mapsBtn} onPress={openMaps}>
-            <Text style={styles.mapsBtnText}>🗺  {t.restaurantDirections}</Text>
+          <TouchableOpacity style={styles.mapsBtn} onPress={openMaps} activeOpacity={0.85}>
+            <Icon name="mapPin" size={19} color="#fff" stroke={2.2} />
+            <AppText weight="800" style={styles.mapsBtnText}>{t.restaurantDirections}</AppText>
           </TouchableOpacity>
         )}
       </ScrollView>
@@ -141,82 +159,90 @@ export default function RestaurantDetailScreen({ restaurant, onBack }: Props) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background },
+  container: { flex: 1, backgroundColor: Colors.bg },
+
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     paddingTop: 60,
     paddingHorizontal: 20,
-    paddingBottom: 16,
-    backgroundColor: Colors.card,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+    paddingBottom: 18,
+    gap: 12,
+    backgroundColor: Colors.surface,
+    borderBottomLeftRadius: Radius.card,
+    borderBottomRightRadius: Radius.card,
+    ...Shadow.soft,
   },
   backBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: Colors.background,
-    justifyContent: 'center',
-    alignItems: 'center',
+    width: 42, height: 42, borderRadius: Radius.pill,
+    backgroundColor: Colors.surfaceAlt,
+    justifyContent: 'center', alignItems: 'center',
+    flexShrink: 0,
   },
-  backBtnText: { fontSize: 18, color: Colors.text },
-  headerTitle: { fontSize: 17, fontWeight: '700', color: Colors.text, flex: 1, textAlign: 'center', marginHorizontal: 8 },
+  headerTitle: { flex: 1, fontSize: 19, color: Colors.text },
+
   scroll: { padding: 20, paddingBottom: 60 },
-  nameCard: {
-    backgroundColor: Colors.card,
-    borderRadius: 18,
+
+  heroCard: {
+    backgroundColor: Colors.surface,
+    borderRadius: Radius.card,
     padding: 20,
     marginBottom: 14,
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
+    ...Shadow.soft,
   },
-  restaurantName: { fontSize: 22, fontWeight: '800', color: Colors.text, marginBottom: 6 },
-  category: { fontSize: 14, color: Colors.textSecondary, marginBottom: 12 },
+  heroRow: { flexDirection: 'row', alignItems: 'center', gap: 14, marginBottom: 14 },
+  emojiTile: {
+    width: 60, height: 60, borderRadius: Radius.sm,
+    backgroundColor: Colors.surfaceAlt,
+    justifyContent: 'center', alignItems: 'center',
+    flexShrink: 0,
+  },
+  heroInfo: { flex: 1, minWidth: 0 },
+  restaurantName: { fontSize: 21, color: Colors.text },
+  metaRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 3 },
+  category: { fontSize: 13, color: Colors.brand },
+  rating: { fontSize: 13, color: Colors.text },
   badges: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   badge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 20,
-    gap: 4,
+    flexDirection: 'row', alignItems: 'center', gap: 5,
+    paddingHorizontal: 11, paddingVertical: 6, borderRadius: Radius.pill,
   },
-  badgeEmoji: { fontSize: 12 },
-  badgeText: { fontSize: 12, fontWeight: '600' },
+  badgeText: { fontSize: 12.5 },
+
   infoCard: {
-    backgroundColor: Colors.card,
-    borderRadius: 18,
-    padding: 20,
-    marginBottom: 14,
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
+    backgroundColor: Colors.surface,
+    borderRadius: Radius.card,
+    padding: 18,
+    marginBottom: 16,
+    gap: 16,
+    ...Shadow.soft,
   },
-  infoRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 12 },
-  infoIcon: { fontSize: 20, marginTop: 2 },
+  infoRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 13 },
+  iconBox: {
+    width: 38, height: 38, borderRadius: Radius.xs,
+    backgroundColor: Colors.surfaceAlt,
+    justifyContent: 'center', alignItems: 'center',
+    flexShrink: 0,
+  },
   infoContent: { flex: 1 },
-  infoLabel: { fontSize: 11, fontWeight: '700', color: Colors.textSecondary, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 },
-  infoValue: { fontSize: 15, color: Colors.text, lineHeight: 22 },
-  infoSub: { fontSize: 13, color: Colors.textSecondary, marginTop: 2 },
-  phoneLink: { color: Colors.primary },
-  hoursRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 },
-  hoursLabel: { fontSize: 13, color: Colors.textSecondary, fontWeight: '500' },
-  hoursValue: { fontSize: 13, color: Colors.text, flex: 1, textAlign: 'right' },
-  divider: { height: 1, backgroundColor: Colors.border, marginVertical: 14 },
-  mapsBtn: {
-    backgroundColor: Colors.primary,
-    borderRadius: 14,
-    paddingVertical: 16,
-    alignItems: 'center',
-    shadowColor: Colors.primary,
-    shadowOpacity: 0.35,
-    shadowRadius: 10,
-    elevation: 6,
+  infoLabel: {
+    fontSize: 11, color: Colors.textSecondary,
+    textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 3,
   },
-  mapsBtnText: { color: '#fff', fontWeight: '700', fontSize: 16 },
+  infoValue: { fontSize: 14.5, color: Colors.text, lineHeight: 21 },
+  infoSub: { fontSize: 12.5, color: Colors.textSecondary, marginTop: 2 },
+  phoneLink: { color: Colors.brand },
+  hoursRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 3 },
+  hoursLabel: { fontSize: 13, color: Colors.textSecondary },
+  hoursValue: { fontSize: 13, color: Colors.text },
+  divider: { height: 1, backgroundColor: Colors.surfaceAlt },
+
+  mapsBtn: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
+    backgroundColor: Colors.brand,
+    borderRadius: Radius.pill,
+    paddingVertical: 16,
+    ...Shadow.brand,
+  },
+  mapsBtnText: { color: '#fff', fontSize: 15.5 },
 });
