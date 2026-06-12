@@ -136,3 +136,41 @@ Used by `SearchScreen` to fetch a food image after a text query returns an `Anal
 ### Barcode Scanning
 
 `CameraScreen` supports barcode scan mode. Barcodes are looked up against the Open Food Facts API (`world.openfoodfacts.org/api/v0/product/{barcode}.json`). If found, the product name and ingredients text are passed to `analyzeFoodImage` as a `textOverride`.
+
+## Key Patterns
+
+### Translations
+Always use the `t` object from `useLanguage()` for UI strings. Never hardcode English strings in components.
+```tsx
+const { t } = useLanguage();
+// Good: <Text>{t.allergiesTitle}</Text>
+// Bad:  <Text>Allergies</Text>
+```
+When adding a new UI string, add it to **all 5 languages** in `translations.ts` — TypeScript will catch missing keys at compile time.
+
+### Variable declaration order
+Declare all variables **before** using them. The QR Passport bug (May 2026) happened because `qrLines` referenced `allergyLabels` before it was declared. Always declare computed values first.
+
+## Git & Branch Conventions
+
+- Branch naming: `<author>-<feature-name>` (use dashes, not slashes — e.g. `hwangbci-share-result`)
+- One feature per branch — do not bundle multiple features
+- Commit message format: `feat|fix|docs|test|chore(scope): description`
+- Always run `tsc --noEmit` before committing — 0 TypeScript errors required
+- Run `bun test src/utils/__tests__` before committing — all tests must pass
+- **Always run `git fetch origin` before creating a new branch** to avoid conflicts
+
+## Known Gotchas
+
+- `bun` binary on Windows is at `C:\Users\hwang\.bun\bin\bun.exe` — the npm shim may be broken. Use PowerShell with the full path if needed.
+- `moduleResolution: bundler` (from expo tsconfig) requires `@types/bun` for test files to type-check cleanly.
+- AI image analysis **cannot detect hidden ingredients** (broth, sauces, oils) — always show a disclaimer on the result screen.
+
+## Lesson Log
+
+| Date | Lesson |
+|------|--------|
+| 2026-05-23 | "Working" ≠ "correct" — 16 hidden TS errors found only after running health check |
+| 2026-05-23 | Translation keys must be added to all 5 locales simultaneously — TypeScript enforces this |
+| 2026-05-26 | Variable declaration order matters — use before declare causes silent runtime bugs in bundlers |
+| 2026-05-27 | AI image analysis cannot detect hidden ingredients (broth, sauces) — always show a disclaimer |
