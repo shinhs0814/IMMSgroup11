@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TouchableOpacity, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { FoodProvider } from '../context/FoodContext';
@@ -18,6 +18,7 @@ import MenuAnalysisScreen from '../screens/analysis/MenuAnalysisScreen';
 import MealHistoryScreen from '../screens/history/MealHistoryScreen';
 import FamilyProfilesScreen from '../screens/family/FamilyProfilesScreen';
 import SettingsSidebar from '../components/SettingsSidebar';
+import TabBar from '../components/TabBar';
 import { AnalysisResult, MenuAnalysisItem } from '../services/anthropic';
 import { SavedFood } from '../services/storage';
 import { Restaurant } from '../types/restaurant';
@@ -171,29 +172,15 @@ function AuthenticatedApp() {
         }}
         onOpenSettings={() => setShowSidebar(true)}
         onOpenHistory={() => setScreen('history')}
+        onScan={() => { setActiveTab('camera'); setScreen('camera'); }}
       />
 
-      {/* Fixed bottom tab bar */}
-      <View style={styles.tabBar}>
-        <TouchableOpacity style={styles.tabBtn} onPress={goHome}>
-          <Text style={[styles.tabIcon, activeTab === 'home' && styles.tabIconActive]}>🏠</Text>
-          <Text style={[styles.tabLabel, activeTab === 'home' && styles.tabLabelActive]}>{t.home}</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.tabBtnCenter}
-          onPress={() => { setActiveTab('camera'); setScreen('camera'); }}
-        >
-          <View style={styles.cameraBtn}>
-            <Text style={styles.cameraBtnIcon}>📷</Text>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.tabBtn} onPress={() => { setActiveTab('search'); setScreen('search'); }}>
-          <Text style={[styles.tabIcon, activeTab === 'search' && styles.tabIconActive]}>🔍</Text>
-          <Text style={[styles.tabLabel, activeTab === 'search' && styles.tabLabelActive]}>{t.search}</Text>
-        </TouchableOpacity>
-      </View>
+      <TabBar
+        active={activeTab === 'camera' ? 'home' : activeTab as 'home' | 'search'}
+        onHome={goHome}
+        onScan={() => { setActiveTab('camera'); setScreen('camera'); }}
+        onSearch={() => { setActiveTab('search'); setScreen('search'); }}
+      />
 
       {/* Settings sidebar overlay */}
       <SettingsSidebar
@@ -235,50 +222,5 @@ export default function AppNavigator() {
 }
 
 const styles = StyleSheet.create({
-  appContainer: { flex: 1 },
-  tabBar: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    flexDirection: 'row',
-    backgroundColor: Colors.tabBar,
-    paddingBottom: 28,
-    paddingTop: 12,
-    paddingHorizontal: 8,
-    borderTopWidth: 1,
-    borderTopColor: Colors.border,
-    shadowColor: '#000',
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    elevation: 8,
-    alignItems: 'flex-end',
-  },
-  tabBtn: {
-    flex: 1,
-    alignItems: 'center',
-    gap: 4,
-  },
-  tabBtnCenter: {
-    flex: 1,
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  tabIcon: { fontSize: 22, opacity: 0.4 },
-  tabIconActive: { opacity: 1 },
-  tabLabel: { fontSize: 10, color: Colors.tabInactive, fontWeight: '500' },
-  tabLabelActive: { color: Colors.tabActive, fontWeight: '700' },
-  cameraBtn: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: Colors.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: Colors.primary,
-    shadowOpacity: 0.4,
-    shadowRadius: 12,
-    elevation: 8,
-  },
-  cameraBtnIcon: { fontSize: 26 },
+  appContainer: { flex: 1, backgroundColor: Colors.bg },
 });
