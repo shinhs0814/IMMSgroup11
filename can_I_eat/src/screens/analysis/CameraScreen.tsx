@@ -184,6 +184,8 @@ export default function CameraScreen({ onResult, onMenuResult, onCancel }: Props
   const [statusText, setStatusText] = useState('');
   const [barcodeScanned, setBarcodeScanned] = useState(false);
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
+  // Debounce: require the same barcode on 3 consecutive frames before acting
+  const scanConfirmRef = useRef<{ code: string; count: number }>({ code: '', count: 0 });
   const [showProfilePicker, setShowProfilePicker] = useState(false);
   const [lastError, setLastError] = useState<string | null>(null);
 
@@ -242,6 +244,17 @@ export default function CameraScreen({ onResult, onMenuResult, onCancel }: Props
 
   const handleBarcodeScanned = async ({ data }: { data: string }) => {
     if (barcodeScanned) return;
+
+    // Require 3 consecutive frames of the same barcode before acting
+    const ref = scanConfirmRef.current;
+    if (ref.code === data) {
+      ref.count += 1;
+    } else {
+      ref.code = data;
+      ref.count = 1;
+    }
+    if (ref.count < 3) return;
+
     setBarcodeScanned(true);
     setMode(null);
     setAnalyzing(true);
@@ -256,7 +269,7 @@ export default function CameraScreen({ onResult, onMenuResult, onCancel }: Props
           `Barcode: ${data}\n\nThis product isn't in our database yet. Try the Label Scan mode to photograph the ingredient list instead.`,
           [
             { text: 'Label Scan', onPress: () => setMode('label') },
-            { text: 'OK', style: 'cancel', onPress: () => setBarcodeScanned(false) },
+            { text: 'OK', style: 'cancel', onPress: () => { setBarcodeScanned(false); scanConfirmRef.current = { code: '', count: 0 }; } },
           ]
         );
         return;
@@ -266,10 +279,13 @@ export default function CameraScreen({ onResult, onMenuResult, onCancel }: Props
       const uiLanguage = LANGUAGE_NAMES[language];
       const prompt = `Product: ${product.name}\nIngredients: ${product.ingredients}`;
       const result = await analyzeFoodImage(null, null, profile, uiLanguage, prompt);
-      onResult(result, '', result.foodName);
+      // Always use the barcode DB name — Claude may paraphrase it differently
+      result.foodName = product.name;
+      onResult(result, '', product.name);
     } catch (e: any) {
       Alert.alert(t.analysisFailedTitle, e.message || 'Please try again.');
       setBarcodeScanned(false);
+      scanConfirmRef.current = { code: '', count: 0 };
     } finally {
       setAnalyzing(false);
       setStatusText('');
@@ -317,6 +333,7 @@ export default function CameraScreen({ onResult, onMenuResult, onCancel }: Props
       }
     }
     setBarcodeScanned(false);
+    scanConfirmRef.current = { code: '', count: 0 };
     setMode('barcode');
   };
 
