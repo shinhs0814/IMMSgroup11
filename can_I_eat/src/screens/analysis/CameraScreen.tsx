@@ -145,35 +145,95 @@ async function fetchFromNaverShopping(barcode: string): Promise<{ name: string; 
   }
 }
 
+/** Open Food Facts text search by product name — used when barcode gives a name but no ingredients */
+async function fetchIngredientsByName(name: string): Promise<string> {
+  try {
+    const encoded = encodeURIComponent(name.trim());
+    const res = await fetch(
+      `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encoded}&search_simple=1&action=process&json=1&fields=product_name,ingredients_text,ingredients_text_ko,ingredients_text_en&page_size=5`,
+      { signal: timeoutSignal(8000) }
+    );
+    const data = await res.json();
+    const products: any[] = data?.products ?? [];
+    for (const p of products) {
+      const ing = p.ingredients_text_ko || p.ingredients_text || p.ingredients_text_en || '';
+      if (ing) return ing;
+    }
+  } catch {}
+  return '';
+}
+
+/** Naver Shopping search by product name — used to confirm/refine name when barcode lookup lacks detail */
+async function fetchNameFromNaverByName(name: string): Promise<string> {
+  const clientId = process.env.EXPO_PUBLIC_NAVER_CLIENT_ID;
+  const clientSecret = process.env.EXPO_PUBLIC_NAVER_CLIENT_SECRET;
+  if (!clientId || !clientSecret) return '';
+  try {
+    const res = await fetch(
+      `https://openapi.naver.com/v1/search/shop.json?query=${encodeURIComponent(name)}&display=1`,
+      {
+        headers: { 'X-Naver-Client-Id': clientId, 'X-Naver-Client-Secret': clientSecret },
+        signal: timeoutSignal(6000),
+      }
+    );
+    const data = await res.json();
+    if (!data.items?.length) return '';
+    const item = data.items[0];
+    return item.title?.replace(/<[^>]+>/g, '') || '';
+  } catch {
+    return '';
+  }
+}
+
 async function fetchProductByBarcode(barcode: string): Promise<{ name: string; ingredients: string } | null> {
-  // Check Korean barcode prefix (880 = South Korea)
   const isKoreanBarcode = barcode.startsWith('880');
 
+  let bestName = '';
+  let bestIngredients = '';
+
+  // Accumulate: first non-empty name wins; first non-empty ingredients wins
+  const update = (result: { name: string; ingredients: string } | null) => {
+    if (!result) return;
+    if (!bestName && result.name) bestName = result.name;
+    if (!bestIngredients && result.ingredients) bestIngredients = result.ingredients;
+  };
+
   if (isKoreanBarcode) {
-    // 1. Naver Shopping — best Korean product coverage
-    const naver = await fetchFromNaverShopping(barcode);
-    if (naver) return naver;
-    // 2. 식품안전나라 — official Korean government DB
-    const fsk = await fetchFromFoodSafetyKorea(barcode);
-    if (fsk) return fsk;
-    // 3. Open Food Facts Korea mirror
-    const korean = await fetchFromKoreanFoodDB(barcode);
-    if (korean) return korean;
+    // Naver Shopping — best Korean name coverage (but returns no ingredients)
+    update(await fetchFromNaverShopping(barcode));
+    // 식품안전나라 — official Korean government DB (name + ingredients)
+    if (!bestIngredients) update(await fetchFromFoodSafetyKorea(barcode));
+    // Open Food Facts Korea mirror
+    if (!bestIngredients) update(await fetchFromKoreanFoodDB(barcode));
   }
 
-  // 3. Open Food Facts (global)
-  const off = await fetchFromOpenFoodFacts(barcode);
-  if (off) return off;
+  // Open Food Facts global
+  if (!bestIngredients) update(await fetchFromOpenFoodFacts(barcode));
+  // Naver Shopping (non-Korean barcodes sold in Korea)
+  if (!bestName) update(await fetchFromNaverShopping(barcode));
+  // UPC Item DB
+  if (!bestIngredients) update(await fetchFromUPCItemDB(barcode));
 
-  // 4. Naver Shopping (also strong for non-Korean products sold in Korea)
-  const naver2 = await fetchFromNaverShopping(barcode);
-  if (naver2) return naver2;
+  // No name found at all — product is truly unknown
+  if (!bestName) return null;
 
-  // 5. UPC Item DB fallback (global)
-  const upc = await fetchFromUPCItemDB(barcode);
-  if (upc) return upc;
+  // We have a name but no ingredients — try a name-based search to fill in nutrition/ingredients
+  if (!bestIngredients) {
+    // 1. Open Food Facts text search by product name
+    bestIngredients = await fetchIngredientsByName(bestName);
 
-  return null;
+    // 2. If still empty and Korean, try to get a cleaner name via Naver (confirms the product)
+    if (!bestIngredients && isKoreanBarcode) {
+      const naverName = await fetchNameFromNaverByName(bestName);
+      if (naverName) {
+        // Try Open Food Facts again with the more precise Naver-confirmed name
+        bestIngredients = await fetchIngredientsByName(naverName);
+        if (naverName.length > bestName.length) bestName = naverName;
+      }
+    }
+  }
+
+  return { name: bestName, ingredients: bestIngredients };
 }
 
 export default function CameraScreen({ onResult, onMenuResult, onCancel }: Props) {
