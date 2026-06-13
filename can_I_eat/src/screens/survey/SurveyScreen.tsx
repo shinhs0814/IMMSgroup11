@@ -68,7 +68,7 @@ export default function SurveyScreen() {
         preferences: selectedPreferences,
       });
     } catch {
-      Alert.alert('Error', 'Could not save your profile. Please try again.');
+      Alert.alert(t.errorTitle, t.couldNotSaveProfile);
     } finally {
       setSaving(false);
     }

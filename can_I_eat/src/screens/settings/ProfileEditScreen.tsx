@@ -56,7 +56,7 @@ export default function ProfileEditScreen({ onBack }: Props) {
       await updateDietaryProfile({ allergies, restrictions, preferences, name: dietaryProfile?.name || '' });
       Alert.alert('✅', t.profileUpdated, [{ text: t.ok, onPress: onBack }]);
     } catch {
-      Alert.alert('Error', 'Could not save changes. Please try again.');
+      Alert.alert(t.errorTitle, t.couldNotSaveChanges);
     } finally {
       setSaving(false);
     }

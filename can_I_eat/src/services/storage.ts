@@ -90,7 +90,8 @@ export async function saveFood(
     userId,
     groupId,
     foodName,
-    analysisResult,
+    // Strip undefined nested fields — Firestore rejects them
+    analysisResult: JSON.parse(JSON.stringify(analysisResult)),
     imageBase64: imageBase64 || null,
     imageUrl: imageUrl || null,
     savedAt: serverTimestamp(),
@@ -169,7 +170,8 @@ export async function logMeal(
     foodName,
     date: date || todayDateString(),
     eatenAt: serverTimestamp(),
-    analysisResult,
+    // Strip undefined nested fields — Firestore rejects them
+    analysisResult: JSON.parse(JSON.stringify(analysisResult)),
     imageBase64: imageBase64 || null,
     imageUrl: imageUrl || null,
   });

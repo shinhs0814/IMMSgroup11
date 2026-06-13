@@ -181,7 +181,7 @@ export default function MenuAnalysisScreen({ items, imageBase64, onBack }: Props
                   {/* Expanded ingredients */}
                   {expanded === idx && (
                     <View style={styles.ingredientsBox}>
-                      <AppText weight="700" style={styles.ingredientsTitle}>Ingredients</AppText>
+                      <AppText weight="700" style={styles.ingredientsTitle}>{t.ingredientsTitle}</AppText>
                       {item.ingredients.map((ing, ii) => (
                         <AppText key={ii} style={styles.ingredientItem}>• {ing}</AppText>
                       ))}

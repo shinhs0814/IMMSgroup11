@@ -149,7 +149,7 @@ export default function SettingsSidebar({ visible, onClose, onMyProfile, onQRPas
             onPress={() => { onClose(); setTimeout(onMyProfile, 280); }}
             activeOpacity={0.85}
           >
-            <AppText weight="800" style={styles.editProfileText}>Edit profile</AppText>
+            <AppText weight="800" style={styles.editProfileText}>{t.editProfile}</AppText>
           </TouchableOpacity>
         </LinearGradient>
 
@@ -157,7 +157,7 @@ export default function SettingsSidebar({ visible, onClose, onMyProfile, onQRPas
         <ScrollView style={styles.body} contentContainerStyle={styles.bodyContent} showsVerticalScrollIndicator={false}>
 
           {/* Dietary profile */}
-          {sectionTitle('My dietary profile')}
+          {sectionTitle(t.myDietaryProfile)}
           <View style={styles.dietCard}>
             {dietChips.length > 0 ? (
               <View style={styles.chipRow}>
@@ -168,30 +168,30 @@ export default function SettingsSidebar({ visible, onClose, onMyProfile, onQRPas
                 ))}
                 <TouchableOpacity style={styles.addChipBtn}>
                   <Icon name="plus" size={14} color={Colors.brand} stroke={2.6} />
-                  <AppText weight="800" style={styles.addChipText}>Add</AppText>
+                  <AppText weight="800" style={styles.addChipText}>{t.add}</AppText>
                 </TouchableOpacity>
               </View>
             ) : (
               <View style={styles.chipRow}>
-                <AppText style={styles.noDietText}>No diet profile set</AppText>
+                <AppText style={styles.noDietText}>{t.noDietProfile}</AppText>
                 <TouchableOpacity style={styles.addChipBtn} onPress={() => { onClose(); setTimeout(onMyProfile, 280); }}>
                   <Icon name="plus" size={14} color={Colors.brand} stroke={2.6} />
-                  <AppText weight="800" style={styles.addChipText}>Set up</AppText>
+                  <AppText weight="800" style={styles.addChipText}>{t.setUp}</AppText>
                 </TouchableOpacity>
               </View>
             )}
           </View>
 
           {/* QR passport */}
-          {sectionTitle('Food passport')}
+          {sectionTitle(t.foodPassport)}
           {onQRPassport && (
             <TouchableOpacity style={styles.passportCard} onPress={onQRPassport} activeOpacity={0.88}>
               <View style={styles.passportQRBox}>
                 <Icon name="scan" size={22} color="#2F6B57" stroke={2} />
               </View>
               <View style={styles.passportInfo}>
-                <AppText weight="800" display style={styles.passportTitle}>My food passport</AppText>
-                <AppText style={styles.passportSub}>Staff scan your allergies & diet, in any language.</AppText>
+                <AppText weight="800" display style={styles.passportTitle}>{t.myFoodPassport}</AppText>
+                <AppText style={styles.passportSub}>{t.passportSub}</AppText>
               </View>
               <Icon name="chevronRight" size={19} color="rgba(255,255,255,0.85)" stroke={2} />
             </TouchableOpacity>
@@ -200,7 +200,7 @@ export default function SettingsSidebar({ visible, onClose, onMyProfile, onQRPas
           {/* Family */}
           {onFamilyProfiles && (
             <>
-              {sectionTitle('Family')}
+              {sectionTitle(t.family)}
               <TouchableOpacity
                 style={styles.menuRow}
                 onPress={() => { onClose(); setTimeout(onFamilyProfiles!, 280); }}
@@ -216,7 +216,7 @@ export default function SettingsSidebar({ visible, onClose, onMyProfile, onQRPas
           )}
 
           {/* Language */}
-          {sectionTitle('🌐 Language')}
+          {sectionTitle(`🌐 ${t.language}`)}
           <View style={styles.langGrid}>
             {languages.map((lang) => (
               <TouchableOpacity

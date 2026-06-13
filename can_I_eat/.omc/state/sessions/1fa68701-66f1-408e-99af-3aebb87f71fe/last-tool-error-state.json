@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"cd /Users/annashin/Documents/can_I_eat/CanIEat && git add can_I_eat/src/screens/analysis/CameraScreen.tsx && git commit -m \\\"fix(barcode): debounce scan, fix product name propagation\\\" && ...",
+  "error": "Exit code 128\n[main de04351] fix(barcode): debounce scan, fix product name propagation\n Committer: ANNA SHIN <annashin@ANNAui-MacBookAir-2.local>\nYour name and email address were configured automatically based\non your username and hostname. Please check that they are accurate.\nYou can suppress this message by setting them explicitly:\n\n    git config --global user.name \"Your Name\"\n    git config --global user.email you@example.com\n\nAfter doing this, you may fix the identity used for this commit w...",
+  "timestamp": "2026-06-13T00:41:05.886Z",
+  "retry_count": 1
+}

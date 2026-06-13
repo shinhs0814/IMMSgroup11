@@ -1,15 +1,17 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Colors } from '../../constants/colors';
+import { useLanguage } from '../../context/LanguageContext';
 type Props = { onBack: () => void };
 export default function QRPassportScreen({ onBack }: Props) {
+  const { t } = useLanguage();
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={onBack} style={styles.back}>
-        <Text style={styles.backText}>← Back</Text>
+        <Text style={styles.backText}>← {t.back}</Text>
       </TouchableOpacity>
-      <Text style={styles.title}>QR Passport</Text>
-      <Text style={styles.note}>QR Passport is available on the mobile app.</Text>
+      <Text style={styles.title}>{t.qrPassportTitle}</Text>
+      <Text style={styles.note}>{t.qrPassportWebOnly}</Text>
     </View>
   );
 }

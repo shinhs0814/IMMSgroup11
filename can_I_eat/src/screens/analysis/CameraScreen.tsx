@@ -145,35 +145,95 @@ async function fetchFromNaverShopping(barcode: string): Promise<{ name: string; 
   }
 }
 
+/** Open Food Facts text search by product name — used when barcode gives a name but no ingredients */
+async function fetchIngredientsByName(name: string): Promise<string> {
+  try {
+    const encoded = encodeURIComponent(name.trim());
+    const res = await fetch(
+      `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encoded}&search_simple=1&action=process&json=1&fields=product_name,ingredients_text,ingredients_text_ko,ingredients_text_en&page_size=5`,
+      { signal: timeoutSignal(8000) }
+    );
+    const data = await res.json();
+    const products: any[] = data?.products ?? [];
+    for (const p of products) {
+      const ing = p.ingredients_text_ko || p.ingredients_text || p.ingredients_text_en || '';
+      if (ing) return ing;
+    }
+  } catch {}
+  return '';
+}
+
+/** Naver Shopping search by product name — used to confirm/refine name when barcode lookup lacks detail */
+async function fetchNameFromNaverByName(name: string): Promise<string> {
+  const clientId = process.env.EXPO_PUBLIC_NAVER_CLIENT_ID;
+  const clientSecret = process.env.EXPO_PUBLIC_NAVER_CLIENT_SECRET;
+  if (!clientId || !clientSecret) return '';
+  try {
+    const res = await fetch(
+      `https://openapi.naver.com/v1/search/shop.json?query=${encodeURIComponent(name)}&display=1`,
+      {
+        headers: { 'X-Naver-Client-Id': clientId, 'X-Naver-Client-Secret': clientSecret },
+        signal: timeoutSignal(6000),
+      }
+    );
+    const data = await res.json();
+    if (!data.items?.length) return '';
+    const item = data.items[0];
+    return item.title?.replace(/<[^>]+>/g, '') || '';
+  } catch {
+    return '';
+  }
+}
+
 async function fetchProductByBarcode(barcode: string): Promise<{ name: string; ingredients: string } | null> {
-  // Check Korean barcode prefix (880 = South Korea)
   const isKoreanBarcode = barcode.startsWith('880');
 
+  let bestName = '';
+  let bestIngredients = '';
+
+  // Accumulate: first non-empty name wins; first non-empty ingredients wins
+  const update = (result: { name: string; ingredients: string } | null) => {
+    if (!result) return;
+    if (!bestName && result.name) bestName = result.name;
+    if (!bestIngredients && result.ingredients) bestIngredients = result.ingredients;
+  };
+
   if (isKoreanBarcode) {
-    // 1. Naver Shopping — best Korean product coverage
-    const naver = await fetchFromNaverShopping(barcode);
-    if (naver) return naver;
-    // 2. 식품안전나라 — official Korean government DB
-    const fsk = await fetchFromFoodSafetyKorea(barcode);
-    if (fsk) return fsk;
-    // 3. Open Food Facts Korea mirror
-    const korean = await fetchFromKoreanFoodDB(barcode);
-    if (korean) return korean;
+    // Naver Shopping — best Korean name coverage (but returns no ingredients)
+    update(await fetchFromNaverShopping(barcode));
+    // 식품안전나라 — official Korean government DB (name + ingredients)
+    if (!bestIngredients) update(await fetchFromFoodSafetyKorea(barcode));
+    // Open Food Facts Korea mirror
+    if (!bestIngredients) update(await fetchFromKoreanFoodDB(barcode));
   }
 
-  // 3. Open Food Facts (global)
-  const off = await fetchFromOpenFoodFacts(barcode);
-  if (off) return off;
+  // Open Food Facts global
+  if (!bestIngredients) update(await fetchFromOpenFoodFacts(barcode));
+  // Naver Shopping (non-Korean barcodes sold in Korea)
+  if (!bestName) update(await fetchFromNaverShopping(barcode));
+  // UPC Item DB
+  if (!bestIngredients) update(await fetchFromUPCItemDB(barcode));
 
-  // 4. Naver Shopping (also strong for non-Korean products sold in Korea)
-  const naver2 = await fetchFromNaverShopping(barcode);
-  if (naver2) return naver2;
+  // No name found at all — product is truly unknown
+  if (!bestName) return null;
 
-  // 5. UPC Item DB fallback (global)
-  const upc = await fetchFromUPCItemDB(barcode);
-  if (upc) return upc;
+  // We have a name but no ingredients — try a name-based search to fill in nutrition/ingredients
+  if (!bestIngredients) {
+    // 1. Open Food Facts text search by product name
+    bestIngredients = await fetchIngredientsByName(bestName);
 
-  return null;
+    // 2. If still empty and Korean, try to get a cleaner name via Naver (confirms the product)
+    if (!bestIngredients && isKoreanBarcode) {
+      const naverName = await fetchNameFromNaverByName(bestName);
+      if (naverName) {
+        // Try Open Food Facts again with the more precise Naver-confirmed name
+        bestIngredients = await fetchIngredientsByName(naverName);
+        if (naverName.length > bestName.length) bestName = naverName;
+      }
+    }
+  }
+
+  return { name: bestName, ingredients: bestIngredients };
 }
 
 export default function CameraScreen({ onResult, onMenuResult, onCancel }: Props) {
@@ -184,8 +244,12 @@ export default function CameraScreen({ onResult, onMenuResult, onCancel }: Props
   const [statusText, setStatusText] = useState('');
   const [barcodeScanned, setBarcodeScanned] = useState(false);
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
-  // Debounce: require the same barcode on 3 consecutive frames before acting
+  // Debounce: require the same barcode on several consecutive frames before acting
   const scanConfirmRef = useRef<{ code: string; count: number }>({ code: '', count: 0 });
+  // Warm-up gate: ignore scans for a moment after the camera mounts so the user
+  // has time to aim at the product before a stray frame is captured.
+  const scanReadyRef = useRef(false);
+  const warmupTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [showProfilePicker, setShowProfilePicker] = useState(false);
   const [lastError, setLastError] = useState<string | null>(null);
 
@@ -244,32 +308,39 @@ export default function CameraScreen({ onResult, onMenuResult, onCancel }: Props
 
   const handleBarcodeScanned = async ({ data }: { data: string }) => {
     if (barcodeScanned) return;
+    // Ignore early frames captured before the warm-up window elapses
+    if (!scanReadyRef.current) return;
 
-    // Require 3 consecutive frames of the same barcode before acting
+    // Only accept well-formed EAN/UPC product barcodes (8, 12, 13 or 14 digits).
+    // This rejects truncated/partial reads like "08034144".
+    const clean = data.trim();
+    if (!/^\d+$/.test(clean) || ![8, 12, 13, 14].includes(clean.length)) return;
+
+    // Require 6 consecutive frames of the same barcode before acting
     const ref = scanConfirmRef.current;
-    if (ref.code === data) {
+    if (ref.code === clean) {
       ref.count += 1;
     } else {
-      ref.code = data;
+      ref.code = clean;
       ref.count = 1;
     }
-    if (ref.count < 3) return;
+    if (ref.count < 6) return;
 
     setBarcodeScanned(true);
     setMode(null);
     setAnalyzing(true);
     setStatusText(t.barcodeScanning);
     try {
-      const product = await fetchProductByBarcode(data);
+      const product = await fetchProductByBarcode(clean);
       if (!product) {
         setAnalyzing(false);
         setStatusText('');
         Alert.alert(
-          '📦 Barcode Detected',
-          `Barcode: ${data}\n\nThis product isn't in our database yet. Try the Label Scan mode to photograph the ingredient list instead.`,
+          t.barcodeDetectedTitle,
+          `${clean}\n\n${t.barcodeNotInDb}`,
           [
-            { text: 'Label Scan', onPress: () => setMode('label') },
-            { text: 'OK', style: 'cancel', onPress: () => { setBarcodeScanned(false); scanConfirmRef.current = { code: '', count: 0 }; } },
+            { text: t.labelScanBtn, onPress: () => setMode('label') },
+            { text: t.ok, style: 'cancel', onPress: () => { setBarcodeScanned(false); scanConfirmRef.current = { code: '', count: 0 }; } },
           ]
         );
         return;
@@ -334,6 +405,10 @@ export default function CameraScreen({ onResult, onMenuResult, onCancel }: Props
     }
     setBarcodeScanned(false);
     scanConfirmRef.current = { code: '', count: 0 };
+    // Warm-up: block scanning for 1.5s so the user can aim at the product first
+    scanReadyRef.current = false;
+    if (warmupTimerRef.current) clearTimeout(warmupTimerRef.current);
+    warmupTimerRef.current = setTimeout(() => { scanReadyRef.current = true; }, 1500);
     setMode('barcode');
   };
 
@@ -357,7 +432,7 @@ export default function CameraScreen({ onResult, onMenuResult, onCancel }: Props
         <CameraView
           style={StyleSheet.absoluteFillObject}
           facing="back"
-          barcodeScannerSettings={{ barcodeTypes: ['ean13', 'ean8', 'upc_a', 'upc_e', 'code128', 'code39', 'qr'] }}
+          barcodeScannerSettings={{ barcodeTypes: ['ean13', 'ean8', 'upc_a', 'upc_e'] }}
           onBarcodeScanned={handleBarcodeScanned}
         />
         <View style={styles.barcodeOverlay}>

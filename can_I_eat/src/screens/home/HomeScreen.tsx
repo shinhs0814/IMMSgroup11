@@ -171,11 +171,11 @@ export default function HomeScreen({ onNavigateToAnalysis, onOpenSettings, onOpe
             end={{ x: 1, y: 1 }}
           >
             <View style={styles.heroContent}>
-              <AppText weight="800" display style={styles.heroTitle}>Can I eat it?</AppText>
-              <AppText style={styles.heroSub}>Snap a dish, label or menu — get an instant verdict.</AppText>
+              <AppText weight="800" display style={styles.heroTitle}>{t.heroTitle}</AppText>
+              <AppText style={styles.heroSub}>{t.heroSub}</AppText>
               <View style={styles.heroBtn}>
                 <Icon name="camera" size={16} color={Colors.brand} stroke={2.4} />
-                <AppText weight="800" style={styles.heroBtnText}>Scan now</AppText>
+                <AppText weight="800" style={styles.heroBtnText}>{t.scanNow}</AppText>
               </View>
             </View>
             <View style={styles.heroPlateFace} pointerEvents="none">
@@ -191,7 +191,7 @@ export default function HomeScreen({ onNavigateToAnalysis, onOpenSettings, onOpe
               <View style={styles.profileIconBox}>
                 <Icon name="shieldCheck" size={17} color={Colors.brand} stroke={2.2} />
               </View>
-              <AppText weight="700" display style={styles.profileCardTitle}>Your diet profile</AppText>
+              <AppText weight="700" display style={styles.profileCardTitle}>{t.yourDietProfile}</AppText>
               <Icon name="chevronRight" size={17} color={Colors.textSecondary} stroke={2} />
             </View>
             {getDietChips().length > 0 && (
