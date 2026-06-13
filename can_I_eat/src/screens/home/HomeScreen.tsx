@@ -60,16 +60,16 @@ export default function HomeScreen({ onNavigateToAnalysis, onOpenSettings, onOpe
         chips.push({ emoji: '⚠️', label: id.replace('custom:', '') });
       } else {
         const a = ALLERGIES.find((x) => x.id === id);
-        if (a) chips.push({ emoji: a.emoji, label: a.label });
+        if (a) chips.push({ emoji: a.emoji, label: (t as any)[`allergy_${id}`] || a.label });
       }
     });
     (activeProfile.restrictions || []).forEach((id: string) => {
       const r = DIETARY_RESTRICTIONS.find((x) => x.id === id);
-      if (r) chips.push({ emoji: r.emoji, label: r.label });
+      if (r) chips.push({ emoji: r.emoji, label: (t as any)[`restriction_${id}`] || r.label });
     });
     (activeProfile.preferences || []).forEach((id: string) => {
       const p = DIETARY_PREFERENCES.find((x) => x.id === id);
-      if (p) chips.push({ emoji: p.emoji, label: p.label });
+      if (p) chips.push({ emoji: p.emoji, label: (t as any)[`pref_${id}`] || p.label });
     });
     return chips;
   };

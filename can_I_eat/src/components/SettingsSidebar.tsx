@@ -93,16 +93,16 @@ export default function SettingsSidebar({ visible, onClose, onMyProfile, onQRPas
         chips.push({ emoji: '⚠️', label: id.replace('custom:', ''), type: 'allergy' });
       } else {
         const a = ALLERGIES.find((x) => x.id === id);
-        if (a) chips.push({ emoji: a.emoji, label: a.label, type: 'allergy' });
+        if (a) chips.push({ emoji: a.emoji, label: (t as any)[`allergy_${id}`] || a.label, type: 'allergy' });
       }
     });
     (activeProfile.restrictions || []).forEach((id: string) => {
       const r = DIETARY_RESTRICTIONS.find((x) => x.id === id);
-      if (r) chips.push({ emoji: r.emoji, label: r.label, type: 'restriction' });
+      if (r) chips.push({ emoji: r.emoji, label: (t as any)[`restriction_${id}`] || r.label, type: 'restriction' });
     });
     (activeProfile.preferences || []).forEach((id: string) => {
       const p = DIETARY_PREFERENCES.find((x) => x.id === id);
-      if (p) chips.push({ emoji: p.emoji, label: p.label, type: 'pref' });
+      if (p) chips.push({ emoji: p.emoji, label: (t as any)[`pref_${id}`] || p.label, type: 'pref' });
     });
     return chips;
   };
