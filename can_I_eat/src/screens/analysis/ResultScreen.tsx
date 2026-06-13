@@ -120,7 +120,7 @@ export default function ResultScreen({ result, imageBase64, imageUrl, savedFood,
 
       await Share.share({ message: lines.join('\n') });
     } catch {
-      Alert.alert('Error', 'Could not share result.');
+      Alert.alert(t.errorTitle, t.couldNotShareResult);
     }
   };
 
@@ -203,11 +203,11 @@ export default function ResultScreen({ result, imageBase64, imageUrl, savedFood,
           {(familyCheckLoading || (familyCheck && familyCheck.length > 0)) && (
             <View style={styles.section}>
               <AppText weight="700" display style={styles.sectionTitle}>
-                <Icon name="users" size={16} color={Colors.brand} stroke={2.2} /> {' '}Family Check
+                <Icon name="users" size={16} color={Colors.brand} stroke={2.2} /> {' '}{t.familyCheck}
               </AppText>
               <View style={styles.familyCard}>
                 {familyCheckLoading ? (
-                  <AppText style={styles.familyLoading}>Checking family members…</AppText>
+                  <AppText style={styles.familyLoading}>{t.checkingFamily}</AppText>
                 ) : (
                   familyCheck!.map((item, i) => {
                     const fv2 = (item.status === 'safe' || item.status === 'caution' || item.status === 'unsafe') ? item.status : 'caution';
@@ -290,7 +290,7 @@ export default function ResultScreen({ result, imageBase64, imageUrl, savedFood,
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.actionBtnOutline} onPress={handleShare} activeOpacity={0.8}>
                   <Icon name="share" size={18} color={Colors.brand} stroke={2.5} />
-                  <AppText weight="800" style={styles.actionBtnOutlineText}>Share</AppText>
+                  <AppText weight="800" style={styles.actionBtnOutlineText}>{t.shareLabel}</AppText>
                 </TouchableOpacity>
               </View>
             )}

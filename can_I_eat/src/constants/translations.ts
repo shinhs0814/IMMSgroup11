@@ -278,6 +278,39 @@ export type TranslationKeys = {
   scanningFor: string;
   switchProfile: string;
   meLabel: string;
+  // Hero card & diet profile
+  heroTitle: string;
+  heroSub: string;
+  scanNow: string;
+  yourDietProfile: string;
+  // Sidebar
+  editProfile: string;
+  myDietaryProfile: string;
+  noDietProfile: string;
+  setUp: string;
+  add: string;
+  foodPassport: string;
+  myFoodPassport: string;
+  passportSub: string;
+  family: string;
+  // QR Passport
+  qrPassportTitle: string;
+  dietaryPassport: string;
+  scanToView: string;
+  noRestrictions: string;
+  shareMyProfile: string;
+  qrPassportWebOnly: string;
+  // Result screen
+  checkingFamily: string;
+  shareLabel: string;
+  familyCheck: string;
+  couldNotShareResult: string;
+  couldNotShareProfile: string;
+  couldNotSaveProfile: string;
+  couldNotSaveChanges: string;
+  barcodeDetectedTitle: string;
+  barcodeNotInDb: string;
+  labelScanBtn: string;
 };
 
 const en: TranslationKeys = {
@@ -542,6 +575,35 @@ aiDisclaimerText: 'AI analysis may not detect hidden ingredients (e.g. broth, sa
   scanningFor: 'Scanning for:',
   switchProfile: 'Switch',
   meLabel: 'Me',
+  heroTitle: 'Can I eat it?',
+  heroSub: 'Snap a dish, label or menu — get an instant verdict.',
+  scanNow: 'Scan now',
+  yourDietProfile: 'Your diet profile',
+  editProfile: 'Edit profile',
+  myDietaryProfile: 'My dietary profile',
+  noDietProfile: 'No diet profile set',
+  setUp: 'Set up',
+  add: 'Add',
+  foodPassport: 'Food passport',
+  myFoodPassport: 'My food passport',
+  passportSub: 'Staff scan your allergies & diet, in any language.',
+  family: 'Family',
+  qrPassportTitle: 'QR Passport',
+  dietaryPassport: 'Dietary Passport',
+  scanToView: 'Scan to view my dietary profile',
+  noRestrictions: 'No dietary restrictions',
+  shareMyProfile: 'Share My Profile',
+  qrPassportWebOnly: 'QR Passport is available on the mobile app.',
+  checkingFamily: 'Checking family members…',
+  shareLabel: 'Share',
+  familyCheck: 'Family Check',
+  couldNotShareResult: 'Could not share result.',
+  couldNotShareProfile: 'Could not share profile.',
+  couldNotSaveProfile: 'Could not save your profile. Please try again.',
+  couldNotSaveChanges: 'Could not save changes. Please try again.',
+  barcodeDetectedTitle: '📦 Barcode Detected',
+  barcodeNotInDb: "This product isn't in our database yet. Try the Label Scan mode to photograph the ingredient list instead.",
+  labelScanBtn: 'Label Scan',
 };
 
 const ko: TranslationKeys = {
@@ -806,6 +868,35 @@ aiDisclaimerText: 'AI 분석은 숨겨진 성분(예: 육수, 소스, 기름 등
   scanningFor: '스캔 대상:',
   switchProfile: '변경',
   meLabel: '나',
+  heroTitle: '먹어도 될까요?',
+  heroSub: '음식, 라벨, 메뉴를 스캔하면 즉시 결과를 알려드려요.',
+  scanNow: '지금 스캔',
+  yourDietProfile: '나의 식단 프로필',
+  editProfile: '프로필 편집',
+  myDietaryProfile: '나의 식단 프로필',
+  noDietProfile: '식단 프로필이 없습니다',
+  setUp: '설정하기',
+  add: '추가',
+  foodPassport: '음식 여권',
+  myFoodPassport: '나의 음식 여권',
+  passportSub: '직원이 어떤 언어로든 알레르기와 식단을 확인할 수 있어요.',
+  family: '가족',
+  qrPassportTitle: 'QR 여권',
+  dietaryPassport: '식단 여권',
+  scanToView: '내 식단 프로필을 보려면 스캔하세요',
+  noRestrictions: '식단 제한 없음',
+  shareMyProfile: '내 프로필 공유',
+  qrPassportWebOnly: 'QR 여권은 모바일 앱에서 사용할 수 있습니다.',
+  checkingFamily: '가족 구성원 확인 중…',
+  shareLabel: '공유',
+  familyCheck: '가족 확인',
+  couldNotShareResult: '결과를 공유할 수 없습니다.',
+  couldNotShareProfile: '프로필을 공유할 수 없습니다.',
+  couldNotSaveProfile: '프로필을 저장할 수 없습니다. 다시 시도해 주세요.',
+  couldNotSaveChanges: '변경 사항을 저장할 수 없습니다. 다시 시도해 주세요.',
+  barcodeDetectedTitle: '📦 바코드 감지됨',
+  barcodeNotInDb: '이 제품은 아직 데이터베이스에 없습니다. 라벨 스캔 모드로 성분표를 촬영해 보세요.',
+  labelScanBtn: '라벨 스캔',
 };
 
 const es: TranslationKeys = {
@@ -1070,6 +1161,35 @@ aiDisclaimerText: 'El análisis de IA puede no detectar ingredientes ocultos (p.
   scanningFor: 'Escaneando para:',
   switchProfile: 'Cambiar',
   meLabel: 'Yo',
+  heroTitle: '¿Puedo comerlo?',
+  heroSub: 'Escanea un plato, etiqueta o menú y obtén un veredicto al instante.',
+  scanNow: 'Escanear ahora',
+  yourDietProfile: 'Tu perfil dietético',
+  editProfile: 'Editar perfil',
+  myDietaryProfile: 'Mi perfil dietético',
+  noDietProfile: 'Sin perfil dietético',
+  setUp: 'Configurar',
+  add: 'Añadir',
+  foodPassport: 'Pasaporte alimentario',
+  myFoodPassport: 'Mi pasaporte alimentario',
+  passportSub: 'El personal escanea tus alergias y dieta, en cualquier idioma.',
+  family: 'Familia',
+  qrPassportTitle: 'Pasaporte QR',
+  dietaryPassport: 'Pasaporte Dietético',
+  scanToView: 'Escanea para ver mi perfil dietético',
+  noRestrictions: 'Sin restricciones dietéticas',
+  shareMyProfile: 'Compartir mi perfil',
+  qrPassportWebOnly: 'El pasaporte QR está disponible en la app móvil.',
+  checkingFamily: 'Comprobando miembros de la familia…',
+  shareLabel: 'Compartir',
+  familyCheck: 'Verificación familiar',
+  couldNotShareResult: 'No se pudo compartir el resultado.',
+  couldNotShareProfile: 'No se pudo compartir el perfil.',
+  couldNotSaveProfile: 'No se pudo guardar tu perfil. Inténtalo de nuevo.',
+  couldNotSaveChanges: 'No se pudieron guardar los cambios. Inténtalo de nuevo.',
+  barcodeDetectedTitle: '📦 Código de barras detectado',
+  barcodeNotInDb: 'Este producto aún no está en nuestra base de datos. Prueba el modo Escaneo de etiqueta para fotografiar la lista de ingredientes.',
+  labelScanBtn: 'Escaneo de etiqueta',
 };
 
 const fr: TranslationKeys = {
@@ -1334,6 +1454,35 @@ aiDisclaimerText: "L'analyse IA peut ne pas détecter les ingrédients cachés (
   scanningFor: 'Scan pour:',
   switchProfile: 'Changer',
   meLabel: 'Moi',
+  heroTitle: 'Puis-je le manger ?',
+  heroSub: 'Scannez un plat, une étiquette ou un menu pour un verdict instantané.',
+  scanNow: 'Scanner',
+  yourDietProfile: 'Votre profil alimentaire',
+  editProfile: 'Modifier le profil',
+  myDietaryProfile: 'Mon profil alimentaire',
+  noDietProfile: 'Aucun profil alimentaire',
+  setUp: 'Configurer',
+  add: 'Ajouter',
+  foodPassport: 'Passeport alimentaire',
+  myFoodPassport: 'Mon passeport alimentaire',
+  passportSub: 'Le personnel scanne vos allergies et votre régime, en toute langue.',
+  family: 'Famille',
+  qrPassportTitle: 'Passeport QR',
+  dietaryPassport: 'Passeport Alimentaire',
+  scanToView: 'Scannez pour voir mon profil alimentaire',
+  noRestrictions: 'Aucune restriction alimentaire',
+  shareMyProfile: 'Partager mon profil',
+  qrPassportWebOnly: 'Le passeport QR est disponible sur l\'app mobile.',
+  checkingFamily: 'Vérification des membres de la famille…',
+  shareLabel: 'Partager',
+  familyCheck: 'Vérification familiale',
+  couldNotShareResult: 'Impossible de partager le résultat.',
+  couldNotShareProfile: 'Impossible de partager le profil.',
+  couldNotSaveProfile: 'Impossible d\'enregistrer votre profil. Veuillez réessayer.',
+  couldNotSaveChanges: 'Impossible d\'enregistrer les modifications. Veuillez réessayer.',
+  barcodeDetectedTitle: '📦 Code-barres détecté',
+  barcodeNotInDb: "Ce produit n'est pas encore dans notre base de données. Essayez le mode Scan d'étiquette pour photographier la liste des ingrédients.",
+  labelScanBtn: "Scan d'étiquette",
 };
 
 const ja: TranslationKeys = {
@@ -1598,6 +1747,35 @@ aiDisclaimerText: 'AI分析では隠れた成分（例：だし、ソース、�
   scanningFor: 'スキャン対象:',
   switchProfile: '切替',
   meLabel: '自分',
+  heroTitle: '食べても大丈夫？',
+  heroSub: '料理・ラベル・メニューをスキャンして、すぐに判定。',
+  scanNow: 'スキャン',
+  yourDietProfile: '食事プロフィール',
+  editProfile: 'プロフィール編集',
+  myDietaryProfile: '私の食事プロフィール',
+  noDietProfile: '食事プロフィール未設定',
+  setUp: '設定する',
+  add: '追加',
+  foodPassport: 'フードパスポート',
+  myFoodPassport: '私のフードパスポート',
+  passportSub: 'スタッフがどの言語でもアレルギーと食事を確認できます。',
+  family: '家族',
+  qrPassportTitle: 'QRパスポート',
+  dietaryPassport: '食事パスポート',
+  scanToView: 'スキャンして食事プロフィールを表示',
+  noRestrictions: '食事制限なし',
+  shareMyProfile: 'プロフィールを共有',
+  qrPassportWebOnly: 'QRパスポートはモバイルアプリで利用できます。',
+  checkingFamily: '家族メンバーを確認中…',
+  shareLabel: '共有',
+  familyCheck: '家族チェック',
+  couldNotShareResult: '結果を共有できませんでした。',
+  couldNotShareProfile: 'プロフィールを共有できませんでした。',
+  couldNotSaveProfile: 'プロフィールを保存できませんでした。もう一度お試しください。',
+  couldNotSaveChanges: '変更を保存できませんでした。もう一度お試しください。',
+  barcodeDetectedTitle: '📦 バーコードを検出',
+  barcodeNotInDb: 'この製品はまだデータベースにありません。ラベルスキャンモードで原材料表を撮影してみてください。',
+  labelScanBtn: 'ラベルスキャン',
 };
 
 export const TRANSLATIONS: Record<AppLanguage, TranslationKeys> = { en, ko, es, fr, ja };

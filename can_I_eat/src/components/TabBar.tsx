@@ -10,6 +10,7 @@ import AppText from './AppText';
 import Icon from './Icon';
 import { Colors } from '../constants/colors';
 import { Radius, Shadow } from '../constants/theme';
+import { useLanguage } from '../context/LanguageContext';
 
 type Tab = 'home' | 'search';
 
@@ -34,12 +35,13 @@ function TabItem({ icon, label, active, onPress }: {
 }
 
 export default function TabBar({ active, onHome, onScan, onSearch }: Props) {
+  const { t } = useLanguage();
   // Row with a spacer in the middle for the FAB
   const row = (
     <View style={styles.row}>
-      <TabItem icon="home" label="Home" active={active === 'home'} onPress={onHome} />
+      <TabItem icon="home" label={t.home} active={active === 'home'} onPress={onHome} />
       <View style={styles.fabSpacer} />
-      <TabItem icon="search" label="Search" active={active === 'search'} onPress={onSearch} />
+      <TabItem icon="search" label={t.search} active={active === 'search'} onPress={onSearch} />
     </View>
   );
 

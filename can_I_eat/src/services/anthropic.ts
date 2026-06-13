@@ -61,7 +61,33 @@ ${buildProfileDescription(dietaryProfile)}
 
 ${textOverride}
 
-Respond with ONLY the JSON schema below.
+ALL text in your response — foodName, ingredients, flag ingredient names, flag reasons, summary, and nutritionHighlights — must be written in ${uiLanguage}.
+Your entire response must be valid JSON only — no markdown, no code blocks, no extra text before or after.
+
+Respond with ONLY this JSON (no other text):
+{
+  "foodName": "name of the product written in ${uiLanguage}",
+  "englishName": "name ALWAYS in English regardless of UI language",
+  "type": "label",
+  "overallStatus": "safe | caution | unsafe",
+  "summary": "1-2 sentence summary for this specific user based on their dietary profile, written in ${uiLanguage}",
+  "ingredients": ["every", "ingredient", "written", "in", "${uiLanguage}"],
+  "flags": [
+    {
+      "ingredient": "ingredient name written in ${uiLanguage}",
+      "reason": "why this is a concern for this user, written in ${uiLanguage}",
+      "severity": "unsafe"
+    }
+  ],
+  "calories": "calorie info if known, else null",
+  "nutritionHighlights": ["notable nutrition facts written in ${uiLanguage}"]
+}
+
+Safety rules:
+- "safe" = no issues for this user
+- "caution" = possible concern, ingredient unclear, or ingredient list unavailable
+- "unsafe" = confirmed allergen or violates dietary restriction
+- If the ingredient list is empty or missing, set overallStatus to "caution" and note in the summary that ingredients could not be verified.
 `
     : `You are a multilingual global food safety assistant. Analyze this image — it may be a food dish or a product package label in ANY language (Korean, Japanese, Arabic, French, Spanish, Chinese, Thai, etc.).
 

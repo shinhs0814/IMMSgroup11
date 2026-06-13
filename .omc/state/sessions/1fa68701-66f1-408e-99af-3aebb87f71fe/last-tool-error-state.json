@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"cd /Users/annashin/Documents/can_I_eat/CanIEat/can_I_eat && npx eas secret:push --scope project --env-file .env 2>&1\",\"timeout\":60000,\"description\":\"Push env secrets to EAS project\"}",
+  "error": "Exit code 1\n★ eas-cli@20.1.0 is now available.\nTo upgrade, run:\nnpm install -g eas-cli\nProceeding with outdated version.\n\nThis command is deprecated. Use eas env:push instead.\n\nThis project already has environment secrets with the following names:\n- EXPO_PUBLIC_ANTHROPIC_API_KEY\n- EXPO_PUBLIC_FIREBASE_API_KEY\n- EXPO_PUBLIC_FIREBASE_APP_ID\n- EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN\n- EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID\n- EXPO_PUBLIC_FIREBASE_PROJECT_ID\n- EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET\n- EXPO_PU...",
+  "timestamp": "2026-06-13T02:24:43.762Z",
+  "retry_count": 1
+}

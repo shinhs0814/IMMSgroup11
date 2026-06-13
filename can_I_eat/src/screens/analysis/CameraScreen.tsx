@@ -184,8 +184,12 @@ export default function CameraScreen({ onResult, onMenuResult, onCancel }: Props
   const [statusText, setStatusText] = useState('');
   const [barcodeScanned, setBarcodeScanned] = useState(false);
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
-  // Debounce: require the same barcode on 3 consecutive frames before acting
+  // Debounce: require the same barcode on several consecutive frames before acting
   const scanConfirmRef = useRef<{ code: string; count: number }>({ code: '', count: 0 });
+  // Warm-up gate: ignore scans for a moment after the camera mounts so the user
+  // has time to aim at the product before a stray frame is captured.
+  const scanReadyRef = useRef(false);
+  const warmupTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [showProfilePicker, setShowProfilePicker] = useState(false);
   const [lastError, setLastError] = useState<string | null>(null);
 
@@ -244,32 +248,39 @@ export default function CameraScreen({ onResult, onMenuResult, onCancel }: Props
 
   const handleBarcodeScanned = async ({ data }: { data: string }) => {
     if (barcodeScanned) return;
+    // Ignore early frames captured before the warm-up window elapses
+    if (!scanReadyRef.current) return;
 
-    // Require 3 consecutive frames of the same barcode before acting
+    // Only accept well-formed EAN/UPC product barcodes (8, 12, 13 or 14 digits).
+    // This rejects truncated/partial reads like "08034144".
+    const clean = data.trim();
+    if (!/^\d+$/.test(clean) || ![8, 12, 13, 14].includes(clean.length)) return;
+
+    // Require 6 consecutive frames of the same barcode before acting
     const ref = scanConfirmRef.current;
-    if (ref.code === data) {
+    if (ref.code === clean) {
       ref.count += 1;
     } else {
-      ref.code = data;
+      ref.code = clean;
       ref.count = 1;
     }
-    if (ref.count < 3) return;
+    if (ref.count < 6) return;
 
     setBarcodeScanned(true);
     setMode(null);
     setAnalyzing(true);
     setStatusText(t.barcodeScanning);
     try {
-      const product = await fetchProductByBarcode(data);
+      const product = await fetchProductByBarcode(clean);
       if (!product) {
         setAnalyzing(false);
         setStatusText('');
         Alert.alert(
-          '📦 Barcode Detected',
-          `Barcode: ${data}\n\nThis product isn't in our database yet. Try the Label Scan mode to photograph the ingredient list instead.`,
+          t.barcodeDetectedTitle,
+          `${clean}\n\n${t.barcodeNotInDb}`,
           [
-            { text: 'Label Scan', onPress: () => setMode('label') },
-            { text: 'OK', style: 'cancel', onPress: () => { setBarcodeScanned(false); scanConfirmRef.current = { code: '', count: 0 }; } },
+            { text: t.labelScanBtn, onPress: () => setMode('label') },
+            { text: t.ok, style: 'cancel', onPress: () => { setBarcodeScanned(false); scanConfirmRef.current = { code: '', count: 0 }; } },
           ]
         );
         return;
@@ -334,6 +345,10 @@ export default function CameraScreen({ onResult, onMenuResult, onCancel }: Props
     }
     setBarcodeScanned(false);
     scanConfirmRef.current = { code: '', count: 0 };
+    // Warm-up: block scanning for 1.5s so the user can aim at the product first
+    scanReadyRef.current = false;
+    if (warmupTimerRef.current) clearTimeout(warmupTimerRef.current);
+    warmupTimerRef.current = setTimeout(() => { scanReadyRef.current = true; }, 1500);
     setMode('barcode');
   };
 
@@ -357,7 +372,7 @@ export default function CameraScreen({ onResult, onMenuResult, onCancel }: Props
         <CameraView
           style={StyleSheet.absoluteFillObject}
           facing="back"
-          barcodeScannerSettings={{ barcodeTypes: ['ean13', 'ean8', 'upc_a', 'upc_e', 'code128', 'code39', 'qr'] }}
+          barcodeScannerSettings={{ barcodeTypes: ['ean13', 'ean8', 'upc_a', 'upc_e'] }}
           onBarcodeScanned={handleBarcodeScanned}
         />
         <View style={styles.barcodeOverlay}>

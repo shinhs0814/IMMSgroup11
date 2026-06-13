@@ -58,7 +58,7 @@ export default function QRPassportScreen({ onBack }: Props) {
       lines.push('', 'Shared via Can I Eat? 🍱');
       await Share.share({ message: lines.join('\n') });
     } catch {
-      Alert.alert('Error', 'Could not share profile.');
+      Alert.alert(t.errorTitle, t.couldNotShareProfile);
     }
   };
 
@@ -69,14 +69,14 @@ export default function QRPassportScreen({ onBack }: Props) {
         <TouchableOpacity onPress={onBack} style={styles.backBtn} activeOpacity={0.7}>
           <Icon name="chevronLeft" size={22} color={Colors.text} stroke={2.4} />
         </TouchableOpacity>
-        <AppText weight="800" display style={styles.headerTitle}>QR Passport</AppText>
+        <AppText weight="800" display style={styles.headerTitle}>{t.qrPassportTitle}</AppText>
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         {/* Passport card */}
         <View style={styles.card}>
           <AppText weight="800" display style={styles.passportTitle}>🍱 Can I Eat?</AppText>
-          <AppText weight="600" style={styles.passportSubtitle}>Dietary Passport</AppText>
+          <AppText weight="600" style={styles.passportSubtitle}>{t.dietaryPassport}</AppText>
           <AppText weight="700" display style={styles.userName}>{user?.displayName || 'User'}</AppText>
           <View style={styles.qrContainer}>
             <QRCode
@@ -87,7 +87,7 @@ export default function QRPassportScreen({ onBack }: Props) {
               getRef={(ref) => (qrRef.current = ref)}
             />
           </View>
-          <AppText style={styles.qrHint}>Scan to view my dietary profile</AppText>
+          <AppText style={styles.qrHint}>{t.scanToView}</AppText>
         </View>
 
         {/* Dietary info */}
@@ -95,13 +95,13 @@ export default function QRPassportScreen({ onBack }: Props) {
           {hasNothing ? (
             <View style={styles.noRestrictRow}>
               <AppText style={{ fontSize: 20 }}>✅</AppText>
-              <AppText weight="600" style={styles.noRestrictText}>No dietary restrictions</AppText>
+              <AppText weight="600" style={styles.noRestrictText}>{t.noRestrictions}</AppText>
             </View>
           ) : (
             <>
               {allergyLabels.length > 0 && (
                 <View style={styles.tagSection}>
-                  <AppText weight="700" display style={styles.tagSectionTitle}>🚨 Allergies</AppText>
+                  <AppText weight="700" display style={styles.tagSectionTitle}>🚨 {t.allergiesTitle}</AppText>
                   <View style={styles.tagRow}>
                     {allergyLabels.map((label) => (
                       <View key={label} style={styles.tagUnsafe}>
@@ -113,7 +113,7 @@ export default function QRPassportScreen({ onBack }: Props) {
               )}
               {restrictionLabels.length > 0 && (
                 <View style={styles.tagSection}>
-                  <AppText weight="700" display style={styles.tagSectionTitle}>⚠️ Restrictions</AppText>
+                  <AppText weight="700" display style={styles.tagSectionTitle}>⚠️ {t.restrictionsTitle}</AppText>
                   <View style={styles.tagRow}>
                     {restrictionLabels.map((label) => (
                       <View key={label} style={styles.tagCaution}>
@@ -125,7 +125,7 @@ export default function QRPassportScreen({ onBack }: Props) {
               )}
               {preferenceLabels.length > 0 && (
                 <View style={styles.tagSection}>
-                  <AppText weight="700" display style={styles.tagSectionTitle}>🌿 Preferences</AppText>
+                  <AppText weight="700" display style={styles.tagSectionTitle}>🌿 {t.preferencesTitle}</AppText>
                   <View style={styles.tagRow}>
                     {preferenceLabels.map((label) => (
                       <View key={label} style={styles.tagSafe}>
@@ -142,7 +142,7 @@ export default function QRPassportScreen({ onBack }: Props) {
         {/* Share button */}
         <TouchableOpacity style={styles.shareBtn} onPress={handleShare} activeOpacity={0.85}>
           <Icon name="share" size={19} color="#fff" stroke={2.2} />
-          <AppText weight="800" style={styles.shareBtnText}>Share My Profile</AppText>
+          <AppText weight="800" style={styles.shareBtnText}>{t.shareMyProfile}</AppText>
         </TouchableOpacity>
       </ScrollView>
     </View>
