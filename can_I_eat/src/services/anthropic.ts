@@ -144,7 +144,7 @@ Safety rules:
 
   const response = await client.messages.create({
     model: MODEL,
-    max_tokens: 2048,
+    max_tokens: 4096,
     messages: [{ role: 'user', content: messageContent }],
   });
 
@@ -221,7 +221,7 @@ Safety rules:
 
   const response = await client.messages.create({
     model: MODEL,
-    max_tokens: 2048,
+    max_tokens: 4096,
     messages: [{ role: 'user', content: prompt }],
   });
 
